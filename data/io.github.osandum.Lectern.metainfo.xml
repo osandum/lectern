@@ -79,6 +79,22 @@
   </requires>
 
   <releases>
+    <release version="0.4.0" date="2026-09-02">
+      <description>
+        <p>
+          Lectern now keeps a list of recently opened documents. It
+          appears on the start screen, below the Open button, and in an
+          "Open Recent" submenu in the main menu, most recently opened
+          first. Choosing a file from the start screen opens it in the
+          current window instead of leaving an empty one behind, and
+          Ctrl+O opens the file chooser from anywhere.
+        </p>
+        <p>
+          The list is the desktop's own recent-files store, shared with
+          the file manager and other applications.
+        </p>
+      </description>
+    </release>
     <release version="0.3.1" date="2026-08-16">
       <description>
         <p>
