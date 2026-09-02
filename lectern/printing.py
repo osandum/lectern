@@ -12,6 +12,7 @@ lengths are computed explicitly throughout rather than assumed to match
 import math
 from pathlib import PurePath
 
+import cairo
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Gdk", "4.0")
@@ -259,6 +260,33 @@ def _inline_code_spans(item):
     return spans
 
 
+def _link_spans(item, href_by_tag):
+    """UTF-8 byte ranges of the item's hyperlink runs paired with their
+    target URL, merged where one link's own runs touch (its text is often
+    several runs -- a bold word inside link text is its own run). Pango has
+    no notion of a hyperlink, so on paper a link is a surface-level PDF
+    annotation placed by geometry over the blue-and-underlined text, in the
+    same way _inline_code_spans drives the inline-code chip."""
+    spans, offset = [], 0
+    for text, tag_names in item.runs:
+        nbytes = len(text.encode("utf-8"))
+        href = next((href_by_tag[n] for n in tag_names if n in href_by_tag), None)
+        if href is not None:
+            if spans and spans[-1][1] == offset and spans[-1][2] == href:
+                spans[-1] = (spans[-1][0], offset + nbytes, href)
+            else:
+                spans.append((offset, offset + nbytes, href))
+        offset += nbytes
+    return spans
+
+
+def _link_uri_attr(href):
+    """cairo's tag-attribute parser has no escape syntax, so a URI holding
+    the single quote we wrap it in would truncate the attribute. Percent-
+    encoding is URLs' own answer for that character."""
+    return href.replace("'", "%27")
+
+
 _MARKER_TAGS = frozenset({"list-marker", "task-checked-glyph", "task-unchecked-glyph"})
 
 
@@ -428,6 +456,10 @@ class _Block:
         self.rule = None
         self.chips = ()
         self.chip_rgb = None
+        # [(start_byte, end_byte, href), ...] over the block's own layout,
+        # one per hyperlink run -- drawn as clickable PDF Link annotations
+        # (see _draw_link_annotations), nothing on a raster printer.
+        self.links = ()
         # 1-6 for a heading paragraph, None otherwise -- distinct from
         # `rule`, which is only set for h1/h2 (where the bottom rule is
         # drawn). _paginate needs every level, to keep a heading with the
@@ -435,7 +467,8 @@ class _Block:
         self.heading_level = None
 
     @classmethod
-    def text(cls, x, layout, *, panel=None, rule=None, chips=(), chip_rgb=None, heading_level=None):
+    def text(cls, x, layout, *, panel=None, rule=None, chips=(), chip_rgb=None,
+             heading_level=None, links=()):
         block = cls("layout", x)
         block.layout = layout
         block.lines = _line_geometry(layout)
@@ -445,6 +478,7 @@ class _Block:
         block.rule = rule
         block.chips = chips
         block.chip_rgb = chip_rgb
+        block.links = links
         return block
 
     @classmethod
@@ -543,7 +577,9 @@ def _draw_diagram_scene(cr, scene, palette, font):
     mermaid.draw.draw_scene(cr, scene, palette, font)
 
 
-def _build_blocks(context, style_table, print_model, page_width, page_height, dark):
+def _build_blocks(context, style_table, print_model, page_width, page_height, dark,
+                  href_by_tag=None):
+    href_by_tag = href_by_tag or {}
     blocks = []
     # One description for the whole job rather than a Gtk.Settings lookup
     # per layout.
@@ -598,6 +634,7 @@ def _build_blocks(context, style_table, print_model, page_width, page_height, da
             blocks.append(_Block.text(
                 x, layout, rule=rule, heading_level=heading_level,
                 chips=_inline_code_spans(item), chip_rgb=code_bg_rgb,
+                links=_link_spans(item, href_by_tag),
             ))
         elif item.kind == "code-block":
             # Same shape as the on-screen panel: it spans the content
@@ -846,6 +883,7 @@ def _paginate(blocks, page_height):
                     # Whole-layout byte ranges; each Pango line knows its
                     # own, so they need no per-chunk slicing.
                     "chips": block.chips, "chip_rgb": block.chip_rgb,
+                    "links": block.links,
                     # Only the fragment that ends the heading carries its
                     # rule; a heading that wrapped across a page break
                     # would otherwise get one on every page.
@@ -893,6 +931,45 @@ def _draw_inline_code_chips(cr, entry):
             )
             cr.fill()
     cr.restore()
+
+
+def _draw_link_annotations(cr, entry):
+    """Lay a clickable PDF 'Link' annotation over every hyperlink run on
+    this page fragment -- the piece that makes a printed link actually
+    followable rather than just blue underlined text.
+
+    Geometry is the per-line index_to_x walk the inline-code chips already
+    use. The rectangle is handed to cairo via cr.user_to_device: a Link
+    tag's explicit `rect` is read in the surface's initial device space
+    and ignores the current transform, so the page translate _on_draw_page
+    applies has to be baked in here rather than left to cairo. On a
+    non-PDF surface (a raster printer) tag_begin/tag_end for TAG_LINK are
+    silently ignored, so this is a no-op there.
+    """
+    spans = entry["links"]
+    if not spans:
+        return
+    for line, _y_top, _height, baseline, x_off in entry["lines"]:
+        line_start, line_end = line.start_index, line.start_index + line.length
+        _ink, logical = line.get_extents()
+        top = (entry["y"] + (baseline - entry["origin_baseline"])
+               + Pango.units_to_double(logical.y))
+        height = Pango.units_to_double(logical.height)
+        for span_start, span_end, href in spans:
+            start, end = max(span_start, line_start), min(span_end, line_end)
+            if start >= end:
+                continue
+            x0 = Pango.units_to_double(line.index_to_x(start, False))
+            x1 = Pango.units_to_double(line.index_to_x(end - 1, True))
+            if x1 < x0:
+                x0, x1 = x1, x0
+            dx0, dy0 = cr.user_to_device(entry["x"] + x_off + x0, top)
+            dx1, dy1 = cr.user_to_device(entry["x"] + x_off + x1, top + height)
+            rx0, rx1 = sorted((dx0, dx1))
+            ry0, ry1 = sorted((dy0, dy1))
+            cr.tag_begin(cairo.TAG_LINK, "uri='%s' rect=[%g %g %g %g]" % (
+                _link_uri_attr(href), rx0, ry0, rx1 - rx0, ry1 - ry0))
+            cr.tag_end(cairo.TAG_LINK)
 
 
 def _draw_entry(cr, entry, page_width):
@@ -963,6 +1040,7 @@ def _draw_entry(cr, entry, page_width):
         for line, _y_top, _height, baseline, x_off in entry["lines"]:
             cr.move_to(entry["x"] + x_off, entry["y"] + (baseline - entry["origin_baseline"]))
             PangoCairo.show_layout_line(cr, line)
+        _draw_link_annotations(cr, entry)
         if entry["rule"] is not None:
             rule_y = entry["top"] + entry["height"] + HEADING_RULE_PAD_PT
             cr.save()
@@ -1042,7 +1120,7 @@ class PrintCoordinator:
 
     def print_document(self, parent_window, print_model, dark, doc_title, file_name,
                         action=Gtk.PrintOperationAction.PRINT_DIALOG, export_path=None,
-                        header_footer=False):
+                        header_footer=False, link_targets=None):
         # header_footer is a plain argument, decided by the caller before
         # the dialog even opens -- not read out of the dialog itself.
         # GtkPrintOperation's create-custom-widget/custom-widget-apply
@@ -1067,13 +1145,31 @@ class PrintCoordinator:
         op.set_print_settings(settings)
         if export_path:
             op.set_export_filename(export_path)
-        state = {"header_footer": header_footer, "header_left": _header_left_text(doc_title, file_name)}
+        state = {
+            "header_footer": header_footer,
+            "header_left": _header_left_text(doc_title, file_name),
+            # tag name -> dispatch target, straight off the renderer. Only
+            # the {"type": "url"} entries matter here; footnote jumps and
+            # the like stay screen-only.
+            "link_targets": link_targets or {},
+        }
         op.connect("begin-print", self._on_begin_print, print_model, dark, state)
         op.connect("draw-page", self._on_draw_page, state)
         return op.run(action, parent_window)
 
     def _on_begin_print(self, op, context, print_model, dark, state):
         style_table = tagdefs.tag_style_props(dark)
+        # Only links that already carry a URI scheme (http/https/mailto/...)
+        # become PDF annotations. A bare relative href resolves against the
+        # author's own directory on screen (window._open_href); baking that
+        # local path -- or a dead in-page "#anchor" -- into a shared PDF is
+        # worse than leaving it as plain blue text.
+        href_by_tag = {
+            name: target["href"]
+            for name, target in (state.get("link_targets") or {}).items()
+            if target.get("type") == "url" and target.get("href")
+            and GLib.uri_parse_scheme(target["href"]) is not None
+        }
         width, height = context.get_width(), context.get_height()
         header_band = HEADER_BAND_PT if state["header_footer"] else 0.0
         footer_band = FOOTER_BAND_PT if state["header_footer"] else 0.0
@@ -1083,7 +1179,8 @@ class PrintCoordinator:
         state["height"] = height
         state["header_band"] = header_band
         state["body_top"] = body_top
-        blocks = _build_blocks(context, style_table, print_model, width, body_height, dark)
+        blocks = _build_blocks(
+            context, style_table, print_model, width, body_height, dark, href_by_tag)
         # Pango.LayoutLine keeps only a *weak* back-reference to its parent
         # Pango.Layout -- without this, `blocks` (and therefore every
         # Layout) would be garbage collected the moment this method

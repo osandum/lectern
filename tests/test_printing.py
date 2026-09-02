@@ -4,6 +4,7 @@ dialog needed, and it exercises the same begin-print/draw-page signals a
 real print job does rather than a hand-rolled stand-in for them.
 """
 import re
+import zlib
 
 import gi
 gi.require_version("Gtk", "4.0")
@@ -27,6 +28,16 @@ def print_model_for(markdown_text):
     renderer = MarkdownRenderer()
     renderer.render(tree, buffer)
     return renderer.print_model
+
+
+def render_for(markdown_text):
+    """print_model plus the renderer's dispatch_targets -- the second is
+    what carries link hrefs into the print pipeline."""
+    tree = SyntaxTreeNode(_PARSER.parse(markdown_text))
+    buffer = Gtk.TextBuffer(tag_table=create_tag_table(dark=False))
+    renderer = MarkdownRenderer()
+    renderer.render(tree, buffer)
+    return renderer.print_model, renderer.dispatch_targets
 
 
 def run_export(print_model, tmp_path, header_footer, doc_title="Hello", file_name="hello.md"):
@@ -175,6 +186,99 @@ def test_header_footer_claims_room_from_the_body_not_the_paper(tmp_path):
         plain["height"] + printing.FOOTER_MARGIN_SHIFT_PT)
     assert len(decorated["pages"]) >= len(plain["pages"])
     assert len(decorated["pages"]) > 1
+
+
+def pdf_texts(path):
+    """Every byte range of the PDF that a scanner might want to search,
+    with FlateDecode object/content streams inflated -- cairo packs
+    annotation dicts and their URIs into compressed object streams, so a
+    raw scan of the file misses them entirely."""
+    blob = path.read_bytes()
+    out = [blob]
+    for m in re.finditer(rb"stream\r?\n", blob):
+        start = m.end()
+        end = blob.find(b"endstream", start)
+        if end == -1:
+            continue
+        try:
+            out.append(zlib.decompress(blob[start:end].rstrip(b"\r\n")))
+        except zlib.error:
+            pass
+    return b"\n".join(out)
+
+
+def test_scheme_links_become_clickable_pdf_annotations(tmp_path):
+    print_model, targets = render_for(
+        "See [the guide](https://example.com/guide) or [mail us](mailto:x@example.com).\n"
+    )
+    out = tmp_path / "out.pdf"
+    result = printing.PrintCoordinator().print_document(
+        None, print_model, False, "Doc", "doc.md",
+        action=Gtk.PrintOperationAction.EXPORT, export_path=str(out),
+        link_targets=targets,
+    )
+    assert result == Gtk.PrintOperationResult.APPLY
+    text = pdf_texts(out)
+    assert len(re.findall(rb"/Subtype\s*/Link", text)) == 2
+    assert b"https://example.com/guide" in text
+    assert b"mailto:x@example.com" in text
+
+
+def test_relative_and_anchor_links_stay_plain_text(tmp_path):
+    """A bare relative href resolves against the author's own directory on
+    screen; baking that local path -- or a dead in-page #anchor -- into a
+    shared PDF is worse than leaving the text unlinked."""
+    print_model, targets = render_for(
+        "A [relative](../other.md) link and an [anchor](#section) link.\n"
+    )
+    out = tmp_path / "out.pdf"
+    printing.PrintCoordinator().print_document(
+        None, print_model, False, "Doc", "doc.md",
+        action=Gtk.PrintOperationAction.EXPORT, export_path=str(out),
+        link_targets=targets,
+    )
+    assert b"/Subtype /Link" not in pdf_texts(out)
+
+
+def test_link_annotations_need_the_targets_argument(tmp_path):
+    """print_model alone has only tag names, not hrefs -- without
+    link_targets the pipeline can't (and doesn't) emit annotations."""
+    print_model = print_model_for("See [the guide](https://example.com/guide).\n")
+    out = tmp_path / "out.pdf"
+    printing.PrintCoordinator().print_document(
+        None, print_model, False, "Doc", "doc.md",
+        action=Gtk.PrintOperationAction.EXPORT, export_path=str(out),
+    )
+    assert b"/Subtype /Link" not in pdf_texts(out)
+
+
+def test_wrapped_link_gets_one_annotation_rect_per_line(tmp_path):
+    long_text = "a link that just keeps going " * 6
+    print_model, targets = render_for(
+        f"Lead text before [{long_text}](https://example.com/long) and after.\n"
+    )
+    out = tmp_path / "out.pdf"
+    printing.PrintCoordinator().print_document(
+        None, print_model, False, "Doc", "doc.md",
+        action=Gtk.PrintOperationAction.EXPORT, export_path=str(out),
+        link_targets=targets,
+    )
+    # One Link annotation per line the anchor text wrapped onto, all
+    # pointing at the same URL.
+    assert len(re.findall(rb"/Subtype\s*/Link", pdf_texts(out))) >= 2
+
+
+def test_link_spans_merges_touching_runs_of_one_link():
+    """A link whose text has inner formatting arrives as several runs;
+    they collapse to a single (start, end, href) span."""
+    print_model, targets = render_for("Go to [**bold** plain](https://example.com/x).\n")
+    href_by_tag = {
+        name: t["href"] for name, t in targets.items() if t.get("type") == "url"
+    }
+    para = next(item for item in print_model if item.kind == "paragraph")
+    spans = printing._link_spans(para, href_by_tag)
+    assert len(spans) == 1
+    assert spans[0][2] == "https://example.com/x"
 
 
 def test_footer_gap_above_is_shifted_by_the_full_margin_amount():

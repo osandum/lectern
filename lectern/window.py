@@ -342,6 +342,9 @@ class LecternWindow(Adw.ApplicationWindow):
             # backgrounds and heading rules dark on a white page.
             self, self._renderer.print_model, False, doc_title, file_name,
             header_footer=header_footer,
+            # So a link in the document prints as a real clickable PDF
+            # annotation, not just blue underlined text.
+            link_targets=self._renderer.dispatch_targets,
         )
 
     def _action_properties(self, action, param):
