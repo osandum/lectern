@@ -36,14 +36,28 @@ def test_records_and_lists_markdown(tmp_path, manager):
     assert [i.get_uri() for i in recent.markdown_items(manager=manager)] == [uri]
 
 
-def test_lists_most_recently_visited_first(tmp_path, manager):
+def test_lists_most_recently_opened_first(tmp_path, manager):
     first = _write(tmp_path, "first.md")
     second = _write(tmp_path, "second.md")
     recent.record(first, manager=manager)
-    time.sleep(1.05)  # get_visited() resolves to whole seconds
+    time.sleep(1.05)  # the timestamp resolves to whole seconds
     recent.record(second, manager=manager)
     _pump()
     assert [i.get_uri() for i in recent.markdown_items(manager=manager)] == [second, first]
+
+
+def test_reopening_a_file_bubbles_it_to_the_top(tmp_path, manager):
+    a = _write(tmp_path, "a.md")
+    b = _write(tmp_path, "b.md")
+    recent.record(a, manager=manager)
+    time.sleep(1.05)
+    recent.record(b, manager=manager)
+    _pump()
+    assert [i.get_uri() for i in recent.markdown_items(manager=manager)] == [b, a]
+    time.sleep(1.05)
+    recent.record(a, manager=manager)  # open a again
+    _pump()
+    assert [i.get_uri() for i in recent.markdown_items(manager=manager)] == [a, b]
 
 
 def test_non_markdown_in_the_shared_store_is_excluded(tmp_path, manager):

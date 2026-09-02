@@ -39,13 +39,13 @@ def record(uri, *, manager=None):
 
 
 def markdown_items(limit=MAX_ITEMS, *, manager=None):
-    """The still-existing Markdown entries, most-recently-visited first,
+    """The still-existing Markdown entries, most-recently-opened first,
     capped at `limit`."""
     infos = [
         info for info in (manager or _default()).get_items()
         if info.exists() and _is_markdown(info)
     ]
-    infos.sort(key=_visited_unix, reverse=True)
+    infos.sort(key=_recency, reverse=True)
     return infos[:limit]
 
 
@@ -59,7 +59,11 @@ def _is_markdown(info):
     return (info.get_uri() or "").lower().endswith(_SUFFIXES)
 
 
-def _visited_unix(info):
-    visited = info.get_visited()
+def _recency(info):
+    # get_modified(), not get_visited(): re-registering an already-known
+    # URI (opening a file a second time) bumps only "modified" -- "visited"
+    # stays frozen at first registration -- so sorting on "visited" would
+    # leave a just-reopened document stuck wherever it already sat.
+    modified = info.get_modified()
     # GTK4 returns a GLib.DateTime; older bindings handed back a Unix int.
-    return visited.to_unix() if isinstance(visited, GLib.DateTime) else visited
+    return modified.to_unix() if isinstance(modified, GLib.DateTime) else modified
