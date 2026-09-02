@@ -17,6 +17,7 @@ from .filewatch import FileWatcher
 from .printing import PrintCoordinator
 from .decorated_textview import DecoratedTextView
 from . import sticky_settings
+from . import recent
 
 
 class LecternWindow(Adw.ApplicationWindow):
@@ -73,15 +74,54 @@ class LecternWindow(Adw.ApplicationWindow):
         header.pack_start(self._find_toggle)
 
         menu = Gio.Menu()
-        menu.append(_("Print…"), "win.print-doc")
-        menu.append(_("Header and Footer When Printing"), "win.print-header-footer")
-        menu.append(_("Document Properties"), "win.properties")
-        menu.append(_("Keyboard Shortcuts"), "win.show-help-overlay")
-        menu.append(_("About Lectern"), "app.about")
-        menu_button = Gtk.MenuButton(icon_name="open-menu-symbolic", tooltip_text=_("Main Menu"))
-        menu_button.set_menu_model(menu)
-        header.pack_end(menu_button)
+
+        file_section = Gio.Menu()
+        file_section.append(_("Open…"), "win.open")
+        self._recent_menu = Gio.Menu()
+        file_section.append_submenu(_("Open Recent"), self._recent_menu)
+        menu.append_section(None, file_section)
+
+        doc_section = Gio.Menu()
+        doc_section.append(_("Print…"), "win.print-doc")
+        doc_section.append(_("Header and Footer When Printing"), "win.print-header-footer")
+        doc_section.append(_("Document Properties"), "win.properties")
+        doc_section.append(_("Keyboard Shortcuts"), "win.show-help-overlay")
+        doc_section.append(_("About Lectern"), "app.about")
+        menu.append_section(None, doc_section)
+
+        self._menu_button = Gtk.MenuButton(icon_name="open-menu-symbolic", tooltip_text=_("Main Menu"))
+        self._menu_button.set_menu_model(menu)
+        # Rebuild the recent submenu each time the popover opens rather than
+        # subscribing to Gtk.RecentManager::changed -- the signal would be
+        # on a process-wide singleton and need disconnecting per window
+        # (see do_close_request), whereas this connection dies with the
+        # button.
+        self._menu_button.connect("notify::active", self._on_menu_active)
+        header.pack_end(self._menu_button)
         return header
+
+    def _on_menu_active(self, button, _pspec):
+        if button.get_active():
+            self._rebuild_recent_menu()
+
+    def _rebuild_recent_menu(self):
+        self._recent_menu.remove_all()
+        infos = recent.markdown_items()
+        for info in infos:
+            label = info.get_display_name() or GLib.path_get_basename(info.get_uri())
+            item = Gio.MenuItem.new(label, None)
+            item.set_action_and_target_value(
+                "win.open-recent", GLib.Variant.new_string(info.get_uri())
+            )
+            self._recent_menu.append_item(item)
+        if not infos:
+            # An item with no action renders insensitive -- a visible
+            # "nothing here yet" rather than an empty popover.
+            self._recent_menu.append_item(Gio.MenuItem.new(_("No Recent Documents"), None))
+            return
+        trailing = Gio.Menu()
+        trailing.append(_("Clear Recently Opened"), "win.clear-recent")
+        self._recent_menu.append_section(None, trailing)
 
     def _build_textview(self):
         # A plain, untagged buffer for now -- real content (and the full,
@@ -235,6 +275,7 @@ class LecternWindow(Adw.ApplicationWindow):
 
     def _install_actions(self):
         actions = [
+            ("open", lambda a, p: self._open_dialog()),
             ("find", self._action_find),
             ("zoom-in", lambda a, p: self._zoom.zoom_in()),
             ("zoom-out", lambda a, p: self._zoom.zoom_out()),
@@ -246,6 +287,20 @@ class LecternWindow(Adw.ApplicationWindow):
             action = Gio.SimpleAction.new(name, None)
             action.connect("activate", handler)
             self.add_action(action)
+
+        # Parameterised: the URI to open. From the menu, always a new
+        # window -- one-window-per-document, same as opening while a file
+        # is already on screen.
+        open_recent = Gio.SimpleAction.new("open-recent", GLib.VariantType.new("s"))
+        open_recent.connect(
+            "activate",
+            lambda a, p: self.get_application().open([Gio.File.new_for_uri(p.get_string())], ""),
+        )
+        self.add_action(open_recent)
+
+        clear_recent = Gio.SimpleAction.new("clear-recent", None)
+        clear_recent.connect("activate", lambda a, p: recent.clear())
+        self.add_action(clear_recent)
 
         # A checkable menu item rather than a print-dialog option: GTK's
         # print dialog is routed through the xdg-desktop-portal on this
@@ -503,14 +558,55 @@ class LecternWindow(Adw.ApplicationWindow):
             description=_("Open a Markdown file to view it here."),
             icon_name="text-x-generic-symbolic",
         )
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=18, halign=Gtk.Align.CENTER)
+
         open_button = Gtk.Button(label=_("Open File…"), halign=Gtk.Align.CENTER)
         open_button.add_css_class("suggested-action")
         open_button.add_css_class("pill")
-        open_button.connect("clicked", self._on_open_clicked)
-        status.set_child(open_button)
+        open_button.connect("clicked", lambda b: self._open_dialog())
+        box.append(open_button)
+
+        infos = recent.markdown_items(limit=8)
+        if infos:
+            listbox = Gtk.ListBox(selection_mode=Gtk.SelectionMode.NONE)
+            listbox.add_css_class("boxed-list")
+            listbox.set_size_request(380, -1)
+            for info in infos:
+                label = info.get_display_name() or GLib.path_get_basename(info.get_uri())
+                row = Adw.ActionRow(
+                    title=GLib.markup_escape_text(label),
+                    subtitle=GLib.markup_escape_text(self._friendly_dir(info.get_uri())),
+                    activatable=True,
+                )
+                row.add_prefix(Gtk.Image.new_from_icon_name("text-x-generic-symbolic"))
+                row.connect(
+                    "activated", lambda r, uri=info.get_uri(): self._open_recent_uri(uri)
+                )
+                listbox.append(row)
+            box.append(listbox)
+
+        status.set_child(box)
         self._content_overlay.set_child(status)
 
-    def _on_open_clicked(self, button):
+    def _open_recent_uri(self, uri):
+        gfile = Gio.File.new_for_uri(uri)
+        # The empty-state page only shows with no document loaded, so this
+        # window is free to take the file itself rather than leave a blank
+        # window behind.
+        if self._document is None:
+            self._open_file(gfile)
+        else:
+            self.get_application().open([gfile], "")
+
+    def _friendly_dir(self, uri):
+        parent = Gio.File.new_for_uri(uri).get_parent()
+        path = parent.get_path() if parent else None
+        if not path:
+            return uri
+        home = GLib.get_home_dir()
+        return "~" + path[len(home):] if path.startswith(home) else path
+
+    def _open_dialog(self):
         dialog = Gtk.FileDialog(title=_("Open Markdown File"))
         filter_md = Gtk.FileFilter(name=_("Markdown files"))
         filter_md.add_pattern("*.md")
@@ -525,7 +621,11 @@ class LecternWindow(Adw.ApplicationWindow):
             gfile = dialog.open_finish(result)
         except GLib.Error:
             return
-        if gfile is not None:
+        if gfile is None:
+            return
+        if self._document is None:
+            self._open_file(gfile)
+        else:
             self.get_application().open([gfile], "")
 
     def _open_file(self, gfile):
@@ -535,6 +635,7 @@ class LecternWindow(Adw.ApplicationWindow):
         except DocumentLoadError as ex:
             self._show_load_error(str(ex))
             return
+        recent.record(gfile.get_uri())
         # Once only, on the initial open -- not in _render_document, which
         # also runs on every reload, so a live-edited file changing its
         # own title mid-session can't flip the checkbox out from under

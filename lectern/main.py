@@ -36,6 +36,7 @@ class LecternApplication(Adw.Application):
         # Accels are application-scoped state (win.* actions are resolved
         # against whichever window has focus at trigger time) -- set once
         # per process here, not once per window in LecternWindow.__init__.
+        self.set_accels_for_action("win.open", ["<primary>o"])
         self.set_accels_for_action("win.find", ["<primary>f"])
         self.set_accels_for_action("win.zoom-in", ["<primary>plus", "<primary>equal", "<primary>KP_Add"])
         self.set_accels_for_action("win.zoom-out", ["<primary>minus", "<primary>KP_Subtract"])
