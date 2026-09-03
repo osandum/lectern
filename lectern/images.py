@@ -35,6 +35,12 @@ _session = None
 # can't balloon memory. Generous enough for any plausible screenshot.
 MAX_REMOTE_BYTES = 20 * 1024 * 1024
 
+# Chunk size for the bounded read in _on_remote_chunk -- small enough that
+# a response that blows past MAX_REMOTE_BYTES is caught not far past the
+# limit, large enough not to turn a normal-sized image into thousands of
+# round trips through the GLib main loop.
+_REMOTE_READ_CHUNK = 64 * 1024
+
 
 def _soup_session():
     global _session
@@ -86,6 +92,8 @@ class ImageView(Gtk.Box):
         self._available_width = 0
         self._picture = None
         self._placeholder = None
+        self._remote_chunks = None  # accumulated GLib.Bytes while a fetch streams in
+        self._remote_total = 0
         self.remote = is_remote(src)
         self.set_margin_top(6)
         self.set_margin_bottom(6)
@@ -114,8 +122,8 @@ class ImageView(Gtk.Box):
         if message is None:
             self._fail(_("Bad image URL"))
             return
-        _soup_session().send_and_read_async(
-            message, GLib.PRIORITY_DEFAULT, None, self._on_remote_read, message
+        _soup_session().send_async(
+            message, GLib.PRIORITY_DEFAULT, None, self._on_remote_send, message
         )
 
     def set_available_width(self, width):
@@ -145,22 +153,67 @@ class ImageView(Gtk.Box):
         except GLib.Error:
             self._fail(_("Couldn’t load image"))
 
-    def _on_remote_read(self, session, result, message):
+    def _on_remote_send(self, session, result, message):
+        """`send_async` (unlike `send_and_read_async`) hands back the
+        response as soon as headers arrive, before any of the body is
+        read -- letting an oversized reply be rejected off a declared
+        Content-Length, or off our own running total as it streams in
+        `_on_remote_chunk`, well before the whole thing sits buffered in
+        memory. `send_and_read_async` used to do that buffering itself,
+        so MAX_REMOTE_BYTES was only ever checked after the damage
+        (memory-wise) was already done.
+        """
         try:
-            data = session.send_and_read_finish(result)
+            stream = session.send_finish(result)
         except GLib.Error:
             self._fail(_("Couldn’t fetch image"))
             return
         status = message.get_status()
         if status != 200:
+            stream.close_async(GLib.PRIORITY_DEFAULT, None, None)
             self._fail(_("Image request failed ({status})").format(status=int(status)))
             return
-        if data is None or data.get_size() == 0:
-            self._fail(_("Empty image response"))
-            return
-        if data.get_size() > MAX_REMOTE_BYTES:
+        content_length = message.get_response_headers().get_content_length()
+        if content_length and content_length > MAX_REMOTE_BYTES:
+            stream.close_async(GLib.PRIORITY_DEFAULT, None, None)
             self._fail(_("Image too large"))
             return
+        self._remote_chunks = []
+        self._remote_total = 0
+        self._read_remote_chunk(stream)
+
+    def _read_remote_chunk(self, stream):
+        stream.read_bytes_async(
+            _REMOTE_READ_CHUNK, GLib.PRIORITY_DEFAULT, None, self._on_remote_chunk, stream
+        )
+
+    def _on_remote_chunk(self, stream, result, _stream_again):
+        try:
+            chunk = stream.read_bytes_finish(result)
+        except GLib.Error:
+            stream.close_async(GLib.PRIORITY_DEFAULT, None, None)
+            self._remote_chunks = None
+            self._fail(_("Couldn’t fetch image"))
+            return
+        if chunk.get_size() == 0:
+            stream.close_async(GLib.PRIORITY_DEFAULT, None, None)
+            self._finish_remote()
+            return
+        self._remote_total += chunk.get_size()
+        if self._remote_total > MAX_REMOTE_BYTES:
+            stream.close_async(GLib.PRIORITY_DEFAULT, None, None)
+            self._remote_chunks = None
+            self._fail(_("Image too large"))
+            return
+        self._remote_chunks.append(chunk)
+        self._read_remote_chunk(stream)
+
+    def _finish_remote(self):
+        chunks, self._remote_chunks = self._remote_chunks, None
+        if not chunks:
+            self._fail(_("Empty image response"))
+            return
+        data = GLib.Bytes.new(b"".join(bytes(chunk.get_data()) for chunk in chunks))
         try:
             self._set_texture(Gdk.Texture.new_from_bytes(data))
         except GLib.Error:
