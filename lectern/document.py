@@ -2,6 +2,8 @@
 deliberately kept inside this module (not at lectern.main top level) so a
 bare `lectern` launch with no file to parse doesn't pay for them.
 """
+import math
+
 from gi.repository import Gio, GLib
 
 from .i18n import _
@@ -98,7 +100,7 @@ class Document:
         return len(self.text.split())
 
     def reading_time_minutes(self):
-        return max(1, self.word_count() // 200)  # ~200 wpm, a common estimate
+        return max(1, math.ceil(self.word_count() / 200))  # ~200 wpm, rounded up
 
     def size_bytes(self):
         try:

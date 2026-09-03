@@ -60,3 +60,20 @@ def test_title_updates_when_the_file_is_reloaded(tmp_path):
     (tmp_path / "doc.md").write_text("# After\n\nbody\n", encoding="utf-8")
     doc.reload()
     assert doc.title == "After"
+
+
+def test_reading_time_rounds_up_a_partial_minute(tmp_path):
+    """201 words at ~200 wpm is just over a minute, not exactly one --
+    floor division used to report both as 1 min."""
+    doc = load(tmp_path, " ".join(["word"] * 201))
+    assert doc.reading_time_minutes() == 2
+
+
+def test_reading_time_is_exact_on_a_multiple_of_the_rate(tmp_path):
+    doc = load(tmp_path, " ".join(["word"] * 400))
+    assert doc.reading_time_minutes() == 2
+
+
+def test_reading_time_is_never_zero_for_a_short_document(tmp_path):
+    doc = load(tmp_path, "one two three")
+    assert doc.reading_time_minutes() == 1
