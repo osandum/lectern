@@ -77,6 +77,20 @@ def test_corrupt_store_file_is_treated_as_empty(tmp_path):
     assert sticky_settings.get_sticky(key, "header_footer", True) is False
 
 
+@pytest.mark.parametrize("contents", ["[]", '"hello"', "123", "null"])
+def test_valid_json_of_the_wrong_shape_is_treated_as_empty(contents):
+    """Valid JSON, just not the {key: {setting: value}} object this store
+    needs -- json.load happily returns a list/string/number/None, and
+    without a shape check that reaches get_sticky's/set_sticky's dict
+    methods and blows up with an AttributeError."""
+    with open(sticky_settings._STORE_PATH, "w", encoding="utf-8") as f:
+        f.write(contents)
+    key = sticky_settings.key_for("Anything", None)
+    assert sticky_settings.get_sticky(key, "header_footer", True) is True
+    sticky_settings.set_sticky(key, "header_footer", False)
+    assert sticky_settings.get_sticky(key, "header_footer", True) is False
+
+
 def test_lru_eviction_drops_the_least_recently_written_entry(monkeypatch):
     monkeypatch.setattr(sticky_settings, "_MAX_ENTRIES", 3)
     keys = [sticky_settings.key_for(f"Doc {i}", None) for i in range(4)]

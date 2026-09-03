@@ -41,12 +41,17 @@ def key_for(title, basename):
 def _load():
     try:
         with open(_STORE_PATH, encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError, OSError):
         # A missing file is the common case (nothing saved yet); a
         # corrupt or unreadable one is treated the same way -- starting
         # over beats refusing to print because of a damaged cache file.
         return {}
+    # json.load happily returns a list, string or number -- all valid
+    # JSON, none of them the {key: {setting: value}} shape this store
+    # requires. Treat that the same as a corrupt file rather than let
+    # get_sticky/set_sticky blow up calling dict methods on it.
+    return data if isinstance(data, dict) else {}
 
 
 def _save(store):
