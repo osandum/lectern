@@ -627,7 +627,15 @@ class LecternWindow(Adw.ApplicationWindow):
         if not path:
             return uri
         home = GLib.get_home_dir()
-        return "~" + path[len(home):] if path.startswith(home) else path
+        # startswith(home) alone treats /home/alice as inside /home/al --
+        # a shared string prefix, not a shared directory. Requiring the
+        # next character to be a path separator (or nothing, for home
+        # itself) keeps the substitution to home and its descendants.
+        if path == home:
+            return "~"
+        if path.startswith(home + "/"):
+            return "~" + path[len(home):]
+        return path
 
     def _open_dialog(self):
         dialog = Gtk.FileDialog(title=_("Open Markdown File"))
