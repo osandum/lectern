@@ -25,10 +25,20 @@ class FileWatcher(GObject.Object):
     def __init__(self, gfile: Gio.File):
         super().__init__()
         self._gfile = gfile
-        self._monitor = gfile.monitor_file(Gio.FileMonitorFlags.WATCH_MOVES, None)
-        self._monitor.connect("changed", self._on_changed)
         self._debounce_id = 0
         self._pending_missing = False
+        # monitor_file can fail -- an inotify watch limit hit, a
+        # filesystem that doesn't support monitoring at all (some FUSE
+        # mounts, certain network shares) -- and that shouldn't be fatal
+        # to opening a document that otherwise loaded fine. A window with
+        # a watcher stuck at None just never emits reload-needed/
+        # file-missing: live reload is lost, not the document.
+        try:
+            self._monitor = gfile.monitor_file(Gio.FileMonitorFlags.WATCH_MOVES, None)
+        except GLib.Error:
+            self._monitor = None
+            return
+        self._monitor.connect("changed", self._on_changed)
 
     def _on_changed(self, monitor, file, other_file, event_type):
         if event_type in _RELEVANT_EVENTS:
@@ -55,4 +65,5 @@ class FileWatcher(GObject.Object):
         if self._debounce_id:
             GLib.source_remove(self._debounce_id)
             self._debounce_id = 0
-        self._monitor.cancel()
+        if self._monitor is not None:
+            self._monitor.cancel()
