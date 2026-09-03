@@ -79,6 +79,30 @@
   </requires>
 
   <releases>
+    <release version="0.4.1" date="2026-09-03">
+      <description>
+        <p>
+          Links now print (and export to PDF) as real, clickable
+          annotations instead of just blue underlined text.
+        </p>
+        <p>
+          A Markdown link to a heading, like <code>[intro](#getting-started)</code>,
+          now jumps to that heading instead of failing to open; a link
+          to another file's heading opens that file correctly rather
+          than trying to open a file literally named with the
+          <code>#anchor</code> attached.
+        </p>
+        <p>
+          Several smaller reliability fixes: a document that fails to
+          open no longer leaves its window unable to open a different
+          one; an oversized remote image is now rejected while it
+          downloads rather than after; a file-monitoring failure no
+          longer prevents a document from opening at all; and the
+          reading-time estimate and recent-folder display are both
+          slightly more accurate.
+        </p>
+      </description>
+    </release>
     <release version="0.4.0" date="2026-09-02">
       <description>
         <p>
