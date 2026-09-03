@@ -660,12 +660,13 @@ class LecternWindow(Adw.ApplicationWindow):
             self.get_application().open([gfile], "")
 
     def _open_file(self, gfile):
-        self._document = Document(gfile)
+        document = Document(gfile)
         try:
-            self._document.load()
+            document.load()
         except DocumentLoadError as ex:
             self._show_load_error(str(ex))
             return
+        self._document = document
         recent.record(gfile.get_uri())
         # Once only, on the initial open -- not in _render_document, which
         # also runs on every reload, so a live-edited file changing its
