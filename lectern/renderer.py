@@ -8,6 +8,8 @@ Printing (see printing.py) works off print_model exclusively, never off
 the live buffer. For the same reason, `self.tables` records each table's
 anchor and cell labels so findbar.py can search that text too.
 """
+import re
+
 import gi
 gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk
@@ -16,6 +18,16 @@ from . import tags as tagdefs
 from . import tables
 from . import highlighting
 from . import images as imagelib
+
+
+def slugify_heading(text):
+    """GitHub-compatible heading anchor slug: lowercase, drop anything
+    that isn't a word character, space or hyphen, then turn spaces into
+    hyphens. Matches what GitHub puts in a heading's `id` and what a
+    `[text](#slug)` link is written against.
+    """
+    slug = re.sub(r"[^\w\s-]", "", text.strip().lower())
+    return re.sub(r"\s+", "-", slug)
 
 # Inline node types that just wrap their children in one more tag, with no
 # other behavior -- driven by a table instead of three near-identical
@@ -148,6 +160,8 @@ class MarkdownRenderer:
         self.anchor_descriptors = {}
         self._footnote_ref_marks = {}   # label -> mark name
         self._footnote_def_marks = {}   # label -> mark name
+        self._heading_marks = {}        # slug -> mark name
+        self._heading_slug_counts = {}  # slug -> number of headings seen with it
         self._pending_anchors = []      # (anchor, widget) drained by caller
         self._instance_counter = 0
         # Set by a block that needs different outside-the-text-box padding
@@ -204,6 +218,9 @@ class MarkdownRenderer:
 
     def footnote_ref_mark_name(self, label):
         return self._footnote_ref_marks.get(label)
+
+    def heading_mark_name(self, slug):
+        return self._heading_marks.get(slug)
 
     def target_at_iter(self, it):
         """Resolve the dispatch target (link/footnote) at a buffer
@@ -270,6 +287,7 @@ class MarkdownRenderer:
     def _dispatch_block_node(self, t, child, buffer, it, ctx):
         if t == "heading":
             level = int(child.tag[1])
+            self._register_heading_anchor(child, buffer, it)
             self._emit_simple_paragraph(child, buffer, it, ctx, extra_tag=f"heading{level}")
         elif t == "paragraph":
             self._emit_simple_paragraph(child, buffer, it, ctx)
@@ -640,6 +658,26 @@ class MarkdownRenderer:
             self._walk_block_node(child, buffer, it, body_ctx or ctx)
 
     # -- footnotes -------------------------------------------------------
+
+    def _register_heading_anchor(self, node, buffer, it):
+        """Record a buffer mark at this heading so `[text](#slug)` links
+        elsewhere in the document can scroll to it -- see window.py's
+        `_open_href`. A repeated slug gets GitHub's own "-1", "-2", ...
+        suffix, so only the first heading with a given title is ever the
+        bare `#slug` target, exactly as on GitHub.
+        """
+        text = tables.inline_plain_text(node)
+        slug = slugify_heading(text) if text else ""
+        if not slug:
+            return
+        count = self._heading_slug_counts.get(slug, 0)
+        self._heading_slug_counts[slug] = count + 1
+        if count:
+            slug = f"{slug}-{count}"
+        self._instance_counter += 1
+        mark_name = f"heading-anchor-{self._instance_counter}"
+        buffer.create_mark(mark_name, it, True)
+        self._heading_marks[slug] = mark_name
 
     def _walk_footnote_block(self, node, buffer, it, ctx):
         if not node.children:

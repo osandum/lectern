@@ -517,12 +517,27 @@ class LecternWindow(Adw.ApplicationWindow):
         A resolved link to another .md file opens in Lectern itself,
         for free, since we're the registered default handler for
         text/markdown -- no special-casing needed here.
+
+        A bare `#section` fragment is neither of those -- it names a
+        heading in *this* document, not a file, so it's resolved against
+        the renderer's own heading anchors instead of the filesystem. A
+        `file.md#section` href gets its fragment stripped before the path
+        part is resolved, so the file it names opens rather than a
+        literal (and nonexistent) "file.md#section" -- landing on that
+        file's own #section is less useful without renderer-to-renderer
+        wiring across windows, so isn't attempted here.
         """
-        if not href or GLib.uri_parse_scheme(href) is not None:
+        if not href:
+            return
+        if href.startswith("#"):
+            self._scroll_to_heading(href[1:])
+            return
+        if GLib.uri_parse_scheme(href) is not None:
             target_uri = href
         else:
+            path, _, _fragment = href.partition("#")
             base_dir = self._document.gfile.get_parent() if self._document else None
-            target_uri = base_dir.resolve_relative_path(href).get_uri() if base_dir else None
+            target_uri = base_dir.resolve_relative_path(path).get_uri() if base_dir else None
         if not target_uri:
             return
         try:
@@ -544,6 +559,11 @@ class LecternWindow(Adw.ApplicationWindow):
         elif kind == "footnote-back":
             mark_name = self._renderer.footnote_ref_mark_name(target["label"])
             self._scroll_to_mark_name(mark_name)
+
+    def _scroll_to_heading(self, slug):
+        if self._renderer is None:
+            return
+        self._scroll_to_mark_name(self._renderer.heading_mark_name(slug))
 
     def _scroll_to_mark_name(self, mark_name):
         if not mark_name:
@@ -607,7 +627,15 @@ class LecternWindow(Adw.ApplicationWindow):
         if not path:
             return uri
         home = GLib.get_home_dir()
-        return "~" + path[len(home):] if path.startswith(home) else path
+        # startswith(home) alone treats /home/alice as inside /home/al --
+        # a shared string prefix, not a shared directory. Requiring the
+        # next character to be a path separator (or nothing, for home
+        # itself) keeps the substitution to home and its descendants.
+        if path == home:
+            return "~"
+        if path.startswith(home + "/"):
+            return "~" + path[len(home):]
+        return path
 
     def _open_dialog(self):
         dialog = Gtk.FileDialog(title=_("Open Markdown File"))
@@ -632,12 +660,13 @@ class LecternWindow(Adw.ApplicationWindow):
             self.get_application().open([gfile], "")
 
     def _open_file(self, gfile):
-        self._document = Document(gfile)
+        document = Document(gfile)
         try:
-            self._document.load()
+            document.load()
         except DocumentLoadError as ex:
             self._show_load_error(str(ex))
             return
+        self._document = document
         recent.record(gfile.get_uri())
         # Once only, on the initial open -- not in _render_document, which
         # also runs on every reload, so a live-edited file changing its

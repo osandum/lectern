@@ -365,3 +365,24 @@ def test_print_model_paragraph_runs_reconstruct_visible_text():
     renderer, _buffer = render("plain **bold** plain\n")
     reconstructed = "".join(text for item in renderer.print_model for text, _tags in item.runs)
     assert reconstructed == "plain bold plain"
+
+
+def test_heading_gets_a_github_style_anchor_mark():
+    renderer, buffer = render("# Getting Started!\n")
+    mark_name = renderer.heading_mark_name("getting-started")
+    assert mark_name is not None
+    assert buffer.get_mark(mark_name) is not None
+
+
+def test_repeated_heading_titles_get_githubs_numeric_suffix():
+    renderer, _buffer = render("# Notes\n\nfirst\n\n# Notes\n\nsecond\n")
+    first = renderer.heading_mark_name("notes")
+    second = renderer.heading_mark_name("notes-1")
+    assert first is not None
+    assert second is not None
+    assert first != second
+
+
+def test_heading_with_no_matching_slug_has_no_mark():
+    renderer, _buffer = render("# Real Heading\n")
+    assert renderer.heading_mark_name("no-such-heading") is None
