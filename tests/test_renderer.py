@@ -241,6 +241,21 @@ def test_fenced_code_block_is_tagged_and_highlighted():
     assert "pyg-keyword" in tag_names
 
 
+def test_indented_code_block_is_rendered_like_a_fence():
+    """A CommonMark 4-space / tab-indented block is a `code_block` token,
+    not a `fence`. It still has to reach the buffer, carry the code-block
+    tag, and produce a print item -- earlier it fell through the block
+    dispatch and vanished from both outputs."""
+    renderer, buffer = render("Run:\n\n\t$ yarn wscli listen 9666\n\nDone.\n")
+    assert "$ yarn wscli listen 9666" in buffer_text(buffer)
+    assert tag_at(buffer, "yarn", "code-block")
+    assert [item.kind for item in renderer.print_model] == \
+        ["paragraph", "code-block", "paragraph"]
+    # Same panel as a fence, so the same room reserved around it.
+    assert gap_above(buffer, "$ yarn") == 16 + tagdefs.CODE_BLOCK_PADDING
+    assert gap_above(buffer, "Done.") == 16 + tagdefs.CODE_BLOCK_PADDING
+
+
 def test_list_indent_levels_nest_correctly():
     markdown_text = "- one\n  - nested\n    - double nested\n"
     _renderer, buffer = render(markdown_text)

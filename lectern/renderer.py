@@ -108,6 +108,7 @@ class MarkdownRenderer:
         "ordered_list": 16,
         "blockquote": 16,
         "fence": 16,
+        "code_block": 16,
         "table": 16,
         "heading": 16,
         "hr": 24,
@@ -119,8 +120,12 @@ class MarkdownRenderer:
     # a collapsed margin would put the neighbour's text where the panel is
     # about to be drawn. Kept out of the code-block tag's own
     # pixels-above/below-lines deliberately: those apply to *every* line
-    # of the fence, not just its first and last.
-    _BLOCK_PADDING = {"fence": tagdefs.CODE_BLOCK_PADDING}
+    # of the block, not just its first and last. Both fenced and indented
+    # code blocks get the same panel, hence the same padding.
+    _BLOCK_PADDING = {
+        "fence": tagdefs.CODE_BLOCK_PADDING,
+        "code_block": tagdefs.CODE_BLOCK_PADDING,
+    }
     # Blocks that only ever contain other blocks. Their last child already
     # recorded whatever trailing padding is owed, so re-deriving it from
     # the container's own type would throw that away.
@@ -295,7 +300,10 @@ class MarkdownRenderer:
             self._walk_block(child, buffer, it, ctx.push_block("blockquote"))
         elif t in ("bullet_list", "ordered_list"):
             self._walk_list(child, buffer, it, ctx, ordered=(t == "ordered_list"))
-        elif t == "fence":
+        elif t in ("fence", "code_block"):
+            # "fence" is ```-delimited; "code_block" is the CommonMark
+            # 4-space / tab-indented kind. _emit_code_block handles an
+            # infoless node fine (no language, content in node.content).
             self._emit_code_block(child, buffer, it, ctx)
         elif t == "hr":
             self._emit_hr(buffer, it, ctx)
