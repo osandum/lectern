@@ -25,6 +25,8 @@ function](data/screenshots/01-reading.png)
 - Find bar — whole-word and case-sensitive, matching inside table cells
   as well as body text — zoom, printing, auto-reload when the file
   changes on disk.
+- Links resolve relative to the document, and hovering one shows its
+  target bottom-left, the way a browser does.
 - One window per opened file, no sidebar — same feel as Papers/Evince.
 
 ### Remote images

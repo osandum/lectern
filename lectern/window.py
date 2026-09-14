@@ -1,11 +1,12 @@
 """One LecternWindow per opened file -- Evince/Papers-style: no sidebar, no
-editing surface, minimal headerbar, a top find-bar revealer and a floating
-bottom-right zoom pill (the same idiom Papers/Loupe use for zoom controls).
+editing surface, minimal headerbar, a top find-bar revealer, a floating
+bottom-right zoom pill (the same idiom Papers/Loupe use for zoom controls)
+and a bottom-left link-target bubble on hover, as browsers show.
 """
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Gtk, Adw, Gio, GLib, Gdk
+from gi.repository import Gtk, Adw, Gio, GLib, Gdk, Pango
 
 from . import tags as tagdefs
 from .i18n import _, ngettext
@@ -18,6 +19,31 @@ from .printing import PrintCoordinator
 from .decorated_textview import DecoratedTextView
 from . import sticky_settings
 from . import recent
+
+
+_LINK_STATUS_CSS = """
+.lectern-link-status {
+    padding: 2px 8px 3px 8px;
+    border-radius: 0 6px 0 0;
+    font-size: 0.85em;
+}
+"""
+_link_status_css_displays = set()
+
+
+def _install_link_status_css(display):
+    """Register the link-status stylesheet once per display, not once
+    per window -- each window opened would otherwise stack another
+    identical provider on the display."""
+    display = display or Gdk.Display.get_default()
+    if display in _link_status_css_displays:
+        return
+    provider = Gtk.CssProvider()
+    provider.load_from_string(_LINK_STATUS_CSS)
+    Gtk.StyleContext.add_provider_for_display(
+        display, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+    )
+    _link_status_css_displays.add(display)
 
 
 class LecternWindow(Adw.ApplicationWindow):
@@ -63,6 +89,7 @@ class LecternWindow(Adw.ApplicationWindow):
         self._content_overlay.set_child(self._scrolled)
         self._content_overlay.add_overlay(self._build_findbar_widget())
         self._content_overlay.add_overlay(self._build_zoom_widget())
+        self._content_overlay.add_overlay(self._build_link_status_widget())
 
     def _build_headerbar(self):
         header = Adw.HeaderBar()
@@ -144,6 +171,7 @@ class LecternWindow(Adw.ApplicationWindow):
 
         motion = Gtk.EventControllerMotion()
         motion.connect("motion", self._on_textview_motion)
+        motion.connect("leave", lambda c: self._hide_link_status())
         self._textview.add_controller(motion)
 
         self._scrolled = Gtk.ScrolledWindow(
@@ -265,6 +293,57 @@ class LecternWindow(Adw.ApplicationWindow):
         if self._zoom_hide_source_id:
             GLib.source_remove(self._zoom_hide_source_id)
         self._zoom_hide_source_id = GLib.timeout_add(1500, self._hide_zoom_osd)
+
+    def _build_link_status_widget(self):
+        """The browser-style bottom-left status bubble that shows where a
+        hovered link goes. Shown by the two hover paths (the TextView's
+        motion handler and the table-cell labels' motion controllers),
+        hidden as soon as the pointer is off a link."""
+        self._link_status_label = Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.MIDDLE)
+        self._link_status_label.set_single_line_mode(True)
+
+        # Flush in the corner with only the inner corner rounded, small
+        # text, a couple of pixels of padding -- Firefox's status panel,
+        # not a floating pill. `osd` supplies the theme-aware translucent
+        # colours; the geometry comes from _LINK_STATUS_CSS since the
+        # `toolbar` class that gives the zoom pill its shape pads far too
+        # generously for a one-line readout.
+        _install_link_status_css(self.get_display())
+        bubble = Gtk.Box()
+        bubble.append(self._link_status_label)
+        bubble.add_css_class("osd")
+        bubble.add_css_class("lectern-link-status")
+
+        self._link_status_revealer = Gtk.Revealer(
+            transition_type=Gtk.RevealerTransitionType.CROSSFADE,
+            transition_duration=100, reveal_child=False,
+        )
+        self._link_status_revealer.set_child(bubble)
+
+        # Overlay children with halign START are clamped to the overlay's
+        # width, so a long URL ellipsizes in the middle rather than
+        # running off the window. The end margin leaves the zoom pill's
+        # corner alone, and can_target=False keeps the bubble from
+        # swallowing pointer events meant for the text underneath it --
+        # otherwise hovering a link in the bottom-left corner would show
+        # the bubble, which would then steal the pointer, which would
+        # hide the bubble again.
+        wrapper = Gtk.Box(halign=Gtk.Align.START, valign=Gtk.Align.END)
+        wrapper.set_margin_end(140)
+        wrapper.set_can_target(False)
+        wrapper.append(self._link_status_revealer)
+        return wrapper
+
+    def _show_link_status(self, href):
+        text = self._describe_href(href)
+        if not text:
+            self._hide_link_status()
+            return
+        self._link_status_label.set_text(text)
+        self._link_status_revealer.set_reveal_child(True)
+
+    def _hide_link_status(self):
+        self._link_status_revealer.set_reveal_child(False)
 
     def _hide_zoom_osd(self):
         self._zoom_hide_source_id = 0
@@ -505,6 +584,16 @@ class LecternWindow(Adw.ApplicationWindow):
             it = self._iter_at_widget_xy(x, y)
             target = self._renderer.target_at_iter(it) if it is not None else None
         self._textview.set_cursor_from_name("pointer" if target is not None else "text")
+        if target is not None and target["type"] == "url":
+            self._show_link_status(target["href"])
+        else:
+            self._hide_link_status()
+
+    def _on_table_link_motion(self, controller, x, y):
+        # Gtk.Label tracks which of its <a> spans is under the pointer
+        # itself (that's what makes them clickable); get_current_uri()
+        # reads that back, and is empty between links in the same cell.
+        self._show_link_status(controller.get_widget().get_current_uri())
 
     def _open_href(self, href):
         """Open a link/table-cell href, resolving it against the open
@@ -532,18 +621,48 @@ class LecternWindow(Adw.ApplicationWindow):
         if href.startswith("#"):
             self._scroll_to_heading(href[1:])
             return
-        if GLib.uri_parse_scheme(href) is not None:
-            target_uri = href
-        else:
-            path, _, _fragment = href.partition("#")
-            base_dir = self._document.gfile.get_parent() if self._document else None
-            target_uri = base_dir.resolve_relative_path(path).get_uri() if base_dir else None
+        target_uri = self._resolve_href(href)
         if not target_uri:
             return
         try:
             Gio.AppInfo.launch_default_for_uri(target_uri, None)
         except GLib.Error:
             self._toast_overlay.add_toast(Adw.Toast(title=_("Couldn’t open link"), timeout=3))
+
+    def _resolve_href(self, href):
+        """The URI `_open_href` would hand to the system for this href:
+        the href itself when it already has a scheme, otherwise its path
+        part resolved against the document's directory. None for a bare
+        fragment (not a URI) or when there is no document to resolve
+        against."""
+        if not href or href.startswith("#"):
+            return None
+        if GLib.uri_parse_scheme(href) is not None:
+            return href
+        path, _, _fragment = href.partition("#")
+        # markdown-it percent-encodes every destination it hands out
+        # (`[x](<my file.md>)` arrives as "my%20file.md"), and
+        # resolve_relative_path wants a filesystem path, not a URI
+        # path -- without decoding, a link to any file with a space or
+        # a non-ASCII character in its name resolves to a file that
+        # doesn't exist.
+        path = GLib.Uri.unescape_string(path) or path
+        base_dir = self._document.gfile.get_parent() if self._document else None
+        return base_dir.resolve_relative_path(path).get_uri() if base_dir else None
+
+    def _describe_href(self, href):
+        """What the hover status shows for a link: the URI it will
+        actually open (so a relative `../foo.md` reads as the file it
+        resolves to, the way a browser shows the absolute URL), a bare
+        `#fragment` as written, both percent-decoded for reading."""
+        if not href:
+            return ""
+        if href.startswith("#"):
+            return href
+        uri = self._resolve_href(href)
+        if not uri:
+            return href
+        return GLib.Uri.unescape_string(uri) or uri
 
     def _on_table_link_activated(self, label, uri):
         self._open_href(uri)
@@ -729,6 +848,10 @@ class LecternWindow(Adw.ApplicationWindow):
         self._sync_window_title()
         for label in self._renderer.table_link_labels:
             label.connect("activate-link", self._on_table_link_activated)
+            motion = Gtk.EventControllerMotion()
+            motion.connect("motion", self._on_table_link_motion)
+            motion.connect("leave", lambda c: self._hide_link_status())
+            label.add_controller(motion)
         self._find = FindController(self._textview, self._renderer.tables)
         self._sync_find_label()
 
