@@ -579,6 +579,16 @@ class LecternWindow(Adw.ApplicationWindow):
             self._activate_target(target)
 
     def _on_textview_motion(self, controller, x, y):
+        # Motion over an anchored child widget (a table cell's Gtk.Label)
+        # bubbles up to the TextView's own controller too, and this
+        # handler would then hide the bubble the label's handler just
+        # showed -- the child fires first. Over a child, the status is
+        # the child's business; bail out before touching it.
+        picked = self._textview.pick(x, y, Gtk.PickFlags.DEFAULT)
+        if picked is not None and picked is not self._textview:
+            self._textview.set_cursor_from_name("text")
+            return
+
         target = None
         if self._renderer is not None:
             it = self._iter_at_widget_xy(x, y)

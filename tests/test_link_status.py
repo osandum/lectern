@@ -8,7 +8,7 @@ methods the motion controller calls.
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Gtk, Adw, Gio
+from gi.repository import Gtk, Adw, Gio, GLib, Graphene
 
 Adw.init()
 
@@ -64,3 +64,23 @@ def test_table_cell_links_get_a_hover_controller(tmp_path):
     assert len(labels) == 1
     kinds = [type(c) for c in labels[0].observe_controllers()]
     assert Gtk.EventControllerMotion in kinds
+
+
+def test_textview_motion_over_a_table_link_leaves_the_status_alone(tmp_path):
+    # The TextView's motion handler fires for the same event as the
+    # table label's (motion bubbles up from the anchored child), and
+    # used to hide the bubble the label had just shown.
+    window = make_window(tmp_path, "| a |\n|---|\n| [c](https://example.com) |\n")
+    window.present()
+    while GLib.MainContext.default().pending():
+        GLib.MainContext.default().iteration(False)
+
+    label = window._renderer.table_link_labels[0]
+    ok, point = label.compute_point(window._textview, Graphene.Point.zero())
+    assert ok
+    width, height = label.get_width(), label.get_height()
+    assert width and height
+
+    window._show_link_status("https://example.com")
+    window._on_textview_motion(None, point.x + width / 2, point.y + height / 2)
+    assert window._link_status_revealer.get_reveal_child()
