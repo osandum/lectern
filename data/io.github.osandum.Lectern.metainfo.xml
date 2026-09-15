@@ -79,6 +79,20 @@
   </requires>
 
   <releases>
+    <release version="0.4.2" date="2026-09-15">
+      <description>
+        <p>
+          Indented code blocks (four spaces or a tab, the plain CommonMark
+          style rather than fenced) now render like any other code block,
+          instead of being silently dropped.
+        </p>
+        <p>
+          Hovering a link shows its target in a small readout at the
+          bottom-left, browser-style; relative links now resolve correctly
+          even when the file name contains a space.
+        </p>
+      </description>
+    </release>
     <release version="0.4.1" date="2026-09-03">
       <description>
         <p>
