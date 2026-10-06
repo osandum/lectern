@@ -18,7 +18,12 @@ def make_parser():
     from mdit_py_plugins.footnote import footnote_plugin
     from mdit_py_plugins.tasklists import tasklists_plugin
 
-    md = MarkdownIt("commonmark").enable(["table", "strikethrough"])
+    # Bare URLs and email addresses become links, as GitHub's autolink
+    # extension makes them. Schemeless ("fuzzy") links stay off: linkify-it
+    # would otherwise link every README.md and setup.py, .md and .py both
+    # being country TLDs.
+    md = MarkdownIt("commonmark", {"linkify": True}).enable(["table", "strikethrough", "linkify"])
+    md.linkify.set({"fuzzy_link": False})
     md.use(footnote_plugin).use(tasklists_plugin, enabled=True, label=False)
     return md
 

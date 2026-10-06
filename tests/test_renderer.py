@@ -370,6 +370,32 @@ def test_link_registers_dispatch_target():
     assert urls == ["https://example.com"]
 
 
+def test_bare_url_becomes_a_link():
+    renderer, buffer = render("se video (https://example.com/watch?v=x).\n")
+    assert tag_at(buffer, "example.com/watch", "link")
+    assert not tag_at(buffer, ").", "link")
+    urls = [t["href"] for t in renderer.dispatch_targets.values() if t["type"] == "url"]
+    assert urls == ["https://example.com/watch?v=x"]
+
+
+def test_bare_email_becomes_a_mailto_link():
+    renderer, _buffer = render("skriv til a@example.com\n")
+    urls = [t["href"] for t in renderer.dispatch_targets.values() if t["type"] == "url"]
+    assert urls == ["mailto:a@example.com"]
+
+
+def test_filenames_are_not_linkified():
+    # .md and .py are country TLDs; fuzzy linkify would make these links.
+    renderer, _buffer = render("see README.md and setup.py\n")
+    assert not [t for t in renderer.dispatch_targets.values() if t["type"] == "url"]
+
+
+def test_bare_url_in_table_cell_is_clickable():
+    renderer, _buffer = render("| Link |\n|---|\n| https://example.com |\n")
+    assert len(renderer.table_link_labels) == 1
+    assert 'href="https://example.com"' in renderer.table_link_labels[0].get_label()
+
+
 def test_horizontal_rule_produces_print_item_and_anchor():
     renderer, buffer = render("above\n\n---\n\nbelow\n")
     kinds = [item.kind for item in renderer.print_model]
