@@ -192,16 +192,48 @@ def pdf_texts(path):
     """Every byte range of the PDF that a scanner might want to search,
     with FlateDecode object/content streams inflated -- cairo packs
     annotation dicts and their URIs into compressed object streams, so a
-    raw scan of the file misses them entirely."""
+    raw scan of the file misses them entirely.
+
+    Stream boundaries come from each object's declared /Length, not a raw
+    search for the first following ``endstream``: compressed bytes can
+    contain that marker text themselves, which truncates the object stream
+    on Ubuntu's cairo often enough to make the wrapped-link annotation test
+    flap.
+    """
     blob = path.read_bytes()
     out = [blob]
-    for m in re.finditer(rb"stream\r?\n", blob):
-        start = m.end()
-        end = blob.find(b"endstream", start)
-        if end == -1:
+    objects = list(re.finditer(rb"(?m)^(\d+)\s+\d+\s+obj\b", blob))
+    spans = []
+    for i, match in enumerate(objects):
+        obj_num = int(match.group(1))
+        start = match.end()
+        end = objects[i + 1].start() if i + 1 < len(objects) else len(blob)
+        spans.append((obj_num, blob[start:end]))
+
+    bodies = {obj_num: body for obj_num, body in spans}
+
+    def stream_length(header):
+        ref = re.search(rb"/Length\s+(\d+)\s+0\s+R\b", header)
+        if ref is not None:
+            target = bodies.get(int(ref.group(1)))
+            if target is None:
+                return None
+            direct = re.search(rb"\b(\d+)\b", target)
+            return int(direct.group(1)) if direct is not None else None
+        direct = re.search(rb"/Length\s+(\d+)\b", header)
+        return int(direct.group(1)) if direct is not None else None
+
+    for _obj_num, body in spans:
+        m = re.search(rb"stream\r?\n", body)
+        if m is None:
             continue
+        length = stream_length(body[:m.start()])
+        if length is None:
+            continue
+        start = m.end()
+        end = start + length
         try:
-            out.append(zlib.decompress(blob[start:end].rstrip(b"\r\n")))
+            out.append(zlib.decompress(body[start:end]))
         except zlib.error:
             pass
     return b"\n".join(out)
