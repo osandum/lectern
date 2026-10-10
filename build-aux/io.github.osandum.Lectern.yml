@@ -114,5 +114,5 @@ modules:
       #     path: ..
       - type: git
         url: https://github.com/osandum/lectern.git
-        tag: v0.4.2
-        commit: 361d4fc1763d655607a06ba02195ba16cde54630
+        tag: v0.4.3
+        commit: 38c232a68f8d72106af2aa12ba14fa19c3de5a7b
