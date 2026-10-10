@@ -69,6 +69,10 @@ def _resolve_local(src, base_dir):
         return Gio.File.new_for_uri(src)
     if scheme is not None:
         return None  # some other scheme we don't serve
+    # markdown-it percent-encodes every destination (`<my pic.png>` arrives
+    # as "my%20pic.png"), and a filesystem path wants it decoded -- the
+    # same step window.py's _resolve_href takes for links.
+    src = GLib.Uri.unescape_string(src) or src
     if src.startswith("/"):
         return Gio.File.new_for_path(src)
     return base_dir.resolve_relative_path(src) if base_dir else None

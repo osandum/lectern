@@ -137,3 +137,16 @@ def test_unlinked_image_has_no_href(tmp_path):
     write_png(tmp_path / "pic.png")
     renderer, _ = render("![a](pic.png) [link](elsewhere.md)\n", base_dir_for(tmp_path))
     assert renderer.images[0].href is None
+
+
+def test_file_name_with_space_and_percent_resolves(tmp_path):
+    # markdown-it hands out "a%20b%25c.png" for `<a b%c.png>`.
+    write_png(tmp_path / "a b%c.png")
+    renderer, _ = render("![x](<a b%c.png>)\n", base_dir_for(tmp_path))
+    assert renderer.images[0].texture is not None
+
+
+def test_non_ascii_file_name_resolves(tmp_path):
+    write_png(tmp_path / "skønne unger.png")
+    renderer, _ = render("![x](<skønne unger.png>)\n", base_dir_for(tmp_path))
+    assert renderer.images[0].texture is not None
