@@ -79,6 +79,21 @@
   </requires>
 
   <releases>
+    <release version="0.4.3" date="2026-10-10">
+      <description>
+        <p>
+          Bare URLs and email addresses are now links. Links inside tables
+          show their target at the bottom-left on hover, like any other
+          link.
+        </p>
+        <p>
+          An image inside a link, such as a thumbnail linking to the full
+          picture, now opens that link when clicked. Images whose file
+          name contains a space, a percent sign or a non-ASCII character
+          now load instead of showing their alt text.
+        </p>
+      </description>
+    </release>
     <release version="0.4.2" date="2026-09-15">
       <description>
         <p>

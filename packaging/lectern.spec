@@ -1,7 +1,7 @@
 %global desktop_id io.github.osandum.Lectern
 
 Name:           lectern
-Version:        0.4.2
+Version:        0.4.3
 Release:        %autorelease
 Summary:        A read-only, Papers-style GTK4/Libadwaita Markdown viewer
 
