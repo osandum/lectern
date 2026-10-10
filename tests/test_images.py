@@ -124,3 +124,16 @@ def test_available_width_caps_but_never_upscales(tmp_path):
     small.set_available_width(400)
     assert wide._picture.get_size_request() == (400, 100)   # scaled, aspect kept
     assert small._picture.get_size_request() == (40, 10)    # left alone
+
+
+def test_linked_image_carries_the_links_href(tmp_path):
+    # The thumbnail-gallery shape: a small image linking to the full one.
+    write_png(tmp_path / "thumb.png")
+    renderer, _ = render("[![t](thumb.png)](full.png)\n", base_dir_for(tmp_path))
+    assert renderer.images[0].href == "full.png"
+
+
+def test_unlinked_image_has_no_href(tmp_path):
+    write_png(tmp_path / "pic.png")
+    renderer, _ = render("![a](pic.png) [link](elsewhere.md)\n", base_dir_for(tmp_path))
+    assert renderer.images[0].href is None

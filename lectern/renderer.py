@@ -502,7 +502,16 @@ class MarkdownRenderer:
         buffer.insert(it, "\n")
         self.print_model.append(PrintItem("table", rows=rows, block_tags=list(ctx.block_tags)))
 
-    def _emit_image(self, node, buffer, it, block_tags):
+    def _enclosing_href(self, inline_tags):
+        """The href of the link an inline node sits inside, or None. The
+        innermost wins, the way a browser resolves nested anchors."""
+        for name in reversed(inline_tags):
+            target = self.dispatch_targets.get(name)
+            if target is not None and target["type"] == "url":
+                return target["href"]
+        return None
+
+    def _emit_image(self, node, buffer, it, block_tags, href=None):
         """Images are inline nodes, so the anchor goes wherever the image
         sat in the text -- an image alone in its paragraph reads as a
         block, one mid-sentence stays in the line, and Gtk.TextView's own
@@ -523,10 +532,16 @@ class MarkdownRenderer:
         splitting a paragraph's runs around the image and emitting several
         PrintItems per paragraph. On screen the ordering is always right,
         since there the anchor sits in the text flow itself.
+
+        `href` is the enclosing link's, for a linked image (`[![t](thumb)](full)`,
+        the usual thumbnail-gallery shape). It travels on the widget rather
+        than as a link tag on the anchor character: an anchored child takes
+        its own pointer events, so the TextView's tag-based click dispatch
+        never sees a click on it. window.py wires the widget up instead.
         """
         src = node.attrs.get("src", "")
         alt = tables.inline_plain_text(node)
-        view = imagelib.ImageView(src, alt, self._base_dir)
+        view = imagelib.ImageView(src, alt, self._base_dir, href=href)
         anchor = buffer.create_child_anchor(it)
         self.images.append(view)
         self._pending_anchors.append((anchor, view))
@@ -739,7 +754,7 @@ class MarkdownRenderer:
                 self.dispatch_targets[tagname] = {"type": "url", "href": child.attrs.get("href", "")}
                 self._walk_inline(child, buffer, it, block_tags, inline_tags + ["link", tagname], runs)
             elif t == "image":
-                self._emit_image(child, buffer, it, block_tags)
+                self._emit_image(child, buffer, it, block_tags, self._enclosing_href(inline_tags))
             elif t == "footnote_ref":
                 self._emit_footnote_ref(child, buffer, it, block_tags, inline_tags, runs)
             elif t == "footnote_anchor":

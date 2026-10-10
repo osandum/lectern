@@ -84,3 +84,32 @@ def test_textview_motion_over_a_table_link_leaves_the_status_alone(tmp_path):
     window._show_link_status("https://example.com")
     window._on_textview_motion(None, point.x + width / 2, point.y + height / 2)
     assert window._link_status_revealer.get_reveal_child()
+
+
+def _controllers(widget, kind):
+    model = widget.observe_controllers()
+    return [model.get_item(i) for i in range(model.get_n_items())
+            if isinstance(model.get_item(i), kind)]
+
+
+def test_clicking_a_linked_image_opens_the_link(tmp_path, monkeypatch):
+    window = make_window(tmp_path, "[![t](thumb.png)](<full size.png>)\n")
+    opened = []
+    monkeypatch.setattr(window, "_open_href", opened.append)
+    image = window._images[0]
+    _controllers(image, Gtk.GestureClick)[0].emit("released", 1, 0.0, 0.0)
+    assert opened == ["full%20size.png"]
+
+
+def test_hovering_a_linked_image_shows_where_it_goes(tmp_path):
+    window = make_window(tmp_path, "[![t](thumb.png)](sub/full.png)\n")
+    motion = _controllers(window._images[0], Gtk.EventControllerMotion)[0]
+    motion.emit("enter", 0.0, 0.0)
+    assert window._link_status_label.get_text() == f"file://{tmp_path}/sub/full.png"
+    motion.emit("leave")
+    assert not window._link_status_revealer.get_reveal_child()
+
+
+def test_unlinked_image_gets_no_link_controllers(tmp_path):
+    window = make_window(tmp_path, "![a](pic.png)\n")
+    assert not _controllers(window._images[0], Gtk.GestureClick)

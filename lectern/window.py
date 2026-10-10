@@ -678,6 +678,18 @@ class LecternWindow(Adw.ApplicationWindow):
         self._open_href(uri)
         return True  # stop Gtk.Label's own default handling
 
+    def _connect_image_link(self, image):
+        """A linked image is an anchored child, so clicks and motion over
+        it never reach the TextView's tag-based dispatch; it gets its own
+        controllers, the way table-cell labels do."""
+        click = Gtk.GestureClick()
+        click.connect("released", lambda g, n, x, y: self._open_href(image.href))
+        image.add_controller(click)
+        motion = Gtk.EventControllerMotion()
+        motion.connect("enter", lambda c, x, y: self._show_link_status(image.href))
+        motion.connect("leave", lambda c: self._hide_link_status())
+        image.add_controller(motion)
+
     def _activate_target(self, target):
         kind = target["type"]
         if kind == "url":
@@ -862,6 +874,9 @@ class LecternWindow(Adw.ApplicationWindow):
             motion.connect("motion", self._on_table_link_motion)
             motion.connect("leave", lambda c: self._hide_link_status())
             label.add_controller(motion)
+        for image in self._images:
+            if image.href:
+                self._connect_image_link(image)
         self._find = FindController(self._textview, self._renderer.tables)
         self._sync_find_label()
 

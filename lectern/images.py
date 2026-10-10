@@ -83,10 +83,15 @@ class ImageView(Gtk.Box):
     is frequently the only description of what was meant to be there.
     """
 
-    def __init__(self, src, alt, base_dir):
+    def __init__(self, src, alt, base_dir, href=None):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, halign=Gtk.Align.START)
         self.src = src
         self.alt = alt or src
+        # Target of the link the image sits inside, if any -- window.py
+        # opens it on click and shows it in the hover status.
+        self.href = href
+        if href:
+            self.set_cursor_from_name("pointer")
         self._base_dir = base_dir
         self._texture = None
         self._available_width = 0
