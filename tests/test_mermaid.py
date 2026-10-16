@@ -22,7 +22,7 @@ from markdown_it.tree import SyntaxTreeNode
 
 from lectern import mermaid
 from lectern.document import make_parser
-from lectern.mermaid import flowchart, scene as sc
+from lectern.mermaid import flowchart, scene as sc, text as textlib
 from lectern.renderer import MarkdownRenderer
 from lectern.tags import create_tag_table
 
@@ -123,6 +123,25 @@ def test_quoted_label_may_contain_delimiters():
 def test_br_becomes_a_line_break():
     chart = mermaid.parse("flowchart TD\n  A[first<br/>second]\n")
     assert chart.nodes["A"].text == "first\nsecond"
+
+
+@pytest.mark.parametrize("label, markup", [
+    ("<b>bold</b> and <em>it</em>", "<b>bold</b> and <i>it</i>"),
+    ("<STRONG>a</STRONG>", "<b>a</b>"),
+    ("List<String> & co", "List&lt;String&gt; &amp; co"),   # not ours: escaped
+    ("<b>open", "&lt;b&gt;open"),                           # unbalanced: verbatim
+    ("<b><i>x</b></i>", "&lt;b&gt;&lt;i&gt;x&lt;/b&gt;&lt;/i&gt;"),
+])
+def test_label_markup(label, markup):
+    assert textlib.label_markup(label) == markup
+
+
+def test_bold_label_measures_as_bold_text():
+    measurer = textlib.Measurer(mermaid.ui_font())
+    tagged = measurer.size("<b>Phase zero</b>")
+    assert tagged > measurer.size("Phase zero")
+    # The tags themselves take no room.
+    assert tagged == measurer.size("Phase zero", bold=True)
 
 
 def test_semicolon_in_a_quoted_label_does_not_end_the_statement():

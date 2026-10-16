@@ -18,9 +18,10 @@ already scaled so that one device unit is one nominal 96dpi pixel.
 import gi
 gi.require_version("Pango", "1.0")
 gi.require_version("PangoCairo", "1.0")
-from gi.repository import Pango, PangoCairo
+from gi.repository import GLib, Pango, PangoCairo
 
 import cairo
+import re
 
 # Body text in a diagram, in nominal 96dpi pixels. Slightly under the
 # 16px body size (zoom.py's 12pt), because a diagram carries many short
@@ -31,6 +32,35 @@ FONT_PX = 14.0
 # wraps node text too; without a cap one long label stretches its rank
 # across the page and squashes everything else.
 WRAP_CHARS = 28
+
+# The inline HTML a label may carry that is drawn as formatting rather
+# than shown: mermaid labels are HTML, and these four are what
+# hand-written diagrams actually use. Any other tag stays visible text.
+_STYLE_TAG_RE = re.compile(r"<(/?)(b|strong|i|em)>", re.I)
+_STYLE_TAGS = {"b": "b", "strong": "b", "i": "i", "em": "i"}
+
+
+def label_markup(text):
+    """Pango markup for a label: `<b>`/`<strong>` bold, `<i>`/`<em>`
+    italic, everything else escaped. Tags that don't nest properly are
+    left as visible text rather than guessed at, for the same reason
+    parse_label leaves unknown tags alone."""
+    out, stack, pos = [], [], 0
+    for match in _STYLE_TAG_RE.finditer(text):
+        tag = _STYLE_TAGS[match.group(2).lower()]
+        if match.group(1):
+            if not stack or stack.pop() != tag:
+                return GLib.markup_escape_text(text, -1)
+        else:
+            stack.append(tag)
+        out.append(GLib.markup_escape_text(text[pos:match.start()], -1))
+        out.append(f"<{match.group(1)}{tag}>")
+        pos = match.end()
+    if stack:
+        return GLib.markup_escape_text(text, -1)
+    out.append(GLib.markup_escape_text(text[pos:], -1))
+    return "".join(out)
+
 
 _scratch_context = None
 
@@ -76,7 +106,7 @@ def make_layout(context, base_font, font_px, text, *, bold=False, italic=False,
                 mono=False, max_px=None, width=None, align="center"):
     layout = Pango.Layout(_unhint_metrics(context))
     layout.set_font_description(font_for(base_font, font_px, bold=bold, italic=italic, mono=mono))
-    layout.set_text(text, -1)
+    layout.set_markup(label_markup(text), -1)
     if width is not None:
         layout.set_width(int(width * Pango.SCALE))
         layout.set_alignment({

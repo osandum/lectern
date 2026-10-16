@@ -19,7 +19,8 @@ def parse_label(text):
     too (verified against mermaid 11 in a browser -- it splits the label
     into one line per `\\n`). Everything else is left exactly as written
     rather than half-stripped: showing a stray tag is at least visibly
-    wrong, where quietly dropping the text inside one is not.
+    wrong, where quietly dropping the text inside one is not. Bold and
+    italic tags survive to be drawn as such (text.label_markup).
     """
     text = text.strip()
     if len(text) >= 2 and text[0] == '"' and text[-1] == '"':
