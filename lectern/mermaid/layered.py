@@ -185,10 +185,11 @@ def _rank_size(cell, vertical):
     return cell.h if vertical else cell.w
 
 
-def place(layers, up, down, vertical, rank_gap=RANK_GAP):
+def place(layers, up, down, vertical, rank_gaps):
     """Assign every cell a centre on both axes.
 
-    Rank axis: layers are stacked by their tallest (widest) member.
+    Rank axis: layers are stacked by their tallest (widest) member, the
+    gap after layer `i` being `rank_gaps[i]`.
     Cross axis: pack each layer, then pull cells toward the average of
     their neighbours in adjacent layers and re-separate. Sweeping in both
     directions keeps a node with only successors (a source) as
@@ -198,11 +199,11 @@ def place(layers, up, down, vertical, rank_gap=RANK_GAP):
     positions = {}
 
     rank_pos = 0.0
-    for layer in layers:
+    for layer, gap in zip(layers, rank_gaps):
         extent = max((_rank_size(cell, vertical) for cell in layer), default=0.0)
         for cell in layer:
             positions[cell.key] = [0.0, rank_pos + extent / 2]
-        rank_pos += extent + rank_gap
+        rank_pos += extent + gap
 
     def pack(layer):
         cursor = 0.0
@@ -264,7 +265,7 @@ def mirror(cells, direction, width, height):
             cell.x = width - cell.x
 
 
-def layout(nodes, edges, direction, rank_gap=RANK_GAP):
+def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None):
     """Rank, order and place `nodes`. Returns (cells, routes, width,
     height); the nodes themselves come back with x/y/rank filled in.
 
@@ -272,13 +273,30 @@ def layout(nodes, edges, direction, rank_gap=RANK_GAP):
     this diagram's edges need": a flowchart's carry a short label at most,
     while a class or ER relation carries a label *and* a cardinality at
     each end, which need clear line either side of the label's plate.
+
+    `edge_room` maps an edge's index to the length along the rank axis it
+    needs between its two ends -- a label plate plus line either side --
+    and widens just the gap that edge crosses. A uniform gap can't be
+    sized for the longest label without spreading every other layer, and
+    one sized for the typical label lets a long plate cover the gap
+    entirely, its ends disappearing under the nodes either side.
     """
     vertical = direction in VERTICAL_DIRECTIONS
     rank_nodes(nodes, edges)
     cells, layers, routes = build_layers(nodes, edges)
     up, down = neighbour_map(edges, cells, routes)
     order_layers(layers, up, down)
-    place(layers, up, down, vertical, rank_gap)
+    rank_gaps = [rank_gap] * len(layers)
+    for index, room in (edge_room or {}).items():
+        edge = edges[index]
+        # Only an edge between adjacent layers is confined to one gap. A
+        # longer one is routed through virtual nodes, and the label goes
+        # on its longest segment, which spans a whole layer as well as a
+        # gap -- already room the gap alone doesn't have to provide.
+        if not routes[index] and edge.src != edge.dst:
+            low = min(nodes[edge.src].rank, nodes[edge.dst].rank)
+            rank_gaps[low] = max(rank_gaps[low], room)
+    place(layers, up, down, vertical, rank_gaps)
     width = max((cell.x + cell.w / 2 for cell in cells.values()), default=0.0)
     height = max((cell.y + cell.h / 2 for cell in cells.values()), default=0.0)
     mirror(cells, direction, width, height)

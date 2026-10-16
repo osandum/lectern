@@ -29,6 +29,9 @@ MIN_NODE_W = 46.0
 LABEL_PAD = 3.0
 CORNER_RADIUS = 7.0
 EDGE_LABEL_FONT_SCALE = 0.92
+# Line left visible either side of an edge label's plate -- enough to
+# clear an arrowhead and still read as a line, not a plate stuck to a box.
+EDGE_LABEL_CLEARANCE = 16.0
 # Clear space between a subgraph's frame and the nodes inside it, and the
 # scale its title is drawn at.
 CLUSTER_PAD = 14.0
@@ -539,8 +542,16 @@ def _build_scene(chart, measurer):
         _size_node(node, measurer)
     original_sizes = _reserve_cluster_room(chart, measurer)
 
+    vertical = chart.direction in layered.VERTICAL_DIRECTIONS
+    edge_room = {}
+    for index, edge in enumerate(chart.edges):
+        if edge.label and edge.style != INVISIBLE:
+            text_w, text_h = measurer.size(
+                edge.label, wrap=False, scale=EDGE_LABEL_FONT_SCALE)
+            edge_room[index] = ((text_h if vertical else text_w)
+                                + 2 * LABEL_PAD + 2 * EDGE_LABEL_CLEARANCE)
     cells, routes, width, height = layered.layout(
-        chart.nodes, chart.edges, chart.direction)
+        chart.nodes, chart.edges, chart.direction, edge_room=edge_room)
 
     for key, (w, h) in original_sizes.items():
         chart.nodes[key].w, chart.nodes[key].h = w, h

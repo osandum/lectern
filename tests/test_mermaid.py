@@ -356,6 +356,24 @@ def test_edge_label_is_drawn_on_a_plate():
     assert plate.y + plate.h >= label.y + label.h
 
 
+@pytest.mark.parametrize("direction", ["LR", "TD"])
+def test_a_long_edge_label_fits_between_the_nodes_it_joins(direction):
+    # A label longer than the default gap between layers used to cover
+    # the gap entirely, its ends hidden under the nodes either side.
+    scene = build(f"flowchart {direction}\n"
+                  "  A[One] -- \"a label far wider than the gap<br/>and two lines tall\" --> B[Two]\n")
+    plate = next(s for s in scene.shapes if isinstance(s, sc.Rect) and s.fill == sc.LABEL_BG)
+    first, second = sorted((s for s in scene.shapes
+                            if isinstance(s, sc.Rect) and s.fill != sc.LABEL_BG),
+                           key=lambda s: (s.x, s.y))
+    if direction == "LR":
+        assert first.x + first.w < plate.x
+        assert plate.x + plate.w < second.x
+    else:
+        assert first.y + first.h < plate.y
+        assert plate.y + plate.h < second.y
+
+
 # -- sequence diagrams -----------------------------------------------------
 
 SEQUENCE = """sequenceDiagram
