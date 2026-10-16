@@ -125,6 +125,12 @@ def test_br_becomes_a_line_break():
     assert chart.nodes["A"].text == "first\nsecond"
 
 
+def test_semicolon_in_a_quoted_label_does_not_end_the_statement():
+    chart = mermaid.parse('flowchart TD\n  A["one; two"] --> B; B --> C\n')
+    assert chart.nodes["A"].text == "one; two"
+    assert len(chart.edges) == 2
+
+
 def test_comments_and_presentational_statements_are_ignored():
     chart = mermaid.parse(
         "flowchart TD\n"

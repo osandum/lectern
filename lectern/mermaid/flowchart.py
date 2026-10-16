@@ -201,11 +201,24 @@ def _split_statements(source):
         line = _strip_comment(raw_line)
         # Semicolons separate statements; mermaid allows but doesn't
         # require them, so they're a separator here and not a terminator.
-        for part in line.split(";"):
+        # One inside a quoted label is just text.
+        for part in _split_unquoted(line, ";"):
             part = part.strip()
             if part:
                 statements.append(part)
     return statements
+
+
+def _split_unquoted(line, sep):
+    parts, start, quoted = [], 0, False
+    for i, ch in enumerate(line):
+        if ch == '"':
+            quoted = not quoted
+        elif ch == sep and not quoted:
+            parts.append(line[start:i])
+            start = i + 1
+    parts.append(line[start:])
+    return parts
 
 
 def _parse_node(statement, pos):
