@@ -71,3 +71,34 @@ def test_the_current_version_has_release_notes():
     # would quietly drop "What's New" from the About dialog.
     path = os.path.join(REPO, "data", f"{APP_ID}.metainfo.xml")
     assert about.release_notes(APP_ID, __version__, [path])
+
+
+def _releases(tmp_path, n):
+    p = tmp_path / "x.metainfo.xml"
+    releases = "".join(
+        f'<release version="1.{i}" date="2026-01-0{i + 1}"><description>'
+        f"<p>First {i}</p><p>Second {i}</p></description></release>"
+        for i in reversed(range(n)))
+    p.write_text(f"<component><releases>{releases}</releases></component>")
+    return str(p)
+
+
+def test_release_notes_add_the_first_paragraph_of_earlier_releases(tmp_path):
+    notes = about.release_notes(APP_ID, "1.2", [_releases(tmp_path, 3)])
+    assert notes.startswith("<p>First 2</p><p>Second 2</p>")
+    assert "<p>First 1</p>" in notes and "<p>First 0</p>" in notes
+    # Earlier releases are summaries: their later paragraphs are left out.
+    assert "Second 1" not in notes and "Second 0" not in notes
+    assert notes.index("First 1") < notes.index("First 0")
+    assert "<em>1.1 · " in notes
+
+
+def test_release_notes_stop_after_five_earlier_releases(tmp_path):
+    notes = about.release_notes(APP_ID, "1.7", [_releases(tmp_path, 8)])
+    assert "First 2" in notes
+    assert "First 1" not in notes
+
+
+def test_release_notes_never_include_later_releases(tmp_path):
+    notes = about.release_notes(APP_ID, "1.1", [_releases(tmp_path, 3)])
+    assert "First 2" not in notes

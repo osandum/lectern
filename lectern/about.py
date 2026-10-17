@@ -10,6 +10,7 @@ import os
 import platform
 import sys
 import xml.etree.ElementTree as ET
+from xml.sax.saxutils import escape
 from importlib import metadata
 
 import gi
@@ -120,13 +121,19 @@ def _metainfo_candidates(application_id):
         yield os.path.join(share, "metainfo", name)
 
 
-def release_notes(application_id, version, paths=None):
-    """This release's <description> from the metainfo, in the AppStream
-    markup Adw.AboutDialog's release notes take (<p>, <ul>, <code>, ...),
-    or None.
+def release_notes(application_id, version, paths=None, previous=5):
+    """This release's <description> from the metainfo, followed by the
+    first paragraph of each of up to `previous` earlier releases, in the
+    AppStream markup Adw.AboutDialog's release notes take (<p>, <ul>,
+    <em>, <code>, ...). None if the metainfo has no entry for `version`.
 
-    Adw.AboutDialog.new_from_appdata() would do this, but wants the
-    metainfo in a GResource, which a plain setuptools package doesn't
+    Adw shows notes for one version only, so the earlier releases go into
+    the same markup, each under an emphasised version-and-date line -- no
+    words in it, so nothing to translate, and the date in the reader's
+    own format.
+
+    Adw.AboutDialog.new_from_appdata() would read the metainfo itself, but
+    wants it in a GResource, which a plain setuptools package doesn't
     have -- so the installed file is read instead (the Flatpak and the RPM
     both install it; a pip install doesn't, and gets no notes).
     """
@@ -135,9 +142,35 @@ def release_notes(application_id, version, paths=None):
             root = ET.parse(path).getroot()
         except (OSError, ET.ParseError):
             continue
-        desc = root.find(f"releases/release[@version='{version}']/description")
-        if desc is None:
+        releases = root.findall("releases/release")
+        current = next((i for i, r in enumerate(releases) if r.get("version") == version), None)
+        if current is None or releases[current].find("description") is None:
             return None
+        parts = [_markup(releases[current].find("description"))]
+        for release in releases[current + 1:current + 1 + previous]:
+            desc = release.find("description")
+            if desc is None or len(desc) == 0:
+                continue
+            heading = release.get("version")
+            date = _format_date(release.get("date"))
+            if date:
+                heading += f" · {date}"
+            parts.append(f"<p><em>{escape(heading)}</em></p>")
+            parts.append(_markup([desc[0]]))
+        return "".join(parts)
+    return None
+
+
+def _markup(elements):
+    return "".join(ET.tostring(e, encoding="unicode") for e in elements).strip()
+
+
+def _format_date(iso):
+    try:
+        y, m, d = (int(n) for n in iso.split("-"))
+        return GLib.DateTime.new_local(y, m, d, 0, 0, 0).format("%x")
+    except (AttributeError, ValueError, TypeError):
+        return None
         return "".join(ET.tostring(child, encoding="unicode") for child in desc).strip()
     return None
 
