@@ -797,3 +797,22 @@ def test_a_blocked_label_slides_along_its_own_edge():
     [(x, y)] = layered.place_labels([(points, 20.0, 10.0)], obstacles=[(-15.0, 40.0, 30.0, 20.0)])
     assert x == 0.0                 # still on the edge
     assert not 40.0 - 7.0 < y < 60.0 + 7.0
+
+
+@pytest.mark.parametrize("statement", [
+    'A["player & team stats"] --> B',
+    'A["review &amp; merge"] --> B',
+    "A(Tom & Jerry) --> B{yes & no}",
+    "A -->|this & that| B",
+    "A -- this & that --> B",
+])
+def test_an_ampersand_in_a_label_is_just_text(statement):
+    chart = mermaid.parse(f"flowchart LR\n  {statement}\n")
+    assert set(chart.nodes) == {"A", "B"}
+    assert len(chart.edges) == 1
+
+
+@pytest.mark.parametrize("statement", ["A & B --> C", "A --> B & C", 'A["x"] & B'])
+def test_a_node_list_is_still_refused(statement):
+    with pytest.raises(mermaid.Unsupported):
+        mermaid.parse(f"flowchart LR\n  {statement}\n")

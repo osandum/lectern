@@ -225,6 +225,29 @@ def _split_unquoted(line, sep):
     return parts
 
 
+def _has_node_list(statement):
+    """Whether `statement` uses mermaid's `A & B --> C` node lists: an `&`
+    between nodes, as opposed to one in a label -- quoted, inside a node's
+    shape brackets, or between an edge label's pipes, all of which mermaid
+    reads as text. Called after _normalize_mid_labels, so a `-- a & b -->`
+    label is already in its pipe form."""
+    quoted, in_pipes, depth = False, False, 0
+    for ch in statement:
+        if ch == '"':
+            quoted = not quoted
+        elif quoted:
+            continue
+        elif ch in "[({":
+            depth += 1
+        elif ch in "])}":
+            depth = max(0, depth - 1)
+        elif ch == "|" and depth == 0:
+            in_pipes = not in_pipes
+        elif ch == "&" and depth == 0 and not in_pipes:
+            return True
+    return False
+
+
 def _parse_node(statement, pos):
     """Parse `ID`, `ID[text]`, `ID{text}`, ... at `pos`.
 
@@ -367,9 +390,9 @@ def parse(source):
             continue
         if any(lowered.startswith(prefix) for prefix in _IGNORED_STATEMENTS):
             continue
-        if "&" in statement:
-            raise Unsupported("`&` node lists are not supported")
         statement = _normalize_mid_labels(statement)
+        if _has_node_list(statement):
+            raise Unsupported("`&` node lists are not supported")
         pos = 0
         key, text, shape, pos = _parse_node(statement, 0)
         touch(key, text, shape)
