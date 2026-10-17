@@ -17,3 +17,21 @@ is too late to set from inside a test module that has already imported Gtk.
 import os
 
 os.environ.setdefault("GSK_RENDERER", "cairo")
+
+
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def _private_recent_manager(tmp_path, monkeypatch):
+    """Point lectern.recent at a throwaway store for every test.
+
+    Anything that opens a document through LecternWindow records it in the
+    recent list, and the default Gtk.RecentManager is the *desktop's* --
+    so without this, every pytest tmp file showed up in the real Open
+    Recent menu and the file manager's Recent view.
+    """
+    from gi.repository import Gtk
+    from lectern import recent
+    manager = Gtk.RecentManager(filename=str(tmp_path / "recently-used.xbel"))
+    monkeypatch.setattr(recent, "_default", lambda: manager)
