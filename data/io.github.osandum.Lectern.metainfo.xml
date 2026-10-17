@@ -79,6 +79,21 @@
   </requires>
 
   <releases>
+    <release version="0.4.4" date="2026-10-17">
+      <description>
+        <p>
+          Nodes in Mermaid flowcharts and class diagrams that use click or
+          link statements can now be clicked, and show their target on
+          hover like any other link.
+        </p>
+        <p>
+          Diagram labels render bold and italic tags instead of showing
+          them as text, long edge labels no longer disappear under the
+          nodes either side, and a semicolon inside a quoted flowchart
+          label no longer turns the diagram into a code listing.
+        </p>
+      </description>
+    </release>
     <release version="0.4.3" date="2026-10-10">
       <description>
         <p>
