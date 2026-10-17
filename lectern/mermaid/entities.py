@@ -352,6 +352,12 @@ def _build_scene(diagram, measurer):
 
     scene = sc.Scene(width, height, [], measurer.font_px)
 
+    # Lines and cardinalities first, then the labels: a label is the one
+    # thing here that can move, so it is placed around everything else
+    # (layered.place_labels), and drawn after every line so no later line
+    # crosses its plate.
+    obstacles = [(e.x - e.w / 2, e.y - e.h / 2, e.w, e.h) for e in diagram.entities.values()]
+    labels = []
     for index, relation in enumerate(diagram.relations):
         if relation.src == relation.dst:
             points = layered.self_loop_points(cells[relation.src])
@@ -360,8 +366,7 @@ def _build_scene(diagram, measurer):
         scene.add(sc.Line(points, dashed=relation.dashed,
                           head=relation.head, tail=relation.tail))
         if relation.label:
-            cx, cy = layered.label_position(points)
-            _plate_label(scene, measurer, relation.label, cx, cy)
+            labels.append((points, relation.label))
         for from_start, cardinality in ((True, relation.src_card),
                                         (False, relation.dst_card)):
             if not cardinality:
@@ -370,6 +375,15 @@ def _build_scene(diagram, measurer):
                 points, from_start, CARDINALITY_OFFSET + measurer.font_px,
                 CARDINALITY_SIDE_OFFSET)
             _plate_label(scene, measurer, cardinality, cx, cy, plate=False)
+            text_w, text_h = measurer.size(cardinality, wrap=False, scale=LABEL_SCALE)
+            obstacles.append((cx - text_w / 2, cy - text_h / 2, text_w, text_h))
+
+    requests = []
+    for points, label in labels:
+        text_w, text_h = measurer.size(label, wrap=False, scale=LABEL_SCALE)
+        requests.append((points, text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD))
+    for (points, label), (cx, cy) in zip(labels, layered.place_labels(requests, obstacles)):
+        _plate_label(scene, measurer, label, cx, cy)
 
     for entity in diagram.entities.values():
         _entity_shapes(entity, measurer, scene)

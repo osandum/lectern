@@ -279,7 +279,8 @@ def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None):
     and widens just the gap that edge crosses. A uniform gap can't be
     sized for the longest label without spreading every other layer, and
     one sized for the typical label lets a long plate cover the gap
-    entirely, its ends disappearing under the nodes either side.
+    entirely, its ends disappearing under the nodes either side. Several
+    labelled edges sharing an end widen it by all of their rooms together.
     """
     vertical = direction in VERTICAL_DIRECTIONS
     rank_nodes(nodes, edges)
@@ -287,6 +288,12 @@ def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None):
     up, down = neighbour_map(edges, cells, routes)
     order_layers(layers, up, down)
     rank_gaps = [rank_gap] * len(layers)
+    # Labelled edges crossing a gap from (or to) the same node fan out of
+    # one point, so their labels all want the same spot beside it. The gap
+    # gets room for them one after another along the rank axis, which is
+    # what lets place_labels slide them apart; a lone label's bundle is
+    # just its own room, so it reserves exactly what it did before.
+    bundles = {}
     for index, room in (edge_room or {}).items():
         edge = edges[index]
         # Only an edge between adjacent layers is confined to one gap. A
@@ -295,7 +302,10 @@ def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None):
         # gap -- already room the gap alone doesn't have to provide.
         if not routes[index] and edge.src != edge.dst:
             low = min(nodes[edge.src].rank, nodes[edge.dst].rank)
-            rank_gaps[low] = max(rank_gaps[low], room)
+            for end in (edge.src, edge.dst):
+                bundles[(low, end)] = bundles.get((low, end), 0.0) + room
+    for (low, _end), room in bundles.items():
+        rank_gaps[low] = max(rank_gaps[low], room)
     place(layers, up, down, vertical, rank_gaps)
     width = max((cell.x + cell.w / 2 for cell in cells.values()), default=0.0)
     height = max((cell.y + cell.h / 2 for cell in cells.values()), default=0.0)
@@ -362,3 +372,67 @@ def label_position(points):
         if length > best_length:
             best, best_length = ((x1 + x2) / 2, (y1 + y2) / 2), length
     return best
+
+
+# Clear space kept around a label plate when checking it against others.
+LABEL_CLEARANCE = 2.0
+# Where along an edge (as a fraction of its length) a label may move to
+# when its first choice collides, nearest the middle first. Not past 0.2
+# from either end, where the arrowheads and cardinalities sit.
+_LABEL_FRACTIONS = (0.5, 0.42, 0.58, 0.34, 0.66, 0.26, 0.74, 0.2, 0.8)
+
+
+def _point_along(points, fraction):
+    lengths = [((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+               for (x1, y1), (x2, y2) in zip(points, points[1:])]
+    remaining = sum(lengths) * fraction
+    for ((x1, y1), (x2, y2)), length in zip(zip(points, points[1:]), lengths):
+        if remaining <= length and length > 0:
+            t = remaining / length
+            return x1 + (x2 - x1) * t, y1 + (y2 - y1) * t
+        remaining -= length
+    return points[-1]
+
+
+def _overlap_area(a, b):
+    ax, ay, aw, ah = a
+    bx, by, bw, bh = b
+    w = min(ax + aw, bx + bw) - max(ax, bx)
+    h = min(ay + ah, by + bh) - max(ay, by)
+    return w * h if w > 0 and h > 0 else 0.0
+
+
+def place_labels(requests, obstacles=()):
+    """Centres for edge labels that don't sit on top of each other.
+
+    `requests` is a list of (edge points, plate width, plate height), and
+    `obstacles` the (x, y, w, h) boxes no plate should cover -- the nodes,
+    and anything already placed such as cardinalities. Labels are placed
+    in order. Each keeps `label_position` when that is clear, so a diagram
+    with no collisions comes out exactly as it did before this pass
+    existed; otherwise it slides along its own edge, nearest the middle
+    first, to the first position that is clear. If none is, it takes the
+    one that overlaps least rather than leaving the pile-up as it was.
+
+    Two labels on edges that leave one node for the same layer are the
+    usual collision: their midpoints are a few pixels apart, and every
+    label on a short edge has nowhere else to be but its middle.
+    """
+    taken = list(obstacles)
+    centres = []
+    for points, w, h in requests:
+        candidates = [label_position(points)]
+        candidates += [_point_along(points, f) for f in _LABEL_FRACTIONS]
+        best, best_cost = None, None
+        for cx, cy in candidates:
+            plate = (cx - w / 2 - LABEL_CLEARANCE, cy - h / 2 - LABEL_CLEARANCE,
+                     w + 2 * LABEL_CLEARANCE, h + 2 * LABEL_CLEARANCE)
+            cost = sum(_overlap_area(plate, box) for box in taken)
+            if best_cost is None or cost < best_cost:
+                best, best_cost = (cx, cy, plate), cost
+            if cost == 0:
+                break
+        cx, cy, plate = best
+        taken.append(plate)
+        centres.append((cx, cy))
+    return centres

@@ -585,6 +585,9 @@ def _build_scene(chart, measurer):
 
     # Edges first so a node's fill covers the stub of any line that
     # overshot its boundary, rather than the line being drawn over the box.
+    # Their labels follow once every line is down, placed clear of each
+    # other and of the nodes (layered.place_labels).
+    labels = []
     for index, edge in enumerate(chart.edges):
         if edge.style == INVISIBLE:
             continue    # ranked above, drawn never
@@ -602,16 +605,22 @@ def _build_scene(chart, measurer):
         if edge.label:
             text_w, text_h = measurer.size(
                 edge.label, wrap=False, scale=EDGE_LABEL_FONT_SCALE)
-            cx, cy = layered.label_position(points)
-            scene.add(sc.Rect(
-                cx - text_w / 2 - LABEL_PAD, cy - text_h / 2 - LABEL_PAD,
-                text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD,
-                radius=3.0, fill=sc.LABEL_BG,
-            ))
-            scene.add(sc.Text(
-                cx - text_w / 2, cy - text_h / 2, text_w, text_h,
-                edge.label, color=sc.DIM, scale=EDGE_LABEL_FONT_SCALE,
-            ))
+            labels.append((points, edge, text_w, text_h))
+
+    obstacles = [(n.x - n.w / 2, n.y - n.h / 2, n.w, n.h) for n in chart.nodes.values()]
+    centres = layered.place_labels(
+        [(points, w + 2 * LABEL_PAD, h + 2 * LABEL_PAD) for points, _edge, w, h in labels],
+        obstacles)
+    for (_points, edge, text_w, text_h), (cx, cy) in zip(labels, centres):
+        scene.add(sc.Rect(
+            cx - text_w / 2 - LABEL_PAD, cy - text_h / 2 - LABEL_PAD,
+            text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD,
+            radius=3.0, fill=sc.LABEL_BG,
+        ))
+        scene.add(sc.Text(
+            cx - text_w / 2, cy - text_h / 2, text_w, text_h,
+            edge.label, color=sc.DIM, scale=EDGE_LABEL_FONT_SCALE,
+        ))
 
     for node in chart.nodes.values():
         for shape in _node_shapes(node):

@@ -712,3 +712,88 @@ def test_diagram_widget_hit_tests_through_its_scale():
     assert view.link_at(cx, cy) == "b.md"
     view.set_available_width(scene.width / 2)   # drawn at half size
     assert view.link_at(cx / 2, cy / 2) == "b.md"
+
+
+# -- label placement -------------------------------------------------------
+
+from lectern.mermaid import layered
+
+
+def plates(scene):
+    return [(s.x, s.y, s.w, s.h) for s in scene.shapes
+            if isinstance(s, sc.Rect) and s.fill == sc.LABEL_BG]
+
+
+def overlap(a, b):
+    return layered._overlap_area(a, b) > 0
+
+
+# A table with five references out, two of them to the same layer right
+# next to each other: their labels' midpoints sat on top of each other.
+FAN_OUT = """classDiagram
+    class Penalty {
+        int ID PK
+        int Haendelse
+        int Spiller FK
+        int Forseelse FK
+        int Kamp FK
+        int Hold FK
+    }
+    class Forseelser {
+        int ID PK
+    }
+    class Haendelser {
+        int ID PK
+    }
+    class Hold {
+        int ID PK
+    }
+    class kamp {
+        int ID PK
+    }
+    class Person {
+        int ID PK
+    }
+    class Indberetning {
+        int ID PK
+        int PenaltyID FK
+    }
+    Haendelser <.. Penalty : Haendelse (implied)
+    Penalty <-- Indberetning : PenaltyID
+    Forseelser <-- Penalty : Forseelse
+    Hold <-- Penalty : Hold
+    kamp <-- Penalty : Kamp
+    Person <-- Penalty : Spiller
+"""
+
+
+def test_class_diagram_labels_do_not_overlap_each_other_or_boxes():
+    scene = build(FAN_OUT)
+    labels = plates(scene)
+    assert len(labels) == 6
+    for i, a in enumerate(labels):
+        assert not any(overlap(a, b) for b in labels[i + 1:])
+    entity_boxes = [(b.x, b.y, b.w, b.h) for b in boxes(scene) if b.fill == sc.NODE]
+    for plate in labels:
+        assert not any(overlap(plate, box) for box in entity_boxes)
+
+
+def test_flowchart_labels_fanning_out_do_not_overlap():
+    scene = build("flowchart TD\n"
+                  "  A -->|first label| B\n  A -->|second label| C\n  A -->|third label| D\n")
+    labels = plates(scene)
+    assert len(labels) == 3
+    for i, a in enumerate(labels):
+        assert not any(overlap(a, b) for b in labels[i + 1:])
+
+
+def test_an_unobstructed_label_keeps_its_midpoint():
+    points = [(0.0, 0.0), (0.0, 100.0)]
+    assert layered.place_labels([(points, 20.0, 10.0)]) == [layered.label_position(points)]
+
+
+def test_a_blocked_label_slides_along_its_own_edge():
+    points = [(0.0, 0.0), (0.0, 100.0)]
+    [(x, y)] = layered.place_labels([(points, 20.0, 10.0)], obstacles=[(-15.0, 40.0, 30.0, 20.0)])
+    assert x == 0.0                 # still on the edge
+    assert not 40.0 - 7.0 < y < 60.0 + 7.0
