@@ -3,7 +3,7 @@
 [![Tests](https://github.com/osandum/lectern/actions/workflows/tests.yml/badge.svg)](https://github.com/osandum/lectern/actions/workflows/tests.yml)
 [![License: GPL-2.0-or-later](https://img.shields.io/badge/License-GPL--2.0--or--later-blue.svg)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/osandum/lectern)](https://github.com/osandum/lectern/releases/latest)
-[![Copr build status](https://copr.fedorainfracloud.org/coprs/osandum/lectern/package/lectern/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/osandum/lectern/package/lectern/)
+[![Copr build status](https://copr.fedorainfracloud.org/coprs/osandum/lectern/package/lectern/status_image/last_build.png?v=1)](https://copr.fedorainfracloud.org/coprs/osandum/lectern/package/lectern/)
 
 A read-only, [Papers](https://apps.gnome.org/da/Papers/)-style Markdown
 viewer for GNOME: open a `.md` file, read it, search/zoom/print it. No
