@@ -76,7 +76,7 @@ def test_the_current_version_has_release_notes():
 def _releases(tmp_path, n):
     p = tmp_path / "x.metainfo.xml"
     releases = "".join(
-        f'<release version="1.{i}" date="2026-01-0{i + 1}"><description>'
+        f'<release version="1.{i}" date="2026-01-{i + 1:02}"><description>'
         f"<p>First {i}</p><p>Second {i}</p></description></release>"
         for i in reversed(range(n)))
     p.write_text(f"<component><releases>{releases}</releases></component>")
@@ -93,10 +93,10 @@ def test_release_notes_add_the_first_paragraph_of_earlier_releases(tmp_path):
     assert "<em>1.1 · " in notes
 
 
-def test_release_notes_stop_after_five_earlier_releases(tmp_path):
-    notes = about.release_notes(APP_ID, "1.7", [_releases(tmp_path, 8)])
-    assert "First 2" in notes
-    assert "First 1" not in notes
+def test_release_notes_stop_after_ten_earlier_releases(tmp_path):
+    notes = about.release_notes(APP_ID, "1.12", [_releases(tmp_path, 13)])
+    assert "<p>First 2</p>" in notes
+    assert "<p>First 1</p>" not in notes
 
 
 def test_release_notes_never_include_later_releases(tmp_path):

@@ -178,7 +178,7 @@ def _metainfo_candidates(application_id):
         yield os.path.join(share, "metainfo", name)
 
 
-def release_notes(application_id, version, paths=None, previous=5):
+def release_notes(application_id, version, paths=None, previous=10):
     """This release's <description> from the metainfo, followed by the
     first paragraph of each of up to `previous` earlier releases, in the
     AppStream markup Adw.AboutDialog's release notes take (<p>, <ul>,
