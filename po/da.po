@@ -27,7 +27,7 @@ msgstr "Bygget med"
 
 #: lectern/about.py:84
 msgid "A read-only, Papers-style Markdown viewer."
-msgstr "En skrivebeskyttet Markdown-fremviser i Papers-stil."
+msgstr "En Markdown-fremviser."
 
 #: lectern/document.py:95
 #, python-brace-format
