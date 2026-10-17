@@ -57,7 +57,6 @@ def present(parent, application_id):
         # click for one sentence. Leaving them out puts Website on the main
         # page instead, and _show_tagline puts the sentence there too.
         website=WEBSITE,
-        issue_url=f"{WEBSITE}/issues",
         debug_info=debug_info(info),
         debug_info_filename="lectern-debug-info.txt",
     )
@@ -83,6 +82,29 @@ def present(parent, application_id):
 
     about.present(parent)
     _show_tagline(about, _("A read-only, Papers-style Markdown viewer."))
+    if not _add_issue_row_to_troubleshooting(about, f"{WEBSITE}/issues"):
+        about.set_issue_url(f"{WEBSITE}/issues")
+    _fit_height_to_main_page(about)
+
+
+def _fit_height_to_main_page(about):
+    """Adw.AboutDialog asks for a fixed content height (638px in 1.9)
+    whatever is on its main page, so the page scrolls by a few pixels as
+    soon as it holds more than Adw's own rows -- the tagline's line or
+    two is enough -- and leaves dead space when it holds fewer. Size it
+    to the main page instead, measured after everything above has been
+    added and at the width the dialog will actually have (a translated
+    tagline can wrap to an extra line). Longer subpages still scroll, as
+    they always did; a window too short for even the main page still
+    clamps the dialog, as Adw does for any size.
+    """
+    nav = _find_type(about, Adw.NavigationView)
+    page = nav.get_visible_page() if nav else None
+    if page is None:
+        return
+    _minimum, natural, _mb, _nb = page.measure(Gtk.Orientation.VERTICAL, about.get_content_width())
+    if natural > 0:
+        about.set_content_height(natural)
 
 
 def _find(widget, css_class):
@@ -91,6 +113,41 @@ def _find(widget, css_class):
     child = widget.get_first_child()
     while child:
         found = _find(child, css_class)
+        if found:
+            return found
+        child = child.get_next_sibling()
+    return None
+
+
+def _add_issue_row_to_troubleshooting(about, url):
+    """Put "Report an Issue" on the Troubleshooting page, next to the
+    debug info a report wants, instead of as its own row on the main
+    page. The page is found by its public navigation tag, but the list in
+    it is private structure, so this returns False when it can't find it
+    and the caller falls back to Adw's own row.
+
+    The title is Adw's own string from its own catalogue, so it reads and
+    translates exactly as the row it replaces.
+    """
+    nav = _find_type(about, Adw.NavigationView)
+    page = nav.find_page("troubleshooting") if nav else None
+    group = _find_type(page, Adw.PreferencesGroup) if page else None
+    if group is None:
+        return False
+    row = Adw.ActionRow(title=GLib.dgettext("libadwaita", "_Report an Issue"),
+                        use_underline=True, activatable=True)
+    row.add_suffix(Gtk.Image(icon_name="adw-external-link-symbolic"))
+    row.connect("activated", lambda r: Gtk.UriLauncher(uri=url).launch(r.get_root(), None, None))
+    group.add(row)
+    return True
+
+
+def _find_type(widget, cls):
+    if isinstance(widget, cls):
+        return widget
+    child = widget.get_first_child()
+    while child:
+        found = _find_type(child, cls)
         if found:
             return found
         child = child.get_next_sibling()

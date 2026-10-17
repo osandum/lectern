@@ -102,3 +102,14 @@ def test_release_notes_stop_after_five_earlier_releases(tmp_path):
 def test_release_notes_never_include_later_releases(tmp_path):
     notes = about.release_notes(APP_ID, "1.1", [_releases(tmp_path, 3)])
     assert "First 2" not in notes
+
+
+def test_issue_row_reports_failure_when_the_dialog_has_no_pages_yet():
+    # Unpresented, the dialog has built none of its pages -- the same
+    # situation a changed private structure would put it in -- and the
+    # caller must then fall back to Adw's own "Report an Issue" row.
+    import gi
+    gi.require_version("Adw", "1")
+    from gi.repository import Adw
+    dialog = Adw.AboutDialog(debug_info="x")
+    assert not about._add_issue_row_to_troubleshooting(dialog, "https://example.com")
