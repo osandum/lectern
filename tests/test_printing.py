@@ -192,7 +192,13 @@ def pdf_texts(path):
     """Every byte range of the PDF that a scanner might want to search,
     with FlateDecode object/content streams inflated -- cairo packs
     annotation dicts and their URIs into compressed object streams, so a
-    raw scan of the file misses them entirely."""
+    raw scan of the file misses them entirely.
+
+    A decompressobj, not rstrip-then-decompress: it stops at the end of
+    the deflate stream and leaves the EOL before `endstream` as unused
+    data, whereas stripping it can eat a final data byte that happens to
+    be \\r or \\n. That stream holds /CreationDate, so its bytes change
+    every run and the scan used to miss the annotations about 1 in 128."""
     blob = path.read_bytes()
     out = [blob]
     for m in re.finditer(rb"stream\r?\n", blob):
@@ -201,7 +207,7 @@ def pdf_texts(path):
         if end == -1:
             continue
         try:
-            out.append(zlib.decompress(blob[start:end].rstrip(b"\r\n")))
+            out.append(zlib.decompressobj().decompress(blob[start:end]))
         except zlib.error:
             pass
     return b"\n".join(out)
