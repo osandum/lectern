@@ -690,6 +690,31 @@ class LecternWindow(Adw.ApplicationWindow):
         motion.connect("leave", lambda c: self._hide_link_status())
         image.add_controller(motion)
 
+    def _connect_diagram_links(self, diagram):
+        """Linked diagram nodes, like a linked image, are inside an
+        anchored child the TextView's dispatch never sees. Unlike an
+        image, a diagram is mostly *not* a link, so both controllers ask
+        the widget which node, if any, is under the pointer."""
+        click = Gtk.GestureClick()
+        click.connect("released", self._on_diagram_click)
+        diagram.add_controller(click)
+        motion = Gtk.EventControllerMotion()
+        motion.connect("motion", self._on_diagram_motion)
+        motion.connect("leave", lambda c: self._hide_link_status())
+        diagram.add_controller(motion)
+
+    def _on_diagram_click(self, gesture, n_press, x, y):
+        href = gesture.get_widget().link_at(x, y)
+        if href:
+            self._open_href(href)
+
+    def _on_diagram_motion(self, controller, x, y):
+        href = controller.get_widget().link_at(x, y)
+        if href:
+            self._show_link_status(href)
+        else:
+            self._hide_link_status()
+
     def _activate_target(self, target):
         kind = target["type"]
         if kind == "url":
@@ -877,6 +902,9 @@ class LecternWindow(Adw.ApplicationWindow):
         for image in self._images:
             if image.href:
                 self._connect_image_link(image)
+        for diagram in self._diagrams:
+            if diagram.has_links:
+                self._connect_diagram_links(diagram)
         self._find = FindController(self._textview, self._renderer.tables)
         self._sync_find_label()
 

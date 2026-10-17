@@ -3,6 +3,10 @@
 Like images.ImageView, and unlike tables, a diagram takes the view's width
 as a *ceiling* rather than something to fill: it has a natural size, is
 scaled down to fit a narrow window, and is never blown up past that size.
+
+Nodes the source linked with `click` are hit-tested here, through the same
+scale the drawing uses; window.py adds the click and hover controllers,
+the way it does for a linked image.
 """
 import gi
 gi.require_version("Gtk", "4.0")
@@ -27,6 +31,12 @@ class DiagramView(Gtk.DrawingArea):
         self.set_margin_bottom(MARGIN)
         self.set_draw_func(self._draw)
         self._apply_size()
+        if scene.has_links:
+            # The pointer cursor only over a linked node, not the whole
+            # diagram: unlike a linked image, most of a diagram isn't one.
+            motion = Gtk.EventControllerMotion()
+            motion.connect("motion", self._on_motion)
+            self.add_controller(motion)
 
     # -- public API, mirroring images.ImageView ---------------------------
 
@@ -46,6 +56,17 @@ class DiagramView(Gtk.DrawingArea):
     def scene(self):
         return self._scene
 
+    @property
+    def has_links(self):
+        return self._scene.has_links
+
+    def link_at(self, x, y):
+        """The href of the linked node at widget point (x, y), or None."""
+        scale = self._scale
+        if scale <= 0:
+            return None
+        return self._scene.link_at(x / scale, y / scale)
+
     # -- internals ---------------------------------------------------------
 
     @property
@@ -54,6 +75,9 @@ class DiagramView(Gtk.DrawingArea):
         if self._available_width > 0 and self._scene.width > 0:
             scale = min(scale, self._available_width / self._scene.width)
         return scale
+
+    def _on_motion(self, controller, x, y):
+        self.set_cursor_from_name("pointer" if self.link_at(x, y) else None)
 
     def _apply_size(self):
         scale = self._scale

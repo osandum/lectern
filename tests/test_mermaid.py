@@ -621,3 +621,94 @@ def test_other_fences_are_untouched():
     renderer, _buffer = render("```python\nx = 1\n```\n")
     assert renderer.diagrams == []
     assert [item.kind for item in renderer.print_model] == ["code-block"]
+
+
+# -- links -----------------------------------------------------------------
+
+from lectern.mermaid.common import parse_click
+
+
+@pytest.mark.parametrize("statement, expected", [
+    ('click A href "a.md"', ("A", "a.md")),
+    ('click A "a.md"', ("A", "a.md")),
+    ('click A href "https://x.org" "a tooltip" _blank', ("A", "https://x.org")),
+    ('link A "a.md"', ("A", "a.md")),
+    ("click A callback", None),
+    ('click A call callback("x")', None),
+    ('click A href ""', None),
+])
+def test_click_statements(statement, expected):
+    assert parse_click(statement) == expected
+
+
+def links(scene):
+    return [shape for shape in scene.shapes if isinstance(shape, sc.Link)]
+
+
+def test_flowchart_click_links_its_node():
+    chart = mermaid.parse('flowchart LR\n  A --> B\n  click B href "b.md"\n')
+    assert chart.nodes["A"].href is None
+    assert chart.nodes["B"].href == "b.md"
+
+
+def test_a_click_may_precede_the_node_it_names():
+    chart = mermaid.parse('flowchart LR\n  click B "b.md"\n  A --> B\n')
+    assert chart.nodes["B"].href == "b.md"
+
+
+def test_a_click_on_an_undeclared_id_conjures_no_node():
+    chart = mermaid.parse('flowchart LR\n  A --> B\n  click C "c.md"\n')
+    assert set(chart.nodes) == {"A", "B"}
+
+
+def test_a_link_covers_exactly_its_nodes_box():
+    scene = build('flowchart LR\n  A[Start] --> B[Linked]\n  click B "b.md"\n')
+    [link] = links(scene)
+    [box] = [b for b in boxes(scene)
+             if any(t.text == "Linked" and b.x <= t.x and t.x + t.w <= b.x + b.w
+                    for t in scene.shapes if isinstance(t, sc.Text))]
+    assert (link.x, link.y, link.w, link.h) == (box.x, box.y, box.w, box.h)
+    assert scene.link_at(link.x + link.w / 2, link.y + link.h / 2) == "b.md"
+    assert scene.link_at(link.x - 1, link.y - 1) is None
+
+
+def test_unlinked_diagram_has_no_links():
+    assert not build(SIMPLE).has_links
+
+
+def test_class_diagram_click_and_link_both_link_a_class():
+    diagram = mermaid.parse(
+        'classDiagram\n  A --> B\n  A --> C\n  click A href "a.md"\n  link B "b.md"\n')
+    assert diagram.entities["A"].href == "a.md"
+    assert diagram.entities["B"].href == "b.md"
+    assert diagram.entities["C"].href is None
+    scene = build('classDiagram\n  class A {\n    int id\n  }\n  click A "a.md"\n')
+    [link] = links(scene)
+    assert scene.link_at(link.x + 1, link.y + link.h - 1) == "a.md"
+
+
+def test_er_diagram_click_is_still_refused():
+    # mermaid's erDiagram has no `click`: it reads the words as entity
+    # names, so drawing it as a link would show what mermaid doesn't.
+    with pytest.raises(mermaid.Unsupported):
+        mermaid.parse('erDiagram\n  A ||--o{ B : has\n  click A "a.md"\n')
+
+
+def test_links_are_not_painted():
+    import cairo
+    from lectern.mermaid import draw as drawlib
+    from lectern.tags import diagram_palette
+    scene = build('flowchart LR\n  A --> B\n  click A "a.md"\n')
+    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, 10, 10)
+    drawlib.draw_scene(cairo.Context(surface), scene, diagram_palette(False), mermaid.ui_font())
+
+
+def test_diagram_widget_hit_tests_through_its_scale():
+    from lectern.mermaid.view import DiagramView
+    scene = build('flowchart LR\n  A --> B\n  click B "b.md"\n')
+    view = DiagramView(scene, mermaid.ui_font())
+    [link] = links(scene)
+    cx, cy = link.x + link.w / 2, link.y + link.h / 2
+    assert view.link_at(cx, cy) == "b.md"
+    view.set_available_width(scene.width / 2)   # drawn at half size
+    assert view.link_at(cx / 2, cy / 2) == "b.md"

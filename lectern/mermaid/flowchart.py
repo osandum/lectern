@@ -19,7 +19,7 @@ import re
 
 from . import layered
 from . import scene as sc
-from .common import Unsupported, parse_label
+from .common import Unsupported, parse_click, parse_label
 
 # -- geometry, in nominal 96dpi pixels -------------------------------------
 
@@ -45,7 +45,7 @@ _DIRECTIONS = {"TD": "TD", "TB": "TD", "BT": "BT", "LR": "LR", "RL": "RL"}
 
 _HEADER_RE = re.compile(r"^(?:flowchart|graph)(?:\s+(?P<dir>[A-Za-z]{2}))?\s*$")
 _ID_RE = re.compile(r"[A-Za-z0-9_]+")
-_IGNORED_STATEMENTS = ("style ", "classdef ", "class ", "click ", "linkstyle ",
+_IGNORED_STATEMENTS = ("style ", "classdef ", "class ", "linkstyle ",
                        "direction ", "%%")
 
 # `subgraph Id[Title]`, `subgraph Id["Title"]`, or a bare `subgraph Title`
@@ -104,12 +104,13 @@ _LINK_RE = re.compile(r"""
 
 
 class FlowNode:
-    __slots__ = ("key", "text", "shape", "w", "h", "x", "y", "rank", "order")
+    __slots__ = ("key", "text", "shape", "href", "w", "h", "x", "y", "rank", "order")
 
     def __init__(self, key, text, shape):
         self.key = key
         self.text = text
         self.shape = shape
+        self.href = None        # from a `click` statement
         self.w = self.h = 0.0
         self.x = self.y = 0.0      # centre, filled in by layout
         self.rank = 0
@@ -317,6 +318,7 @@ def parse(source):
     edges = []
     subgraphs = []      # top-level blocks
     open_blocks = []    # the `subgraph`s currently being read, innermost last
+    hrefs = {}          # node key -> `click` target, applied once all are read
 
     def touch(key, text, shape):
         node = nodes.get(key)
@@ -355,6 +357,14 @@ def parse(source):
                 raise Unsupported("`end` outside a subgraph")
             open_blocks.pop()
             continue
+        if lowered.startswith("click "):
+            # A `click` may come before the node it names is declared, so
+            # targets are collected and applied after the last statement.
+            # A callback click has no target and is ignored like a style.
+            link = parse_click(statement)
+            if link is not None:
+                hrefs[link[0]] = link[1]
+            continue
         if any(lowered.startswith(prefix) for prefix in _IGNORED_STATEMENTS):
             continue
         if "&" in statement:
@@ -376,6 +386,11 @@ def parse(source):
         raise Unsupported("unclosed subgraph")
     if not nodes:
         raise Unsupported("no nodes")
+    # mermaid ignores a click on an id no statement declares, rather than
+    # conjuring up a node for it.
+    for key, href in hrefs.items():
+        if key in nodes:
+            nodes[key].href = href
     return Flowchart(direction, nodes, edges, subgraphs)
 
 
@@ -604,6 +619,9 @@ def _build_scene(chart, measurer):
         text_w, text_h = measurer.size(node.text)
         scene.add(sc.Text(
             node.x - text_w / 2, node.y - text_h / 2, text_w, text_h, node.text))
+        if node.href:
+            scene.add(sc.Link(node.x - node.w / 2, node.y - node.h / 2,
+                              node.w, node.h, node.href))
 
     for group, x, y, w, h, title_h in clusters:
         if not group.title:

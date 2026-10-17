@@ -98,6 +98,21 @@ class Text:
         self.scale = scale
 
 
+class Link:
+    """A clickable area over a node that the source linked with `click`.
+
+    Nothing is painted for it -- draw.py has no branch for it, so paper
+    and screen ignore it alike -- but it lives in the shape list so it is
+    moved by `normalize` along with the node it covers, and the widget can
+    hit-test the scene in the scene's own coordinates.
+    """
+    __slots__ = ("x", "y", "w", "h", "href")
+
+    def __init__(self, x, y, w, h, href):
+        self.x, self.y, self.w, self.h = x, y, w, h
+        self.href = href
+
+
 class Scene:
     __slots__ = ("width", "height", "shapes", "font_px")
 
@@ -114,6 +129,20 @@ class Scene:
     def add(self, shape):
         self.shapes.append(shape)
         return shape
+
+    @property
+    def has_links(self):
+        return any(isinstance(shape, Link) for shape in self.shapes)
+
+    def link_at(self, x, y):
+        """The href of the link under scene point (x, y), or None. The last
+        one added wins where two overlap, the way it would be drawn on top."""
+        for shape in reversed(self.shapes):
+            if (isinstance(shape, Link)
+                    and shape.x <= x <= shape.x + shape.w
+                    and shape.y <= y <= shape.y + shape.h):
+                return shape.href
+        return None
 
     def normalize(self, margin=1.0):
         """Shift the drawing so nothing sits at a negative coordinate, and
@@ -133,7 +162,7 @@ class Scene:
 
 def _point_extents(shape):
     """(x0, y0, x1, y1) of one shape, in scene coordinates."""
-    if isinstance(shape, (Rect, Ellipse, Text)):
+    if isinstance(shape, (Rect, Ellipse, Text, Link)):
         return shape.x, shape.y, shape.x + shape.w, shape.y + shape.h
     xs = [p[0] for p in shape.points]
     ys = [p[1] for p in shape.points]
@@ -150,7 +179,7 @@ def _bounds(shapes):
 
 def translate(shapes, dx, dy):
     for shape in shapes:
-        if isinstance(shape, (Rect, Ellipse, Text)):
+        if isinstance(shape, (Rect, Ellipse, Text, Link)):
             shape.x += dx
             shape.y += dy
         else:

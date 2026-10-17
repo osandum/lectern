@@ -10,7 +10,7 @@ import re
 
 from . import layered
 from . import scene as sc
-from .common import Unsupported, parse_label
+from .common import Unsupported, parse_click, parse_label
 
 # -- geometry, in nominal 96dpi pixels -------------------------------------
 
@@ -60,7 +60,7 @@ _STEREOTYPE_RE = re.compile(r"^<<(?P<name>.+)>>$")
 
 class Entity:
     """One box: a title, an optional «stereotype», and a list of members."""
-    __slots__ = ("key", "title", "stereotype", "members", "w", "h", "x", "y",
+    __slots__ = ("key", "title", "stereotype", "members", "href", "w", "h", "x", "y",
                  "rank", "order", "title_h")
 
     def __init__(self, key, title=None):
@@ -68,6 +68,7 @@ class Entity:
         self.title = title or key
         self.stereotype = None
         self.members = []
+        self.href = None        # classDiagram `click`/`link`
         self.w = self.h = self.title_h = 0.0
         self.x = self.y = 0.0
         self.rank = 0
@@ -146,6 +147,7 @@ def _parse_common(source, header_re, kind):
     relations = []
     direction = "TD"
     open_entity = None
+    hrefs = {}          # entity key -> link target, applied once all are read
 
     def touch(key, title=None):
         entity = entities.get(key)
@@ -193,6 +195,13 @@ def _parse_common(source, header_re, kind):
             continue
 
         if kind == "classDiagram":
+            # Only classDiagram has links: mermaid's erDiagram grammar has
+            # no `click`, and reads one as entity names instead.
+            if line.lower().startswith(("click ", "link ")):
+                link = parse_click(line)
+                if link is not None:
+                    hrefs[link[0]] = link[1]
+                continue
             if line.lower().startswith("class "):
                 key = line[6:].strip().split()[0]
                 touch(key, key)
@@ -214,6 +223,9 @@ def _parse_common(source, header_re, kind):
         raise Unsupported("unclosed block")
     if not entities:
         raise Unsupported("no entities")
+    for key, href in hrefs.items():
+        if key in entities:
+            entities[key].href = href
     return EntityDiagram(entities, relations, direction)
 
 
@@ -278,6 +290,8 @@ def _entity_shapes(entity, measurer, scene):
     y = entity.y - entity.h / 2
     scene.add(sc.Rect(x, y, entity.w, entity.h, radius=4.0,
                       fill=sc.NODE, stroke=sc.EDGE))
+    if entity.href:
+        scene.add(sc.Link(x, y, entity.w, entity.h, entity.href))
     cursor = y + BOX_PAD_Y
     title_w, title_h = measurer.size(entity.title, bold=True, wrap=False)
     scene.add(sc.Text(entity.x - title_w / 2, cursor, title_w, title_h,

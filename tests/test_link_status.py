@@ -113,3 +113,44 @@ def test_hovering_a_linked_image_shows_where_it_goes(tmp_path):
 def test_unlinked_image_gets_no_link_controllers(tmp_path):
     window = make_window(tmp_path, "![a](pic.png)\n")
     assert not _controllers(window._images[0], Gtk.GestureClick)
+
+
+LINKED_DIAGRAM = '```mermaid\nflowchart LR\n  A --> B\n  click B href "sub/b.md"\n```\n'
+
+
+def _linked_point(diagram):
+    from lectern.mermaid.scene import Link
+    [link] = [s for s in diagram.scene.shapes if isinstance(s, Link)]
+    scale = diagram._scale
+    return (link.x + link.w / 2) * scale, (link.y + link.h / 2) * scale
+
+
+def test_clicking_a_linked_diagram_node_opens_the_link(tmp_path, monkeypatch):
+    window = make_window(tmp_path, LINKED_DIAGRAM)
+    opened = []
+    monkeypatch.setattr(window, "_open_href", opened.append)
+    diagram = window._diagrams[0]
+    click = _controllers(diagram, Gtk.GestureClick)[0]
+    click.emit("released", 1, 0.0, 0.0)         # the diagram's corner: no node
+    assert opened == []
+    click.emit("released", 1, *_linked_point(diagram))
+    assert opened == ["sub/b.md"]
+
+
+def test_hovering_a_linked_diagram_node_shows_where_it_goes(tmp_path):
+    window = make_window(tmp_path, LINKED_DIAGRAM)
+    diagram = window._diagrams[0]
+    # Motion reaches every motion controller on the widget -- the
+    # window's status one and the widget's own cursor one alike.
+    def move(x, y):
+        for motion in _controllers(diagram, Gtk.EventControllerMotion):
+            motion.emit("motion", x, y)
+    move(*_linked_point(diagram))
+    assert window._link_status_label.get_text() == f"file://{tmp_path}/sub/b.md"
+    move(0.0, 0.0)
+    assert not window._link_status_revealer.get_reveal_child()
+
+
+def test_unlinked_diagram_gets_no_link_controllers(tmp_path):
+    window = make_window(tmp_path, "```mermaid\nflowchart LR\n  A --> B\n```\n")
+    assert not _controllers(window._diagrams[0], Gtk.GestureClick)
