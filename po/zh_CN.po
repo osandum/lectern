@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lectern 0.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/osandum/lectern/issues\n"
-"POT-Creation-Date: 2026-08-15 17:46+0200\n"
+"POT-Creation-Date: 2026-10-17 12:47+0200\n"
 "PO-Revision-Date: 2026-08-15 17:46+0200\n"
 "Last-Translator: \n"
 "Language-Team: Chinese (Simplified)\n"
@@ -20,214 +20,238 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: lectern/document.py:88
+#: lectern/about.py:65
+msgid "translator-credits"
+msgstr ""
+
+#: lectern/about.py:74
+msgid "Built With"
+msgstr "构建工具"
+
+#: lectern/about.py:84
+msgid "A read-only, Papers-style Markdown viewer."
+msgstr "只读的 Markdown 查看器，风格与 Papers 类似。"
+
+#: lectern/document.py:95
 #, python-brace-format
 msgid "Could not read {path}"
 msgstr "无法读取 {path}"
 
-#: lectern/images.py:93
+#: lectern/images.py:110
 msgid "Remote image not loaded"
 msgstr "外部图片未加载"
 
-#: lectern/images.py:112
+#: lectern/images.py:129
 msgid "Loading…"
 msgstr "正在加载…"
 
-#: lectern/images.py:115
+#: lectern/images.py:132
 msgid "Bad image URL"
 msgstr "图片 URL 无效"
 
-#: lectern/images.py:141
+#: lectern/images.py:158
 msgid "Image not found"
 msgstr "找不到图片"
 
-#: lectern/images.py:146
+#: lectern/images.py:163
 msgid "Couldn’t load image"
 msgstr "无法加载图片"
 
-#: lectern/images.py:152
+#: lectern/images.py:178 lectern/images.py:205
 msgid "Couldn’t fetch image"
 msgstr "无法获取图片"
 
-#: lectern/images.py:156
+#: lectern/images.py:183
 #, python-brace-format
 msgid "Image request failed ({status})"
 msgstr "图片请求失败 ({status})"
 
-#: lectern/images.py:159
-msgid "Empty image response"
-msgstr "图片响应为空"
-
-#: lectern/images.py:162
+#: lectern/images.py:188 lectern/images.py:215
 msgid "Image too large"
 msgstr "图片过大"
 
-#: lectern/images.py:167
+#: lectern/images.py:223
+msgid "Empty image response"
+msgstr "图片响应为空"
+
+#: lectern/images.py:229
 msgid "Couldn’t decode image"
 msgstr "无法解码图片"
 
-#: lectern/images.py:199
+#: lectern/images.py:261
 #, python-brace-format
 msgid "{reason}: {src}"
 msgstr "{reason}: {src}"
 
-#: lectern/main.py:74
-msgid "A read-only, Papers-style Markdown viewer."
-msgstr "只读的 Markdown 查看器，风格与 Papers 类似。"
-
-#: lectern/printing.py:1066
+#: lectern/printing.py:1208
 #, python-brace-format
 msgid "Page {page} of {total}"
 msgstr "第 {page} 页，共 {total} 页"
 
-#: lectern/window.py:53
+#: lectern/window.py:81
 msgid "Load"
 msgstr "加载"
 
-#: lectern/window.py:70
+#: lectern/window.py:99
 msgid "Find"
 msgstr "查找"
 
-#: lectern/window.py:75
+#: lectern/window.py:106
+msgid "Open…"
+msgstr "打开…"
+
+#: lectern/window.py:108
+msgid "Open Recent"
+msgstr "打开最近的文件"
+
+#: lectern/window.py:112
 msgid "Print…"
 msgstr "打印…"
 
-#: lectern/window.py:76
+#: lectern/window.py:113
 msgid "Header and Footer When Printing"
 msgstr "打印时的页眉和页脚"
 
-#: lectern/window.py:77 lectern/window.py:284
+#: lectern/window.py:114 lectern/window.py:433
 msgid "Document Properties"
 msgstr "文档属性"
 
-#: lectern/window.py:78
+#: lectern/window.py:115
 msgid "Keyboard Shortcuts"
 msgstr "键盘快捷键"
 
-#: lectern/window.py:79
+#: lectern/window.py:116
 msgid "About Lectern"
 msgstr "关于 Lectern"
 
-#: lectern/window.py:80
+#: lectern/window.py:119
 msgid "Main Menu"
 msgstr "主菜单"
 
-#: lectern/window.py:138
+#: lectern/window.py:147
+msgid "No Recent Documents"
+msgstr "没有最近的文档"
+
+#: lectern/window.py:150
+msgid "Clear Recently Opened"
+msgstr "清除最近打开的文件"
+
+#: lectern/window.py:207
 msgid "Find in document"
 msgstr "在文档中查找"
 
-#: lectern/window.py:146
+#: lectern/window.py:215
 msgid "Whole word"
 msgstr "全字匹配"
 
-#: lectern/window.py:146
+#: lectern/window.py:215
 msgid "Match whole word only"
 msgstr "仅匹配整个单词"
 
-#: lectern/window.py:148
+#: lectern/window.py:217
 msgid "Case"
 msgstr "大小写"
 
-#: lectern/window.py:148
+#: lectern/window.py:217
 msgid "Case sensitive"
 msgstr "区分大小写"
 
-#: lectern/window.py:151
+#: lectern/window.py:220
 msgid "Previous match"
 msgstr "上一个匹配项"
 
-#: lectern/window.py:153
+#: lectern/window.py:222
 msgid "Next match"
 msgstr "下一个匹配项"
 
-#: lectern/window.py:159
+#: lectern/window.py:228
 msgid "Close"
 msgstr "关闭"
 
-#: lectern/window.py:180
+#: lectern/window.py:249
 msgid "Zoom out"
 msgstr "缩小"
 
-#: lectern/window.py:182
+#: lectern/window.py:251
 msgid "Zoom in"
 msgstr "放大"
 
-#: lectern/window.py:286
+#: lectern/window.py:435
 #, python-brace-format
 msgid "Name: {name}"
 msgstr "名称：{name}"
 
-#: lectern/window.py:287
+#: lectern/window.py:436
 #, python-brace-format
 msgid "Location: {location}"
 msgstr "位置：{location}"
 
-#: lectern/window.py:288
+#: lectern/window.py:437
 #, python-brace-format
 msgid "Size: {size} bytes"
 msgstr "大小：{size} 字节"
 
-#: lectern/window.py:289
+#: lectern/window.py:438
 #, python-brace-format
 msgid "Words: {count}"
 msgstr "字数：{count}"
 
-#: lectern/window.py:290
+#: lectern/window.py:439
 #, python-brace-format
 msgid "Est. reading time: {minutes} min"
 msgstr "预计阅读时间：{minutes} 分钟"
 
-#: lectern/window.py:295
+#: lectern/window.py:444
 msgid "OK"
 msgstr "确定"
 
-#: lectern/window.py:339
+#: lectern/window.py:488
 #, python-brace-format
 msgid "{position} / {count}"
 msgstr "{position} / {count}"
 
-#: lectern/window.py:341
+#: lectern/window.py:490
 msgid "No matches"
 msgstr "无匹配项"
 
-#: lectern/window.py:353
+#: lectern/window.py:502
 #, python-brace-format
 msgid "This document contains {count} remote image, not loaded"
 msgid_plural "This document contains {count} remote images, not loaded"
 msgstr[0] "本文档包含 {count} 张未加载的外部图片"
 
-#: lectern/window.py:461
+#: lectern/window.py:640
 msgid "Couldn’t open link"
 msgstr "无法打开链接"
 
-#: lectern/window.py:490
+#: lectern/window.py:746
 msgid "No Document"
 msgstr "无文档"
 
-#: lectern/window.py:491
+#: lectern/window.py:747
 msgid "Open a Markdown file to view it here."
 msgstr "打开一个 Markdown 文件以在此查看。"
 
-#: lectern/window.py:494
+#: lectern/window.py:752
 msgid "Open File…"
 msgstr "打开文件…"
 
-#: lectern/window.py:502
+#: lectern/window.py:807
 msgid "Open Markdown File"
 msgstr "打开 Markdown 文件"
 
-#: lectern/window.py:503
+#: lectern/window.py:808
 msgid "Markdown files"
 msgstr "Markdown 文件"
 
-#: lectern/window.py:555
+#: lectern/window.py:873
 msgid "Couldn’t Open File"
 msgstr "无法打开文件"
 
-#: lectern/window.py:605
+#: lectern/window.py:933
 msgid "Reloaded"
 msgstr "已重新加载"
 
-#: lectern/window.py:608
+#: lectern/window.py:936
 msgid "File no longer available"
 msgstr "文件不再可用"

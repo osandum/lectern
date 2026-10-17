@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lectern 0.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/osandum/lectern/issues\n"
-"POT-Creation-Date: 2026-08-15 17:46+0200\n"
+"POT-Creation-Date: 2026-10-17 12:47+0200\n"
 "PO-Revision-Date: 2026-08-15 17:46+0200\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
@@ -19,215 +19,240 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lectern/document.py:88
+#: lectern/about.py:65
+msgid "translator-credits"
+msgstr ""
+
+#: lectern/about.py:74
+msgid "Built With"
+msgstr "Byggd med"
+
+#: lectern/about.py:84
+msgid "A read-only, Papers-style Markdown viewer."
+msgstr "En skrivskyddad Markdown-visare i Papers stil."
+
+#: lectern/document.py:95
 #, python-brace-format
 msgid "Could not read {path}"
 msgstr "Kunde inte läsa {path}"
 
-#: lectern/images.py:93
+#: lectern/images.py:110
 msgid "Remote image not loaded"
 msgstr "Extern bild inte inläst"
 
-#: lectern/images.py:112
+#: lectern/images.py:129
 msgid "Loading…"
 msgstr "Läser in…"
 
-#: lectern/images.py:115
+#: lectern/images.py:132
 msgid "Bad image URL"
 msgstr "Ogiltig bild-URL"
 
-#: lectern/images.py:141
+#: lectern/images.py:158
 msgid "Image not found"
 msgstr "Bilden hittades inte"
 
-#: lectern/images.py:146
+#: lectern/images.py:163
 msgid "Couldn’t load image"
 msgstr "Kunde inte läsa in bilden"
 
-#: lectern/images.py:152
+#: lectern/images.py:178 lectern/images.py:205
 msgid "Couldn’t fetch image"
 msgstr "Kunde inte hämta bilden"
 
-#: lectern/images.py:156
+#: lectern/images.py:183
 #, python-brace-format
 msgid "Image request failed ({status})"
 msgstr "Bildbegäran misslyckades ({status})"
 
-#: lectern/images.py:159
-msgid "Empty image response"
-msgstr "Tomt bildsvar"
-
-#: lectern/images.py:162
+#: lectern/images.py:188 lectern/images.py:215
 msgid "Image too large"
 msgstr "Bilden är för stor"
 
-#: lectern/images.py:167
+#: lectern/images.py:223
+msgid "Empty image response"
+msgstr "Tomt bildsvar"
+
+#: lectern/images.py:229
 msgid "Couldn’t decode image"
 msgstr "Kunde inte avkoda bilden"
 
-#: lectern/images.py:199
+#: lectern/images.py:261
 #, python-brace-format
 msgid "{reason}: {src}"
 msgstr "{reason}: {src}"
 
-#: lectern/main.py:74
-msgid "A read-only, Papers-style Markdown viewer."
-msgstr "En skrivskyddad Markdown-visare i Papers stil."
-
-#: lectern/printing.py:1066
+#: lectern/printing.py:1208
 #, python-brace-format
 msgid "Page {page} of {total}"
 msgstr "Sida {page} av {total}"
 
-#: lectern/window.py:53
+#: lectern/window.py:81
 msgid "Load"
 msgstr "Läs in"
 
-#: lectern/window.py:70
+#: lectern/window.py:99
 msgid "Find"
 msgstr "Sök"
 
-#: lectern/window.py:75
+#: lectern/window.py:106
+msgid "Open…"
+msgstr "Öppna…"
+
+#: lectern/window.py:108
+msgid "Open Recent"
+msgstr "Öppna senaste"
+
+#: lectern/window.py:112
 msgid "Print…"
 msgstr "Skriv ut…"
 
-#: lectern/window.py:76
+#: lectern/window.py:113
 msgid "Header and Footer When Printing"
 msgstr "Sidhuvud och sidfot vid utskrift"
 
-#: lectern/window.py:77 lectern/window.py:284
+#: lectern/window.py:114 lectern/window.py:433
 msgid "Document Properties"
 msgstr "Dokumentegenskaper"
 
-#: lectern/window.py:78
+#: lectern/window.py:115
 msgid "Keyboard Shortcuts"
 msgstr "Tangentbordsgenvägar"
 
-#: lectern/window.py:79
+#: lectern/window.py:116
 msgid "About Lectern"
 msgstr "Om Lectern"
 
-#: lectern/window.py:80
+#: lectern/window.py:119
 msgid "Main Menu"
 msgstr "Huvudmeny"
 
-#: lectern/window.py:138
+#: lectern/window.py:147
+msgid "No Recent Documents"
+msgstr "Inga senaste dokument"
+
+#: lectern/window.py:150
+msgid "Clear Recently Opened"
+msgstr "Rensa senast öppnade"
+
+#: lectern/window.py:207
 msgid "Find in document"
 msgstr "Sök i dokumentet"
 
-#: lectern/window.py:146
+#: lectern/window.py:215
 msgid "Whole word"
 msgstr "Hela ord"
 
-#: lectern/window.py:146
+#: lectern/window.py:215
 msgid "Match whole word only"
 msgstr "Matcha endast hela ord"
 
-#: lectern/window.py:148
+#: lectern/window.py:217
 msgid "Case"
 msgstr "Skiftläge"
 
-#: lectern/window.py:148
+#: lectern/window.py:217
 msgid "Case sensitive"
 msgstr "Skiftlägeskänslig"
 
-#: lectern/window.py:151
+#: lectern/window.py:220
 msgid "Previous match"
 msgstr "Föregående träff"
 
-#: lectern/window.py:153
+#: lectern/window.py:222
 msgid "Next match"
 msgstr "Nästa träff"
 
-#: lectern/window.py:159
+#: lectern/window.py:228
 msgid "Close"
 msgstr "Stäng"
 
-#: lectern/window.py:180
+#: lectern/window.py:249
 msgid "Zoom out"
 msgstr "Zooma ut"
 
-#: lectern/window.py:182
+#: lectern/window.py:251
 msgid "Zoom in"
 msgstr "Zooma in"
 
-#: lectern/window.py:286
+#: lectern/window.py:435
 #, python-brace-format
 msgid "Name: {name}"
 msgstr "Namn: {name}"
 
-#: lectern/window.py:287
+#: lectern/window.py:436
 #, python-brace-format
 msgid "Location: {location}"
 msgstr "Plats: {location}"
 
-#: lectern/window.py:288
+#: lectern/window.py:437
 #, python-brace-format
 msgid "Size: {size} bytes"
 msgstr "Storlek: {size} byte"
 
-#: lectern/window.py:289
+#: lectern/window.py:438
 #, python-brace-format
 msgid "Words: {count}"
 msgstr "Ord: {count}"
 
-#: lectern/window.py:290
+#: lectern/window.py:439
 #, python-brace-format
 msgid "Est. reading time: {minutes} min"
 msgstr "Uppskattad lästid: {minutes} min"
 
-#: lectern/window.py:295
+#: lectern/window.py:444
 msgid "OK"
 msgstr "OK"
 
-#: lectern/window.py:339
+#: lectern/window.py:488
 #, python-brace-format
 msgid "{position} / {count}"
 msgstr "{position} / {count}"
 
-#: lectern/window.py:341
+#: lectern/window.py:490
 msgid "No matches"
 msgstr "Inga träffar"
 
-#: lectern/window.py:353
+#: lectern/window.py:502
 #, python-brace-format
 msgid "This document contains {count} remote image, not loaded"
 msgid_plural "This document contains {count} remote images, not loaded"
 msgstr[0] "Detta dokument innehåller {count} extern bild som inte har lästs in"
-msgstr[1] "Detta dokument innehåller {count} externa bilder som inte har lästs in"
+msgstr[1] ""
+"Detta dokument innehåller {count} externa bilder som inte har lästs in"
 
-#: lectern/window.py:461
+#: lectern/window.py:640
 msgid "Couldn’t open link"
 msgstr "Kunde inte öppna länken"
 
-#: lectern/window.py:490
+#: lectern/window.py:746
 msgid "No Document"
 msgstr "Inget dokument"
 
-#: lectern/window.py:491
+#: lectern/window.py:747
 msgid "Open a Markdown file to view it here."
 msgstr "Öppna en Markdown-fil för att visa den här."
 
-#: lectern/window.py:494
+#: lectern/window.py:752
 msgid "Open File…"
 msgstr "Öppna fil…"
 
-#: lectern/window.py:502
+#: lectern/window.py:807
 msgid "Open Markdown File"
 msgstr "Öppna Markdown-fil"
 
-#: lectern/window.py:503
+#: lectern/window.py:808
 msgid "Markdown files"
 msgstr "Markdown-filer"
 
-#: lectern/window.py:555
+#: lectern/window.py:873
 msgid "Couldn’t Open File"
 msgstr "Kunde inte öppna filen"
 
-#: lectern/window.py:605
+#: lectern/window.py:933
 msgid "Reloaded"
 msgstr "Inläst igen"
 
-#: lectern/window.py:608
+#: lectern/window.py:936
 msgid "File no longer available"
 msgstr "Filen är inte längre tillgänglig"

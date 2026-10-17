@@ -62,3 +62,24 @@ def test_a_compiled_catalogue_is_actually_used(tmp_path):
     assert translation.ngettext("{count} item", "{count} items", 2) == "MANY-{count}"
     # A string genuinely absent from the catalogue still passes through.
     assert translation.gettext("Not translated anywhere") == "Not translated anywhere"
+
+
+def test_every_module_using_gettext_is_in_potfiles():
+    # A module missing from po/POTFILES.in never reaches the template, so
+    # its strings stay English in every language without anything saying
+    # so -- which is how Open Recent went untranslated from 0.4.0 on.
+    import os
+    import re
+    repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(repo, "po", "POTFILES.in"), encoding="utf-8") as f:
+        listed = {line.strip() for line in f if line.strip() and not line.startswith("#")}
+    using = set()
+    for root, _dirs, files in os.walk(os.path.join(repo, "lectern")):
+        for name in files:
+            path = os.path.join(root, name)
+            if not name.endswith(".py") or name == "i18n.py":
+                continue
+            with open(path, encoding="utf-8") as f:
+                if re.search(r"^from \.+i18n import", f.read(), re.M):
+                    using.add(os.path.relpath(path, repo))
+    assert using <= listed, f"missing from po/POTFILES.in: {sorted(using - listed)}"
