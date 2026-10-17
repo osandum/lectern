@@ -347,8 +347,21 @@ def _build_scene(diagram, measurer):
     for entity in diagram.entities.values():
         _size_entity(entity, measurer)
 
+    # RANK_GAP already holds one label and the cardinalities at both ends;
+    # what a relation adds is its plate and the clearance place_labels keeps
+    # around it, so that several labels fanning out of one entity into the
+    # same gap can stack along it instead of the gap fitting just one. That
+    # only bites past two of them, so most diagrams lay out as before.
+    vertical = diagram.direction in layered.VERTICAL_DIRECTIONS
+    edge_room = {}
+    for index, relation in enumerate(diagram.relations):
+        if relation.label:
+            text_w, text_h = measurer.size(relation.label, wrap=False, scale=LABEL_SCALE)
+            edge_room[index] = ((text_h if vertical else text_w)
+                                + 2 * LABEL_PAD + 2 * layered.LABEL_CLEARANCE)
     cells, routes, width, height = layered.layout(
-        diagram.entities, diagram.relations, diagram.direction, rank_gap=RANK_GAP)
+        diagram.entities, diagram.relations, diagram.direction,
+        rank_gap=RANK_GAP, edge_room=edge_room)
 
     scene = sc.Scene(width, height, [], measurer.font_px)
 

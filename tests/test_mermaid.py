@@ -799,6 +799,17 @@ def test_a_blocked_label_slides_along_its_own_edge():
     assert not 40.0 - 7.0 < y < 60.0 + 7.0
 
 
+def test_the_first_diagram_in_a_process_measures_like_every_later_one(monkeypatch):
+    # The shared measuring context used to be unhinted only by the first
+    # layout made on it, after Measurer had already read the line height
+    # off it hinted -- so whichever diagram came first had taller lines,
+    # and a test passed or failed depending on what ran before it.
+    from lectern.mermaid import text
+    monkeypatch.setattr(text, "_scratch_context", None)
+    first = plates(build(FAN_OUT))
+    assert plates(build(FAN_OUT)) == first
+
+
 @pytest.mark.parametrize("statement", [
     'A["player & team stats"] --> B',
     'A["review &amp; merge"] --> B',

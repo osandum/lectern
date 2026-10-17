@@ -68,11 +68,16 @@ _scratch_context = None
 def scratch_context():
     """A Pango context to measure against, with no window or printer
     behind it. One per process: building it costs an image surface, and
-    nothing about it varies per diagram."""
+    nothing about it varies per diagram.
+
+    Unhinted from the start, not first by make_layout: Measurer reads the
+    font's line height off this context before laying anything out, and
+    reading it hinted made the first diagram in a process measure every
+    line taller than all the diagrams after it."""
     global _scratch_context
     if _scratch_context is None:
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, 1, 1)
-        _scratch_context = PangoCairo.create_context(cairo.Context(surface))
+        _scratch_context = _unhint_metrics(PangoCairo.create_context(cairo.Context(surface)))
     return _scratch_context
 
 
