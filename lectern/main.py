@@ -8,10 +8,9 @@ import sys
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Gtk, Adw, Gio
+from gi.repository import Adw, Gio
 
-from . import __version__
-from .i18n import _
+from . import about
 from .window import LecternWindow
 
 APPLICATION_ID = "io.github.osandum.Lectern"
@@ -62,20 +61,7 @@ class LecternApplication(Adw.Application):
         win.present()
 
     def _on_about(self, action, param):
-        about = Adw.AboutDialog(
-            application_name="Lectern",
-            # Matches the icon actually installed at
-            # data/icons/hicolor/scalable/apps/APPLICATION_ID.svg (and
-            # the .desktop file's own Icon= line) -- resolved through
-            # the icon theme by name, same as any other themed icon.
-            application_icon=APPLICATION_ID,
-            version=__version__,
-            developer_name="Lectern contributors",
-            license_type=Gtk.License.GPL_2_0,
-            comments=_("A read-only, Papers-style Markdown viewer."),
-            website="https://github.com/osandum/lectern",
-        )
-        about.present(self.get_active_window())
+        about.present(self.get_active_window(), APPLICATION_ID)
 
 
 def main():
