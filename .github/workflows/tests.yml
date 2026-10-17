@@ -76,14 +76,23 @@ jobs:
     runs-on: ubuntu-latest
     # Pinned rather than :latest so a distro bump is a deliberate commit
     # instead of a surprise red build. Matches the development machine.
-    container: fedora:42
+    container:
+      image: fedora:44
+      # On Fedora 44 (not 42) gdk-pixbuf decodes images through glycin, which runs
+      # every decoder in a bubblewrap sandbox; bwrap can't create its
+      # namespaces in an unprivileged container, so without this every
+      # image (and clipboard) test fails with "Loader process exited early".
+      options: --privileged
     steps:
       - uses: actions/checkout@v4
 
+      # gobject-introspection is named explicitly: on Fedora 44 it carries
+      # the cairo typelib Gtk needs, and python3-gobject no longer pulls it
+      # in once weak dependencies are off.
       - name: Install GTK4, libadwaita and PyGObject
         run: |
           dnf install -y --setopt=install_weak_deps=False \
-            git python3-pip python3-gobject \
+            git python3-pip python3-gobject gobject-introspection \
             gtk4 libadwaita libsoup3 librsvg2 \
             xorg-x11-server-Xvfb dejavu-sans-fonts
 

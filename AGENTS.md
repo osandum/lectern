@@ -85,7 +85,7 @@ Both of the layout bugs the harness was built for (#5 no maximum measure, #6 zoo
 
 Tests assert tag placement on parsed-and-rendered buffers (e.g., parse `"hello **world**"`, locate `"world"`, assert it has the `strong` tag) — this is the pattern to follow for new renderer coverage rather than snapshot-testing rendered output.
 
-**CI** (`.github/workflows/`): `tests.yml` runs the suite on Ubuntu and in a Fedora container; `data.yml` validates the desktop entry and the SVGs. The two distros are there for the **GTK version** spread, not the Python one — a Python matrix is impossible anyway, since PyGObject is a system package carrying the typelibs and is pinned to the distro's Python. Both test jobs build the venv exactly as the README documents, so breaking the documented install breaks CI.
+**CI** (`.github/workflows/`): `tests.yml` runs the suite on Ubuntu and in a Fedora container; `data.yml` validates the desktop entry and the SVGs. The two distros are there for the **GTK version** spread, not the Python one — a Python matrix is impossible anyway, since PyGObject is a system package carrying the typelibs and is pinned to the distro's Python. Both test jobs build the venv exactly as the README documents, so breaking the documented install breaks CI. The Fedora container runs `--privileged` because glycin (gdk-pixbuf's image decoding on Fedora 44) sandboxes every decoder with bubblewrap, which can't start unprivileged; every image test fails without it, with nothing in the error pointing at the sandbox.
 
 **App ID:** `io.github.osandum.Lectern` — permanent once published to Flathub, so don't churn it. The Python package/import name (`lectern`) and the GitHub repo name (`osandum/lectern`) are independent of it and don't need to match.
 
