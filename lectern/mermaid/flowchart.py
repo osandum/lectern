@@ -136,13 +136,12 @@ class FlowEdge:
 class Subgraph:
     """A `subgraph ... end` block: a frame drawn around its members.
 
-    Membership is recorded rather than the layout being constrained by it.
-    The nodes are laid out exactly as they would be without the block, and
-    the frame is then fitted around wherever they landed -- with a check
-    (see _cluster_boxes) that nothing else landed inside it. That is the
-    honest version of a cut-down layout: a frame that has swallowed a node
-    it doesn't own says something the author didn't write, so the diagram
-    falls back to its source instead.
+    The layout keeps a block's members together and everything else out
+    of the band they occupy (layered.fence_groups), and the frame is then
+    fitted around wherever they landed -- with a check (see _cluster_boxes)
+    that nothing else landed inside it anyway. A frame that has swallowed a
+    node it doesn't own says something the author didn't write, so the
+    diagram falls back to its source instead.
     """
     __slots__ = ("key", "title", "members", "children", "parent")
 
@@ -513,6 +512,16 @@ def _title_height(group, measurer):
     return measurer.size(group.title, wrap=False, scale=CLUSTER_TITLE_SCALE)[1]
 
 
+def _title_box(group, x, y, w, title_h, measurer):
+    """(x, y, w, h) of a frame's title text, centred in its title band."""
+    if not group.title:
+        return (x, y, 0.0, 0.0)
+    text_w, text_h = measurer.size(
+        group.title, wrap=False, scale=CLUSTER_TITLE_SCALE)
+    return (x + (w - text_w) / 2, y + (title_h - text_h) / 2 + CLUSTER_PAD / 2,
+            text_w, text_h)
+
+
 def _reserve_cluster_room(chart, measurer):
     """Grow every node inside a subgraph by the room its frames need.
 
@@ -534,6 +543,15 @@ def _reserve_cluster_room(chart, measurer):
             node.w += margin
             node.h += margin
     return original
+
+
+def _group_paths(chart):
+    """Node key -> the keys of the blocks it sits in, outermost first."""
+    paths = {}
+    for group in chart.all_subgraphs():     # outermost first
+        for key in group.node_keys():
+            paths[key] = paths.get(key, ()) + (group.key,)
+    return paths
 
 
 def _cluster_boxes(chart, measurer):
@@ -589,7 +607,8 @@ def _build_scene(chart, measurer):
             edge_room[index] = ((text_h if vertical else text_w)
                                 + 2 * LABEL_PAD + 2 * EDGE_LABEL_CLEARANCE)
     cells, routes, width, height = layered.layout(
-        chart.nodes, chart.edges, chart.direction, edge_room=edge_room)
+        chart.nodes, chart.edges, chart.direction, edge_room=edge_room,
+        groups=_group_paths(chart))
 
     for key, (w, h) in original_sizes.items():
         chart.nodes[key].w, chart.nodes[key].h = w, h
@@ -631,6 +650,12 @@ def _build_scene(chart, measurer):
             labels.append((points, edge, text_w, text_h))
 
     obstacles = [(n.x - n.w / 2, n.y - n.h / 2, n.w, n.h) for n in chart.nodes.values()]
+    # A frame's title wins over an edge label drawn where it is (see the
+    # end), so a label has to keep clear of it, the same as of a node.
+    titles = [_title_box(group, x, y, w, title_h, measurer)
+              for group, x, y, w, _h, title_h in clusters]
+    obstacles += [(tx - LABEL_PAD, ty - LABEL_PAD, tw + 2 * LABEL_PAD, th + 2 * LABEL_PAD)
+                  for tx, ty, tw, th in titles if tw]
     centres = layered.place_labels(
         [(points, w + 2 * LABEL_PAD, h + 2 * LABEL_PAD) for points, _edge, w, h in labels],
         obstacles)
@@ -655,13 +680,10 @@ def _build_scene(chart, measurer):
             scene.add(sc.Link(node.x - node.w / 2, node.y - node.h / 2,
                               node.w, node.h, node.href))
 
-    for group, x, y, w, h, title_h in clusters:
+    for (group, _x, _y, _w, _h, _title_h), (title_x, title_y, text_w, text_h) \
+            in zip(clusters, titles):
         if not group.title:
             continue
-        text_w, text_h = measurer.size(
-            group.title, wrap=False, scale=CLUSTER_TITLE_SCALE)
-        title_x = x + (w - text_w) / 2
-        title_y = y + (title_h - text_h) / 2 + CLUSTER_PAD / 2
         scene.add(sc.Rect(title_x - LABEL_PAD, title_y - LABEL_PAD,
                           text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD,
                           radius=3.0, fill=sc.CLUSTER))

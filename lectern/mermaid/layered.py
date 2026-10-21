@@ -148,13 +148,67 @@ def neighbour_map(edges, cells, routes):
     return up, down
 
 
-def order_layers(layers, up, down, passes=4):
+def group_paths(paths, edges, routes):
+    """Extend `paths` (node key -> the groups it sits in, outermost first)
+    to the virtual nodes. An edge inside a block stays inside its frame; one
+    into or out of a block runs with the cells of its more deeply nested
+    end, rather than being routed all the way around the frame; one between
+    two unrelated blocks runs with neither."""
+    extended = dict(paths)
+    for index, edge in enumerate(edges):
+        if not routes[index]:
+            continue
+        src, dst = paths.get(edge.src, ()), paths.get(edge.dst, ())
+        deeper, shallower = (src, dst) if len(src) >= len(dst) else (dst, src)
+        if deeper[:len(shallower)] == shallower:
+            path = deeper
+        else:
+            path = []
+            for a, b in zip(src, dst):
+                if a != b:
+                    break
+                path.append(a)
+            path = tuple(path)
+        for key in routes[index]:
+            extended[key] = path
+    return extended
+
+
+def grouped_sort(layer, score, paths, depth=0):
+    """Sort `layer` by `score`, keeping every group's members next to each
+    other: a group sorts as one block, by its members' mean score, and its
+    members are sorted the same way inside it. This is dagre's
+    sortSubgraph, and what keeps a node that isn't a block's from landing
+    between two that are."""
+    scores = {cell.key: score(cell) for cell in layer}
+    blocks = {}
+    for cell in layer:
+        path = paths.get(cell.key, ())
+        # A cell in no group at this depth is a block of its own.
+        block = (True, path[depth]) if len(path) > depth else (False, cell.key)
+        blocks.setdefault(block, []).append(cell)
+    ordered = []
+    for (grouped, _key), members in blocks.items():
+        if grouped:
+            members = grouped_sort(members, lambda cell: scores[cell.key],
+                                   paths, depth + 1)
+        mean = sum(scores[cell.key] for cell in members) / len(members)
+        ordered.append((mean, members))
+    ordered.sort(key=lambda item: item[0])
+    return [cell for _mean, members in ordered for cell in members]
+
+
+def order_layers(layers, up, down, passes=4, paths=None):
     """Barycentre sweeps: repeatedly reorder each layer by the average
     position of its neighbours in the layer just processed. Two or three
     passes get most of the crossings a diagram-sized graph has; more stops
     paying."""
+    paths = paths or {}
     cells_by_key = {cell.key: cell for layer in layers for cell in layer}
     for cell_list in layers:
+        for position, cell in enumerate(cell_list):
+            cell.order = position
+        cell_list[:] = grouped_sort(cell_list, lambda cell: cell.order, paths)
         for position, cell in enumerate(cell_list):
             cell.order = position
 
@@ -166,7 +220,7 @@ def order_layers(layers, up, down, passes=4):
                 # its current position rather than being swept to the
                 # front, which is what a 0 barycentre would do.
                 return sum(positions) / len(positions) if positions else cell.order
-            cell_list.sort(key=barycentre)
+            cell_list[:] = grouped_sort(cell_list, barycentre, paths)
             for position, cell in enumerate(cell_list):
                 cell.order = position
 
@@ -185,7 +239,7 @@ def _rank_size(cell, vertical):
     return cell.h if vertical else cell.w
 
 
-def place(layers, up, down, vertical, rank_gaps):
+def place(layers, up, down, vertical, rank_gaps, paths=None):
     """Assign every cell a centre on both axes.
 
     Rank axis: layers are stacked by their tallest (widest) member, the
@@ -194,7 +248,12 @@ def place(layers, up, down, vertical, rank_gaps):
     their neighbours in adjacent layers and re-separate. Sweeping in both
     directions keeps a node with only successors (a source) as
     well-aligned as one with only predecessors.
+
+    `paths` (see group_paths) keeps each group's cells together in every
+    layer, and then clears the cross-axis band the group occupies of
+    everything that isn't in it (fence_groups).
     """
+    paths = paths or {}
     cells_by_key = {cell.key: cell for layer in layers for cell in layer}
     positions = {}
 
@@ -239,8 +298,10 @@ def place(layers, up, down, vertical, rank_gaps):
                 if keys:
                     positions[cell.key][0] = sum(
                         positions[cells_by_key[k].key][0] for k in keys) / len(keys)
-            layer.sort(key=lambda cell: positions[cell.key][0])
+            layer[:] = grouped_sort(layer, lambda cell: positions[cell.key][0], paths)
             separate(layer)
+
+    fence_groups(layers, positions, paths, vertical)
 
     # Nothing above pins the diagram to the origin; shift it there so the
     # scene's own box starts at (0, 0).
@@ -256,6 +317,67 @@ def place(layers, up, down, vertical, rank_gaps):
                 cell.x, cell.y = rank, cross
 
 
+def fence_groups(layers, positions, paths, vertical):
+    """Push every cell that isn't a group's out of the band the group
+    spans across the layers it occupies.
+
+    Keeping a group's cells contiguous within each layer isn't enough for a
+    frame: the frame is one rectangle over all of its layers, and an
+    outsider sitting in a layer the group has few cells in can still land
+    inside it on the cross axis. Each layer's outsiders before the group's
+    block go below the band, those after it above, the way dagre's border
+    nodes hold them out. Moving a cell can widen another group's band, so
+    this repeats until nothing moves.
+    """
+    # Ordered, not a set: string hashing is salted per process, and the
+    # same diagram must lay out the same way every time it's opened.
+    groups = list(dict.fromkeys(group for path in paths.values() for group in path))
+    if not groups:
+        return
+
+    def half(cell):
+        return _cross_size(cell, vertical) / 2
+
+    def members(group, layer):
+        return [i for i, cell in enumerate(layer)
+                if group in paths.get(cell.key, ())]
+
+    for _ in range(4 * len(groups)):
+        moved = False
+        for group in groups:
+            spanned = [layer for layer in layers if members(group, layer)]
+            ranks = range(layers.index(spanned[0]), layers.index(spanned[-1]) + 1)
+            inside = [cell for layer in spanned for cell in layer
+                      if group in paths.get(cell.key, ())]
+            low = min(positions[c.key][0] - half(c) for c in inside) - NODE_GAP
+            high = max(positions[c.key][0] + half(c) for c in inside) + NODE_GAP
+            for rank in ranks:
+                layer = layers[rank]
+                own = members(group, layer)
+                if own:
+                    before, after = range(own[0]), range(own[-1] + 1, len(layer))
+                else:
+                    middle = (low + high) / 2
+                    split = sum(1 for cell in layer if positions[cell.key][0] < middle)
+                    before, after = range(split), range(split, len(layer))
+                limit = low
+                for i in reversed(before):
+                    cell = layer[i]
+                    if positions[cell.key][0] + half(cell) > limit + 1e-6:
+                        positions[cell.key][0] = limit - half(cell)
+                        moved = True
+                    limit = positions[cell.key][0] - half(cell) - NODE_GAP
+                limit = high
+                for i in after:
+                    cell = layer[i]
+                    if positions[cell.key][0] - half(cell) < limit - 1e-6:
+                        positions[cell.key][0] = limit + half(cell)
+                        moved = True
+                    limit = positions[cell.key][0] + half(cell) + NODE_GAP
+        if not moved:
+            break
+
+
 def mirror(cells, direction, width, height):
     """BT and RL are TD and LR drawn backwards along the rank axis."""
     for cell in cells.values():
@@ -265,7 +387,8 @@ def mirror(cells, direction, width, height):
             cell.x = width - cell.x
 
 
-def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None):
+def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None,
+           groups=None):
     """Rank, order and place `nodes`. Returns (cells, routes, width,
     height); the nodes themselves come back with x/y/rank filled in.
 
@@ -281,12 +404,18 @@ def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None):
     one sized for the typical label lets a long plate cover the gap
     entirely, its ends disappearing under the nodes either side. Several
     labelled edges sharing an end widen it by all of their rooms together.
+
+    `groups` maps a node's key to the groups (a flowchart's subgraphs) it
+    sits in, outermost first. Grouped nodes are kept together and
+    everything else is kept out of the band they occupy, so a frame fitted
+    around them afterwards encloses only its own.
     """
     vertical = direction in VERTICAL_DIRECTIONS
     rank_nodes(nodes, edges)
     cells, layers, routes = build_layers(nodes, edges)
     up, down = neighbour_map(edges, cells, routes)
-    order_layers(layers, up, down)
+    paths = group_paths(groups or {}, edges, routes)
+    order_layers(layers, up, down, paths=paths)
     rank_gaps = [rank_gap] * len(layers)
     # Labelled edges crossing a gap from (or to) the same node fan out of
     # one point, so their labels all want the same spot beside it. The gap
@@ -306,7 +435,7 @@ def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None):
                 bundles[(low, end)] = bundles.get((low, end), 0.0) + room
     for (low, _end), room in bundles.items():
         rank_gaps[low] = max(rank_gaps[low], room)
-    place(layers, up, down, vertical, rank_gaps)
+    place(layers, up, down, vertical, rank_gaps, paths)
     width = max((cell.x + cell.w / 2 for cell in cells.values()), default=0.0)
     height = max((cell.y + cell.h / 2 for cell in cells.values()), default=0.0)
     mirror(cells, direction, width, height)

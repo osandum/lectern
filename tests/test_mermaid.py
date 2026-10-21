@@ -231,6 +231,26 @@ def test_a_subgraph_frame_encloses_its_own_nodes_and_no_others():
         assert enclosed == (shape.text in inside or shape.text == "Group"), shape.text
 
 
+def test_an_outsider_ranked_between_members_is_kept_out_of_the_frame():
+    """X sits a rank between A and B, both in the block, so a layout
+    ignoring membership puts it right inside their frame -- which used to
+    mean the whole diagram fell back to source."""
+    for direction in ("TD", "LR"):
+        scene = build(
+            f"flowchart {direction}\n"
+            "  subgraph g[Group]\n    A[Inside one]\n    B[Inside two]\n  end\n"
+            "  S[Start] --> A\n  S --> B\n  A --> X[Outside] --> B\n")
+        frame = next(shape for shape in boxes(scene)
+                     if getattr(shape, "fill", None) == sc.CLUSTER)
+        outside = [shape for shape in scene.shapes if isinstance(shape, sc.Text)
+                   and shape.text in ("Start", "Outside")]
+        assert len(outside) == 2
+        for shape in outside:
+            x0, y0, x1, y1 = sc._point_extents(shape)
+            assert (x1 <= frame.x or x0 >= frame.x + frame.w
+                    or y1 <= frame.y or y0 >= frame.y + frame.h), (direction, shape.text)
+
+
 def test_a_frame_that_would_swallow_a_foreign_node_falls_back():
     """Two blocks whose members the layout interleaves can't both be framed
     honestly. Better an honest code block than a grouping the author never
