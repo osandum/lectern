@@ -95,6 +95,9 @@ class EntityDiagram:
         self.entities = entities
         self.relations = relations
         self.direction = direction
+        # Mermaid has no setting for these; it rounds them like a
+        # flowchart's default edges.
+        self.curve = layered.DEFAULT_CURVE
 
     def build_scene(self, measurer):
         return _build_scene(self, measurer)
@@ -376,10 +379,13 @@ def _build_scene(diagram, measurer):
             points = layered.self_loop_points(cells[relation.src])
         else:
             points = layered.edge_points(cells, routes, index, relation)
-        scene.add(sc.Line(points, dashed=relation.dashed,
+        drawn = layered.curved(points, diagram.curve, [
+            (e.x - e.w / 2, e.y - e.h / 2, e.w, e.h) for key, e in diagram.entities.items()
+            if key not in (relation.src, relation.dst)])
+        scene.add(sc.Line(drawn, dashed=relation.dashed,
                           head=relation.head, tail=relation.tail))
         if relation.label:
-            labels.append((points, relation.label))
+            labels.append((points, drawn, relation.label))
         for from_start, cardinality in ((True, relation.src_card),
                                         (False, relation.dst_card)):
             if not cardinality:
@@ -392,10 +398,10 @@ def _build_scene(diagram, measurer):
             obstacles.append((cx - text_w / 2, cy - text_h / 2, text_w, text_h))
 
     requests = []
-    for points, label in labels:
+    for points, drawn, label in labels:
         text_w, text_h = measurer.size(label, wrap=False, scale=LABEL_SCALE)
-        requests.append((points, text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD))
-    for (points, label), (cx, cy) in zip(labels, layered.place_labels(requests, obstacles)):
+        requests.append((points, text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD, drawn))
+    for (_points, _drawn, label), (cx, cy) in zip(labels, layered.place_labels(requests, obstacles)):
         _plate_label(scene, measurer, label, cx, cy)
 
     for entity in diagram.entities.values():

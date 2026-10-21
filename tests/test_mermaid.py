@@ -22,7 +22,8 @@ from markdown_it.tree import SyntaxTreeNode
 
 from lectern import mermaid
 from lectern.document import make_parser
-from lectern.mermaid import flowchart, scene as sc, text as textlib
+from lectern.mermaid import flowchart, layered, scene as sc, text as textlib
+from lectern.mermaid.common import parse_init
 from lectern.renderer import MarkdownRenderer
 from lectern.tags import create_tag_table
 
@@ -392,6 +393,75 @@ def test_a_long_edge_label_fits_between_the_nodes_it_joins(direction):
     else:
         assert first.y + first.h < plate.y
         assert plate.y + plate.h < second.y
+
+
+# -- edge curves -----------------------------------------------------------
+
+# A --> C spans two ranks, so it is routed through a virtual node and bends.
+BENT = "flowchart TD\n  A --> B --> C\n  A -- skips B --> C\n"
+LINEAR = "%%{init: {'flowchart': {'curve': 'linear'}}}%%\n"
+
+
+@pytest.mark.parametrize("directive, settings", [
+    ("%%{init: {'flowchart': {'curve': 'linear'}}}%%", {"flowchart": {"curve": "linear"}}),
+    ('%%{init: {"flowchart": {"curve": "linear"}}}%%', {"flowchart": {"curve": "linear"}}),
+    ("%%{ initialize: { flowchart: { curve: 'linear', }, } }%%", {"flowchart": {"curve": "linear"}}),
+    ("%%{init: {'flowchart': }}%%", {}),     # unparseable: dropped, not fatal
+    ("%% just a comment", {}),
+])
+def test_init_directive_is_read_leniently(directive, settings):
+    assert parse_init(directive + "\nflowchart TD\n  A\n") == settings
+
+
+def test_flowchart_edges_curve_unless_asked_not_to():
+    assert mermaid.parse(BENT).curve == "basis"
+    assert mermaid.parse(LINEAR + BENT).curve == "linear"
+    # Mermaid's other curves all round corners; they draw as the default.
+    assert mermaid.parse(
+        "%%{init: {'flowchart': {'curve': 'cardinal'}}}%%\n" + BENT).curve == "basis"
+
+
+def longest_line(scene):
+    return max((s for s in scene.shapes if isinstance(s, sc.Line)),
+               key=lambda line: len(line.points))
+
+
+def test_a_curve_keeps_the_routes_ends_and_end_directions():
+    route = [(0.0, 0.0), (0.0, 100.0), (100.0, 200.0), (100.0, 300.0)]
+    path = layered.curved(route)
+    assert path[0] == route[0] and path[-1] == route[-1]
+    assert len(path) > len(route)
+
+    def direction(a, b):
+        length = ((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2) ** 0.5
+        return round((b[0] - a[0]) / length, 6), round((b[1] - a[1]) / length, 6)
+    # Arrowheads are drawn off the last segment, so they must not turn.
+    assert direction(path[1], path[0]) == direction(route[1], route[0])
+    assert direction(path[-2], path[-1]) == direction(route[-2], route[-1])
+    assert layered.curved(route, "linear") == route
+
+
+def test_a_curve_that_would_cut_through_a_box_is_not_drawn_through_it():
+    route = [(0.0, 0.0), (0.0, 100.0), (100.0, 100.0)]
+    corner_box = (2.0, 70.0, 26.0, 26.0)    # just inside the bend
+    assert any(2 < x < 28 and 70 < y < 96 for x, y in layered.curved(route))
+    path = layered.curved(route, boxes=[corner_box])
+    assert not any(2 < x < 28 and 70 < y < 96 for x, y in path)
+    assert path[0] == route[0] and path[-1] == route[-1]
+
+
+def test_a_bent_edge_is_drawn_curved_and_its_label_sits_on_it():
+    curved_line = longest_line(build(BENT))
+    straight_line = longest_line(build(LINEAR + BENT))
+    assert len(straight_line.points) == 3
+    assert len(curved_line.points) > 3
+
+    scene = build(BENT)
+    line = longest_line(scene)
+    plate = next(s for s in scene.shapes if isinstance(s, sc.Rect) and s.fill == sc.LABEL_BG)
+    centre = (plate.x + plate.w / 2, plate.y + plate.h / 2)
+    nearest = layered._nearest_on(line.points, centre)
+    assert ((nearest[0] - centre[0]) ** 2 + (nearest[1] - centre[1]) ** 2) ** 0.5 < 0.5
 
 
 # -- sequence diagrams -----------------------------------------------------

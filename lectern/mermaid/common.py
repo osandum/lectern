@@ -1,5 +1,6 @@
 """What more than one diagram parser needs, kept out of any one of them
 so the others don't have to import a type they don't use."""
+import json
 import re
 
 _BR_RE = re.compile(r"<br\s*/?>", re.I)
@@ -20,6 +21,12 @@ _CLICK_RE = re.compile(r"""
     (?:\s+_\w+)?
     \s*$
 """, re.X | re.I)
+
+
+# `%%{init: {...}}%%`, mermaid's in-diagram configuration directive.
+_DIRECTIVE_RE = re.compile(r"%%\{\s*(?:init|initialize)\s*:\s*(\{.*?\})\s*\}%%", re.S)
+_BARE_KEY_RE = re.compile(r"([{,]\s*)([A-Za-z_][\w-]*)\s*:")
+_TRAILING_COMMA_RE = re.compile(r",\s*([}\]])")
 
 
 class Unsupported(Exception):
@@ -55,3 +62,35 @@ def parse_click(statement):
     if not match or not match.group("href"):
         return None
     return match.group("click_key") or match.group("link_key"), match.group("href")
+
+
+def parse_init(source):
+    """The settings in a diagram's `%%{init: ...}%%` directives, merged
+    (later wins), or {} if there are none.
+
+    Mermaid reads the directive leniently -- single quotes and bare keys
+    are as common in the wild as strict JSON -- so it is coaxed into JSON
+    before parsing. One that still won't parse is dropped rather than
+    failing the diagram: it is styling, and the diagram it styles is all
+    there without it.
+    """
+    settings = {}
+    for body in _DIRECTIVE_RE.findall(source):
+        text = _TRAILING_COMMA_RE.sub(r"\1", _BARE_KEY_RE.sub(r'\1"\2":', body.replace("'", '"')))
+        try:
+            value = json.loads(text)
+        except ValueError:
+            continue
+        if isinstance(value, dict):
+            settings.update(value)
+    return settings
+
+
+def curve_setting(source, section, default):
+    """The edge curve a directive asks `section` (e.g. "flowchart") for.
+    Only "linear" is drawn as asked; mermaid's other curves are all ways of
+    rounding the corners, and draw as the default basis spline -- a
+    slightly different curve misstates nothing."""
+    config = parse_init(source).get(section)
+    curve = config.get("curve") if isinstance(config, dict) else None
+    return "linear" if curve == "linear" else default

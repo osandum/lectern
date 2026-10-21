@@ -19,7 +19,7 @@ import re
 
 from . import layered
 from . import scene as sc
-from .common import Unsupported, parse_click, parse_label
+from .common import Unsupported, curve_setting, parse_click, parse_label
 
 # -- geometry, in nominal 96dpi pixels -------------------------------------
 
@@ -161,8 +161,9 @@ class Subgraph:
 
 
 class Flowchart:
-    def __init__(self, direction, nodes, edges, subgraphs=()):
+    def __init__(self, direction, nodes, edges, subgraphs=(), curve=layered.DEFAULT_CURVE):
         self.direction = direction
+        self.curve = curve          # "basis" | "linear", see layered.curved
         self.nodes = nodes          # ordered dict: key -> FlowNode
         self.edges = edges
         self.subgraphs = list(subgraphs)   # top-level blocks; each may nest
@@ -413,7 +414,8 @@ def parse(source):
     for key, href in hrefs.items():
         if key in nodes:
             nodes[key].href = href
-    return Flowchart(direction, nodes, edges, subgraphs)
+    return Flowchart(direction, nodes, edges, subgraphs,
+                     curve_setting(source, "flowchart", layered.DEFAULT_CURVE))
 
 
 # -- sizing ----------------------------------------------------------------
@@ -637,8 +639,11 @@ def _build_scene(chart, measurer):
             points = layered.self_loop_points(cells[edge.src])
         else:
             points = layered.edge_points(cells, routes, index, edge)
+        drawn = layered.curved(points, chart.curve, [
+            (n.x - n.w / 2, n.y - n.h / 2, n.w, n.h) for key, n in chart.nodes.items()
+            if key not in (edge.src, edge.dst)])
         scene.add(sc.Line(
-            points,
+            drawn,
             dashed=_DASHED[edge.style],
             width=_STROKE_WIDTH[edge.style],
             head=edge.head,
@@ -647,7 +652,7 @@ def _build_scene(chart, measurer):
         if edge.label:
             text_w, text_h = measurer.size(
                 edge.label, wrap=False, scale=EDGE_LABEL_FONT_SCALE)
-            labels.append((points, edge, text_w, text_h))
+            labels.append((points, drawn, edge, text_w, text_h))
 
     obstacles = [(n.x - n.w / 2, n.y - n.h / 2, n.w, n.h) for n in chart.nodes.values()]
     # A frame's title wins over an edge label drawn where it is (see the
@@ -657,9 +662,10 @@ def _build_scene(chart, measurer):
     obstacles += [(tx - LABEL_PAD, ty - LABEL_PAD, tw + 2 * LABEL_PAD, th + 2 * LABEL_PAD)
                   for tx, ty, tw, th in titles if tw]
     centres = layered.place_labels(
-        [(points, w + 2 * LABEL_PAD, h + 2 * LABEL_PAD) for points, _edge, w, h in labels],
+        [(points, w + 2 * LABEL_PAD, h + 2 * LABEL_PAD, drawn)
+         for points, drawn, _edge, w, h in labels],
         obstacles)
-    for (_points, edge, text_w, text_h), (cx, cy) in zip(labels, centres):
+    for (_points, _drawn, edge, text_w, text_h), (cx, cy) in zip(labels, centres):
         scene.add(sc.Rect(
             cx - text_w / 2 - LABEL_PAD, cy - text_h / 2 - LABEL_PAD,
             text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD,

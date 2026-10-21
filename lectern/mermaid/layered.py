@@ -491,6 +491,79 @@ def self_loop_points(cell):
     ]
 
 
+# Mermaid's own default for flowcharts; "linear" is the straight route.
+DEFAULT_CURVE = "basis"
+# Straight pieces each cubic of a curved edge is drawn as. A span is one
+# rank gap or so, a hundred-odd pixels, where this is smooth at any zoom.
+_CURVE_STEPS = 16
+
+
+def curved(points, curve=DEFAULT_CURVE, boxes=()):
+    """The polyline an edge is drawn as: `points` themselves for "linear",
+    otherwise a uniform cubic B-spline through them -- d3's curveBasis,
+    which mermaid draws its edges with by default.
+
+    The spline is flattened here rather than handed to cairo as curves, so
+    everything downstream of a scene.Line -- arrowheads off its last
+    segment, the scene's extents, label placement -- keeps working on
+    straight segments. It starts and ends on the route's end points, leaves
+    and arrives along the route's first and last segments (so heads point
+    as they did).
+
+    Rounding a corner cuts across it, though, and a box sitting just
+    inside a corner -- a node beside the virtual one an edge bends at --
+    gets cut through. `boxes` are the (x, y, w, h) the edge must stay out
+    of (every box but its own two ends'). One that would be crossed gets a
+    tighter curve, each corner counted twice so the spline hugs it, and
+    failing that the straight route, which the layout has kept clear.
+    """
+    if curve == "linear" or len(points) < 3:
+        return list(points)
+    for multiplicity in (1, 2):
+        inner = [point for point in points[1:-1] for _ in range(multiplicity)]
+        out = _basis([points[0]] * 3 + inner + [points[-1]] * 3)
+        if not any(x < px < x + w and y < py < y + h
+                   for x, y, w, h in boxes for px, py in out):
+            return out
+    return list(points)
+
+
+def _basis(controls):
+    """Flatten the uniform cubic B-spline over `controls`, whose first and
+    last points are each repeated three times so it ends on them."""
+    windows = list(zip(controls, controls[1:], controls[2:], controls[3:]))
+    out = [controls[0]]
+    for index, ((x0, y0), (x1, y1), (x2, y2), (x3, y3)) in enumerate(windows):
+        # The first and last pieces are straight: the edge's way out of
+        # and into its boxes, the stretch the arrowheads point along.
+        steps = 1 if index in (0, len(windows) - 1) else _CURVE_STEPS
+        for step in range(1, steps + 1):
+            t = step / steps
+            b0 = (1 - t) ** 3 / 6
+            b1 = (3 * t ** 3 - 6 * t ** 2 + 4) / 6
+            b2 = (-3 * t ** 3 + 3 * t ** 2 + 3 * t + 1) / 6
+            b3 = t ** 3 / 6
+            out.append((b0 * x0 + b1 * x1 + b2 * x2 + b3 * x3,
+                        b0 * y0 + b1 * y1 + b2 * y2 + b3 * y3))
+    out[-1] = controls[-1]
+    return out
+
+
+def _nearest_on(path, point):
+    """The point of polyline `path` nearest to `point`."""
+    px, py = point
+    best, best_d = path[0], None
+    for (x1, y1), (x2, y2) in zip(path, path[1:]):
+        dx, dy = x2 - x1, y2 - y1
+        span = dx * dx + dy * dy
+        t = 0.0 if span == 0 else max(0.0, min(1.0, ((px - x1) * dx + (py - y1) * dy) / span))
+        x, y = x1 + dx * t, y1 + dy * t
+        d = (x - px) ** 2 + (y - py) ** 2
+        if best_d is None or d < best_d:
+            best, best_d = (x, y), d
+    return best
+
+
 def label_position(points):
     """Midpoint of the edge's longest segment -- the place with the most
     room for a plate, rather than the geometric middle, which on an
@@ -534,7 +607,10 @@ def _overlap_area(a, b):
 def place_labels(requests, obstacles=()):
     """Centres for edge labels that don't sit on top of each other.
 
-    `requests` is a list of (edge points, plate width, plate height), and
+    `requests` is a list of (edge points, plate width, plate height), or
+    of (route, width, height, drawn path) for a curved edge: positions are
+    chosen along the straight route, whose segments say where the room is,
+    and then moved onto the curve actually drawn. And
     `obstacles` the (x, y, w, h) boxes no plate should cover -- the nodes,
     and anything already placed such as cardinalities. Labels are placed
     in order. Each keeps `label_position` when that is clear, so a diagram
@@ -549,9 +625,11 @@ def place_labels(requests, obstacles=()):
     """
     taken = list(obstacles)
     centres = []
-    for points, w, h in requests:
+    for points, w, h, *drawn in requests:
         candidates = [label_position(points)]
         candidates += [_point_along(points, f) for f in _LABEL_FRACTIONS]
+        if drawn and drawn[0] is not points:
+            candidates = [_nearest_on(drawn[0], c) for c in candidates]
         best, best_cost = None, None
         for cx, cy in candidates:
             plate = (cx - w / 2 - LABEL_CLEARANCE, cy - h / 2 - LABEL_CLEARANCE,
