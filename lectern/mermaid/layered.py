@@ -26,8 +26,17 @@ VERTICAL_DIRECTIONS = ("TD", "BT")
 class Virtual:
     """A placeholder node an edge is routed through when it spans more
     than one rank. Without them a long edge cuts straight across whatever
-    happens to sit in the ranks between its ends."""
-    __slots__ = ("key", "w", "h", "x", "y", "rank", "order")
+    happens to sit in the ranks between its ends.
+
+    Once placed, a virtual spans its whole layer along the rank axis (see
+    place), and the edge runs straight through it from one side of the
+    layer to the other. Bending at a point in the layer's middle instead
+    sends the edge diagonally across half of the layer on either side --
+    through the boxes beside it, whenever its ends are far apart across.
+
+    `label` is the index of the edge whose label this virtual makes room
+    for, if any (see layout)."""
+    __slots__ = ("key", "w", "h", "x", "y", "rank", "order", "label", "across")
 
     def __init__(self, key, rank):
         self.key = key
@@ -35,6 +44,8 @@ class Virtual:
         self.x = self.y = 0.0
         self.rank = rank
         self.order = 0
+        self.label = None
+        self.across = True     # layers stacked top to bottom (see place)
 
     @property
     def virtual(self):
@@ -307,6 +318,12 @@ def place(layers, up, down, vertical, rank_gaps, paths=None, rank=None):
         extent = max((_rank_size(cell, vertical) for cell in layer), default=0.0)
         for cell in layer:
             positions[cell.key] = [0.0, rank_pos + extent / 2]
+            if isinstance(cell, Virtual):
+                cell.across = vertical
+                if vertical:
+                    cell.h = extent
+                else:
+                    cell.w = extent
         rank_pos += extent + gap
 
     def pack(layer):
@@ -521,7 +538,7 @@ def mirror(cells, direction, width, height):
 
 
 def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None,
-           groups=None):
+           groups=None, label_sizes=None):
     """Rank, order and place `nodes`. Returns (cells, routes, width,
     height); the nodes themselves come back with x/y/rank filled in.
 
@@ -542,10 +559,23 @@ def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None,
     sits in, outermost first. Grouped nodes are kept together and
     everything else is kept out of the band they occupy, so a frame fitted
     around them afterwards encloses only its own.
+
+    `label_sizes` maps an edge's index to its label plate's (w, h). An
+    edge spanning several ranks has its middle virtual grown to the
+    plate's size, the way dagre makes a label a node of its own: the
+    layer then keeps a slot for the label beside the boxes in it, rather
+    than the label being dropped wherever the edge happens to run (see
+    label_anchor).
     """
     vertical = direction in VERTICAL_DIRECTIONS
     rank_nodes(nodes, edges)
     cells, layers, routes = build_layers(nodes, edges)
+    for index, (w, h) in (label_sizes or {}).items():
+        chain = routes.get(index)
+        if chain:
+            cell = cells[chain[len(chain) // 2]]
+            cell.w, cell.h = max(cell.w, w), max(cell.h, h)
+            cell.label = index
     up, down = neighbour_map(edges, cells, routes)
     paths = group_paths(groups or {}, edges, routes)
     rank = order_layers(layers, up, down, paths=paths)
@@ -595,12 +625,32 @@ def boundary_point(cell, toward, shape=None):
     half_w, half_h = cell.w / 2, cell.h / 2
     scale = min(half_w / abs(dx) if dx else float("inf"),
                 half_h / abs(dy) if dy else float("inf"))
-    return cx + dx * scale, cy + dy * scale
+    x, y = cx + dx * scale, cy + dy * scale
+    cap = getattr(cell, "cap", 0.0)
+    if cap and abs(abs(y - cy) - half_h) < 1e-6:
+        # A cylinder's top and bottom are curved: down (or up) onto the
+        # rim, or an edge arriving off-centre stops short of it.
+        across = min(1.0, abs(x - cx) / half_w)
+        drop = cap * (1 - (1 - across * across) ** 0.5)
+        y += drop if y < cy else -drop
+    return x, y
 
 
 def edge_points(cells, routes, index, edge):
     src, dst = cells[edge.src], cells[edge.dst]
-    middle = [(cells[key].x, cells[key].y) for key in routes[index]]
+    middle = []
+    previous = (src.x, src.y)
+    for key in routes[index]:
+        cell = cells[key]
+        # In one side of the virtual's layer and out of the other (see
+        # Virtual), whichever side faces the way the edge is coming from.
+        if cell.across:
+            ends = [(cell.x, cell.y - cell.h / 2), (cell.x, cell.y + cell.h / 2)]
+        else:
+            ends = [(cell.x - cell.w / 2, cell.y), (cell.x + cell.w / 2, cell.y)]
+        ends.sort(key=lambda end: (end[0] - previous[0]) ** 2 + (end[1] - previous[1]) ** 2)
+        middle += ends
+        previous = ends[-1]
     first_target = middle[0] if middle else (dst.x, dst.y)
     last_source = middle[-1] if middle else (src.x, src.y)
     start = boundary_point(src, first_target)
@@ -697,6 +747,16 @@ def _nearest_on(path, point):
     return best
 
 
+def label_anchor(cells, routes, index):
+    """The centre of the slot layout() kept for edge `index`'s label, or
+    None if it has none."""
+    for key in routes.get(index, ()):
+        cell = cells[key]
+        if cell.label == index:
+            return cell.x, cell.y
+    return None
+
+
 def label_position(points):
     """Midpoint of the edge's longest segment -- the place with the most
     room for a plate, rather than the geometric middle, which on an
@@ -743,7 +803,9 @@ def place_labels(requests, obstacles=()):
     `requests` is a list of (edge points, plate width, plate height), or
     of (route, width, height, drawn path) for a curved edge: positions are
     chosen along the straight route, whose segments say where the room is,
-    and then moved onto the curve actually drawn. And
+    and then moved onto the curve actually drawn. A fifth item, if
+    present and not None, is the spot to try first instead of
+    `label_position` (see label_anchor). And
     `obstacles` the (x, y, w, h) boxes no plate should cover -- the nodes,
     and anything already placed such as cardinalities. Labels are placed
     in order. Each keeps `label_position` when that is clear, so a diagram
@@ -758,11 +820,13 @@ def place_labels(requests, obstacles=()):
     """
     taken = list(obstacles)
     centres = []
-    for points, w, h, *drawn in requests:
-        candidates = [label_position(points)]
+    for points, w, h, *rest in requests:
+        drawn = rest[0] if rest else None
+        anchor = rest[1] if len(rest) > 1 else None
+        candidates = [anchor or label_position(points)]
         candidates += [_point_along(points, f) for f in _LABEL_FRACTIONS]
-        if drawn and drawn[0] is not points:
-            candidates = [_nearest_on(drawn[0], c) for c in candidates]
+        if drawn is not None and drawn is not points:
+            candidates = [_nearest_on(drawn, c) for c in candidates]
         best, best_cost = None, None
         for cx, cy in candidates:
             plate = (cx - w / 2 - LABEL_CLEARANCE, cy - h / 2 - LABEL_CLEARANCE,

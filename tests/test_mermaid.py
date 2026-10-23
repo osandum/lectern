@@ -557,7 +557,8 @@ def test_a_curve_that_would_cut_through_a_box_is_not_drawn_through_it():
 def test_a_bent_edge_is_drawn_curved_and_its_label_sits_on_it():
     curved_line = longest_line(build(BENT))
     straight_line = longest_line(build(LINEAR + BENT))
-    assert len(straight_line.points) == 3
+    # In, through and out of B's layer (see layered.Virtual).
+    assert len(straight_line.points) == 4
     assert len(curved_line.points) > 3
 
     scene = build(BENT)
@@ -566,6 +567,79 @@ def test_a_bent_edge_is_drawn_curved_and_its_label_sits_on_it():
     centre = (plate.x + plate.w / 2, plate.y + plate.h / 2)
     nearest = layered._nearest_on(line.points, centre)
     assert ((nearest[0] - centre[0]) ** 2 + (nearest[1] - centre[1]) ** 2) ** 0.5 < 0.5
+
+
+# Long edges from a source far off to one side, labels on two of them: the
+# first version of this drew the dotted NS --> BF through Live-Front's
+# corner and put a label over the arrowhead of U --> IIP.
+FANNED = """flowchart TB
+  U["Internet users"] --> LF["Live-Front<br/>nginx"]
+  U --> FR["Freja3<br/>Apache · www, bra.dk"]
+  U --> IIP["IIPImage<br/>iipsrv · img."]
+  LF --> TH["Thor-1…4<br/>Nomad · Docker"]
+  LF --> BF["Bifrost-1…4<br/>Nomad · JBoss"]
+  FR --> BF
+  TH <--> BF
+  BF --> ORA[("Miro<br/>Oracle 11g")]
+  TH --> NFS[("NetApp NFS")]
+  IIP --> NFS
+  NS["Nomad · Consul · Vault<br/>3 servers"] -.schedules.-> TH
+  NS -.schedules.-> BF
+"""
+
+
+def sampled(line, steps=20):
+    for (x1, y1), (x2, y2) in zip(line.points, line.points[1:]):
+        for step in range(steps + 1):
+            t = step / steps
+            yield x1 + (x2 - x1) * t, y1 + (y2 - y1) * t
+
+
+def inside(point, rect, inset=0.0):
+    x, y = point
+    return (rect.x + inset < x < rect.x + rect.w - inset
+            and rect.y + inset < y < rect.y + rect.h - inset)
+
+
+@pytest.mark.parametrize("prefix", ["", LINEAR])
+def test_a_long_edge_runs_past_the_boxes_in_the_layers_it_crosses(prefix):
+    scene = build(prefix + FANNED)
+    nodes = [s for s in scene.shapes if isinstance(s, sc.Rect) and s.fill == sc.NODE]
+    for line in (s for s in scene.shapes if isinstance(s, sc.Line)):
+        assert not any(inside(point, node, inset=1.0)
+                       for point in sampled(line) for node in nodes)
+
+
+def test_a_long_edge_label_gets_a_slot_of_its_own():
+    scene = build(FANNED)
+    plates = [s for s in scene.shapes if isinstance(s, sc.Rect) and s.fill == sc.LABEL_BG]
+    lines = [s for s in scene.shapes if isinstance(s, sc.Line)]
+    assert len(plates) == 2
+    for plate in plates:
+        # Exactly one line runs under it -- its own.
+        crossing = [line for line in lines
+                    if any(inside(point, plate) for point in sampled(line))]
+        assert len(crossing) == 1
+
+
+def test_a_cylinder_has_an_elliptical_top_and_edges_meet_its_rim():
+    scene = build("flowchart TD\n  A --> B[(db)]\n")
+    [top] = [s for s in scene.shapes if isinstance(s, sc.Ellipse)]
+    [line] = [s for s in scene.shapes if isinstance(s, sc.Line)]
+    x, y = line.points[-1]
+    # A centred edge arrives at the top of the rim, which is the ellipse's
+    # top, not the middle of the box.
+    assert x == pytest.approx(top.x + top.w / 2)
+    assert y == pytest.approx(top.y)
+
+
+def test_an_off_centre_edge_meets_a_cylinder_on_its_rim():
+    cell = flowchart.FlowNode("B", "db", "cylinder")
+    cell.x, cell.y, cell.w, cell.h, cell.cap = 0.0, 0.0, 100.0, 60.0, 10.0
+    x, y = layered.boundary_point(cell, (40.0, -300.0))
+    # On the top ellipse: centred 10 below the box's top, 50 by 10.
+    assert (x / 50) ** 2 + ((y - (-30 + 10)) / 10) ** 2 == pytest.approx(1.0)
+    assert y > -30
 
 
 # -- sequence diagrams -----------------------------------------------------

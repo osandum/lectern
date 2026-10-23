@@ -15,6 +15,7 @@ highlighted code block. A diagram drawn *wrongly* is worse than one not
 drawn at all -- the reader can't tell a mis-parse from what the author
 meant, whereas the code block is at least honest.
 """
+import math
 import re
 
 from . import layered
@@ -107,7 +108,7 @@ _LINK_RE = re.compile(r"""
 
 
 class FlowNode:
-    __slots__ = ("key", "text", "shape", "href", "w", "h", "x", "y", "rank", "order")
+    __slots__ = ("key", "text", "shape", "href", "w", "h", "x", "y", "rank", "order", "cap")
 
     def __init__(self, key, text, shape):
         self.key = key
@@ -118,6 +119,7 @@ class FlowNode:
         self.x = self.y = 0.0      # centre, filled in by layout
         self.rank = 0
         self.order = 0
+        self.cap = 0.0          # a cylinder's rim, see _size_node
 
     @property
     def virtual(self):
@@ -474,6 +476,12 @@ def _attach_cluster_edges(nodes, edges, subgraphs, declared):
 
 # -- sizing ----------------------------------------------------------------
 
+def _cylinder_cap(width):
+    """Half-height of a cylinder's elliptical top and bottom: mermaid's
+    proportions, flatter the wider the node."""
+    return width / 2 / (2.5 + width / 50)
+
+
 def _size_node(node, measurer):
     text_w, text_h = measurer.size(node.text)
     width = max(MIN_NODE_W, text_w + 2 * NODE_PAD_X)
@@ -495,7 +503,10 @@ def _size_node(node, measurer):
     elif shape == "asymmetric":
         width += 14
     elif shape == "cylinder":
-        height += 12
+        # The rim of the top takes both halves of the cap out of the box,
+        # the bottom only one.
+        height += 3 * _cylinder_cap(width)
+        node.cap = _cylinder_cap(width)     # where edges meet it (layered.boundary_point)
     elif shape in ("parallelogram", "parallelogram-alt", "trapezoid", "trapezoid-alt"):
         # The slanted sides eat into the text's own box at top or bottom,
         # so the label needs the width back.
@@ -556,10 +567,18 @@ def _node_shapes(node):
             sc.Line([(x + w - 8, y), (x + w - 8, y + h)], stroke=sc.EDGE),
         ]
     if shape == "cylinder":
-        cap = 10.0
+        # The body, its bottom the front half of an ellipse, with the whole
+        # top ellipse drawn over it: that covers the body's straight top
+        # edge and leaves the rim showing.
+        cap = _cylinder_cap(w)
+        steps = 24
+        bottom = [(node.x - w / 2 * math.cos(math.pi * i / steps),
+                   y + h - cap + cap * math.sin(math.pi * i / steps))
+                  for i in range(steps + 1)]
         return [
-            sc.Rect(x, y, w, h, radius=cap * 0.9, fill=sc.NODE, stroke=sc.EDGE),
-            sc.Line([(x, y + cap), (x + w, y + cap)], stroke=sc.EDGE),
+            sc.Polygon([(x, y + cap)] + bottom + [(x + w, y + cap)],
+                       fill=sc.NODE, stroke=sc.EDGE),
+            sc.Ellipse(x, y, w, 2 * cap, fill=sc.NODE, stroke=sc.EDGE),
         ]
     return [sc.Rect(x, y, w, h, fill=sc.NODE, stroke=sc.EDGE)]
 
@@ -678,13 +697,14 @@ def _build_scene(chart, measurer):
     original_sizes = _reserve_cluster_room(chart, measurer)
 
     vertical = chart.direction in layered.VERTICAL_DIRECTIONS
-    edge_room = {}
+    edge_room, label_sizes = {}, {}
     for index, edge in enumerate(chart.edges):
         if edge.label and edge.style != INVISIBLE:
             text_w, text_h = measurer.size(
                 edge.label, wrap=False, scale=EDGE_LABEL_FONT_SCALE)
             edge_room[index] = ((text_h if vertical else text_w)
                                 + 2 * LABEL_PAD + 2 * EDGE_LABEL_CLEARANCE)
+            label_sizes[index] = (text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD)
     paths = _group_paths(chart)
     for edge in chart.edges:
         # A block's end counts as being where the block is, not inside it.
@@ -695,7 +715,7 @@ def _build_scene(chart, measurer):
                 setattr(edge, end + "_path", path[:path.index(cluster)])
     cells, routes, width, height = layered.layout(
         chart.nodes, chart.edges, chart.direction, edge_room=edge_room,
-        groups=paths)
+        groups=paths, label_sizes=label_sizes)
 
     for key, (w, h) in original_sizes.items():
         chart.nodes[key].w, chart.nodes[key].h = w, h
@@ -742,7 +762,8 @@ def _build_scene(chart, measurer):
         if edge.label:
             text_w, text_h = measurer.size(
                 edge.label, wrap=False, scale=EDGE_LABEL_FONT_SCALE)
-            labels.append((points, drawn, edge, text_w, text_h))
+            labels.append((points, drawn, edge, text_w, text_h,
+                           layered.label_anchor(cells, routes, index)))
 
     obstacles = [(n.x - n.w / 2, n.y - n.h / 2, n.w, n.h) for n in chart.nodes.values()]
     # A frame's title wins over an edge label drawn where it is (see the
@@ -752,10 +773,10 @@ def _build_scene(chart, measurer):
     obstacles += [(tx - LABEL_PAD, ty - LABEL_PAD, tw + 2 * LABEL_PAD, th + 2 * LABEL_PAD)
                   for tx, ty, tw, th in titles if tw]
     centres = layered.place_labels(
-        [(points, w + 2 * LABEL_PAD, h + 2 * LABEL_PAD, drawn)
-         for points, drawn, _edge, w, h in labels],
+        [(points, w + 2 * LABEL_PAD, h + 2 * LABEL_PAD, drawn, anchor)
+         for points, drawn, _edge, w, h, anchor in labels],
         obstacles)
-    for (_points, _drawn, edge, text_w, text_h), (cx, cy) in zip(labels, centres):
+    for (_points, _drawn, edge, text_w, text_h, _anchor), (cx, cy) in zip(labels, centres):
         scene.add(sc.Rect(
             cx - text_w / 2 - LABEL_PAD, cy - text_h / 2 - LABEL_PAD,
             text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD,
@@ -770,8 +791,10 @@ def _build_scene(chart, measurer):
         for shape in _node_shapes(node):
             scene.add(shape)
         text_w, text_h = measurer.size(node.text)
+        # Centred in a cylinder's body: below the rim, not in the box.
+        text_y = node.y + (_cylinder_cap(node.w) / 2 if node.shape == "cylinder" else 0.0)
         scene.add(sc.Text(
-            node.x - text_w / 2, node.y - text_h / 2, text_w, text_h, node.text))
+            node.x - text_w / 2, text_y - text_h / 2, text_w, text_h, node.text))
         if node.href:
             scene.add(sc.Link(node.x - node.w / 2, node.y - node.h / 2,
                               node.w, node.h, node.href))

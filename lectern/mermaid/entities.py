@@ -384,15 +384,16 @@ def _build_scene(diagram, measurer):
     # same gap can stack along it instead of the gap fitting just one. That
     # only bites past two of them, so most diagrams lay out as before.
     vertical = diagram.direction in layered.VERTICAL_DIRECTIONS
-    edge_room = {}
+    edge_room, label_sizes = {}, {}
     for index, relation in enumerate(diagram.relations):
         if relation.label:
             text_w, text_h = measurer.size(relation.label, wrap=False, scale=LABEL_SCALE)
             edge_room[index] = ((text_h if vertical else text_w)
                                 + 2 * LABEL_PAD + 2 * layered.LABEL_CLEARANCE)
+            label_sizes[index] = (text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD)
     cells, routes, width, height = layered.layout(
         diagram.entities, diagram.relations, diagram.direction,
-        rank_gap=RANK_GAP, edge_room=edge_room)
+        rank_gap=RANK_GAP, edge_room=edge_room, label_sizes=label_sizes)
 
     scene = sc.Scene(width, height, [], measurer.font_px)
 
@@ -413,7 +414,8 @@ def _build_scene(diagram, measurer):
         scene.add(sc.Line(drawn, dashed=relation.dashed,
                           head=relation.head, tail=relation.tail))
         if relation.label:
-            labels.append((points, drawn, relation.label))
+            labels.append((points, drawn, relation.label,
+                           layered.label_anchor(cells, routes, index)))
         for from_start, cardinality in ((True, relation.src_card),
                                         (False, relation.dst_card)):
             if not cardinality:
@@ -426,10 +428,10 @@ def _build_scene(diagram, measurer):
             obstacles.append((cx - text_w / 2, cy - text_h / 2, text_w, text_h))
 
     requests = []
-    for points, drawn, label in labels:
+    for points, drawn, label, anchor in labels:
         text_w, text_h = measurer.size(label, wrap=False, scale=LABEL_SCALE)
-        requests.append((points, text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD, drawn))
-    for (_points, _drawn, label), (cx, cy) in zip(labels, layered.place_labels(requests, obstacles)):
+        requests.append((points, text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD, drawn, anchor))
+    for (_points, _drawn, label, _anchor), (cx, cy) in zip(labels, layered.place_labels(requests, obstacles)):
         _plate_label(scene, measurer, label, cx, cy)
 
     for entity in diagram.entities.values():
