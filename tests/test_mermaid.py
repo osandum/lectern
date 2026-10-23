@@ -586,6 +586,14 @@ def test_sequence_participants_keep_declaration_order_and_labels():
     assert diagram.participants["W"].label == "Window"
 
 
+def test_sequence_alias_breaks_lines_like_any_other_label():
+    diagram = mermaid.parse(
+        'sequenceDiagram\n  actor D as Developer<br/>(Slack)\n  participant G as "GitHub"\n'
+        "  D->>G: push\n")
+    assert diagram.participants["D"].label == "Developer\n(Slack)"
+    assert diagram.participants["G"].label == "GitHub"
+
+
 def test_sequence_participant_is_declared_by_first_use():
     diagram = mermaid.parse("sequenceDiagram\n  A->>B: hi\n")
     assert list(diagram.participants) == ["A", "B"]

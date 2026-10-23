@@ -157,7 +157,7 @@ def parse(source):
 
         declaration = _PARTICIPANT_RE.match(line)
         if declaration:
-            touch(declaration.group("key"), (declaration.group("label") or "").strip() or None)
+            touch(declaration.group("key"), parse_label(declaration.group("label") or "") or None)
             continue
 
         note = _NOTE_RE.match(line)
