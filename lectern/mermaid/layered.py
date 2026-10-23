@@ -153,12 +153,18 @@ def group_paths(paths, edges, routes):
     to the virtual nodes. An edge inside a block stays inside its frame; one
     into or out of a block runs with the cells of its more deeply nested
     end, rather than being routed all the way around the frame; one between
-    two unrelated blocks runs with neither."""
+    two unrelated blocks runs with neither. An edge may name the groups an
+    end counts as being in (`src_path`/`dst_path`) when that isn't where
+    the node it is laid out to sits -- a flowchart edge to a whole block
+    is laid out to a node inside it, but runs outside the frame."""
     extended = dict(paths)
     for index, edge in enumerate(edges):
         if not routes[index]:
             continue
-        src, dst = paths.get(edge.src, ()), paths.get(edge.dst, ())
+        src = getattr(edge, "src_path", None)
+        dst = getattr(edge, "dst_path", None)
+        src = paths.get(edge.src, ()) if src is None else src
+        dst = paths.get(edge.dst, ()) if dst is None else dst
         deeper, shallower = (src, dst) if len(src) >= len(dst) else (dst, src)
         if deeper[:len(shallower)] == shallower:
             path = deeper

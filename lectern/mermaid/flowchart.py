@@ -81,11 +81,14 @@ _SHAPES = [
 
 # Mermaid spells a labelled link two ways: `A -- text --> B` and
 # `A -->|text| B`. Rewriting the first into the second up front means the
-# link scanner below only has to know one of them.
+# link scanner below only has to know one of them. An opening can't be
+# the end of a longer link -- else the `-- B --` in `A --- B --- C` reads
+# as a label -- and, as in mermaid, a dotted or thick label may touch its
+# dashes (`-.text.->`), so long as it doesn't start like a link itself.
 _MID_LABEL_FORMS = [
-    (re.compile(r"--\s+(?P<text>.+?)\s+(?P<tail>-{2,}[>ox]?)"), "solid"),
-    (re.compile(r"-\.\s+(?P<text>.+?)\s+(?P<tail>\.-+[>ox]?)"), "dotted"),
-    (re.compile(r"==\s+(?P<text>.+?)\s+(?P<tail>={2,}[>ox]?)"), "thick"),
+    (re.compile(r"(?<![-.])--\s+(?P<text>.+?)\s+(?P<tail>-{2,}[>ox]?)"), "solid"),
+    (re.compile(r"(?<![-.])-\.\s*(?P<text>[^\s.>-].*?)\s*(?P<tail>\.-+[>ox]?)"), "dotted"),
+    (re.compile(r"(?<!=)==\s*(?P<text>[^\s=>].*?)\s*(?P<tail>={2,}[>ox]?)"), "thick"),
 ]
 
 _LINK_RE = re.compile(r"""
@@ -122,7 +125,8 @@ class FlowNode:
 
 
 class FlowEdge:
-    __slots__ = ("src", "dst", "label", "style", "head", "tail")
+    __slots__ = ("src", "dst", "label", "style", "head", "tail",
+                 "src_cluster", "dst_cluster", "src_path", "dst_path")
 
     def __init__(self, src, dst, label, style, head, tail):
         self.src = src
@@ -131,6 +135,12 @@ class FlowEdge:
         self.style = style      # solid | dotted | thick
         self.head = head        # arrow | circle | cross | None
         self.tail = tail
+        # An end naming a subgraph rather than a node: the edge is laid
+        # out to a node inside it, with its bends kept outside the frame
+        # (the paths, see layered.group_paths), and cut where it meets
+        # the frame -- which is how mermaid draws one.
+        self.src_cluster = self.dst_cluster = None
+        self.src_path = self.dst_path = None
 
 
 class Subgraph:
@@ -339,8 +349,11 @@ def parse(source):
     subgraphs = []      # top-level blocks
     open_blocks = []    # the `subgraph`s currently being read, innermost last
     hrefs = {}          # node key -> `click` target, applied once all are read
+    declared = set()    # keys given a label or shape somewhere
 
     def touch(key, text, shape):
+        if text is not None:
+            declared.add(key)
         node = nodes.get(key)
         if node is None:
             # A node first seen as a bare reference gets its id as its
@@ -407,6 +420,7 @@ def parse(source):
             group = next_group
     if open_blocks:
         raise Unsupported("unclosed subgraph")
+    _attach_cluster_edges(nodes, edges, subgraphs, declared)
     if not nodes:
         raise Unsupported("no nodes")
     # mermaid ignores a click on an id no statement declares, rather than
@@ -416,6 +430,46 @@ def parse(source):
             nodes[key].href = href
     return Flowchart(direction, nodes, edges, subgraphs,
                      curve_setting(source, "flowchart", layered.DEFAULT_CURVE))
+
+
+def _attach_cluster_edges(nodes, edges, subgraphs, declared):
+    """Turn edge ends naming a subgraph into cluster ends.
+
+    Each such end was read as a bare node reference, and stands in for the
+    block's first node instead (mermaid's findNonClusterChild). A key that
+    is also a declared node, or an edge between a block and something
+    inside it, has no drawing anyone could read unambiguously."""
+    blocks = {}
+    stack = list(subgraphs)
+    while stack:
+        group = stack.pop()
+        blocks[group.key] = group
+        stack.extend(group.children)
+    clustered = [key for key in nodes if key in blocks]
+    if not clustered:
+        return
+    for key in clustered:
+        if key in declared:
+            raise Unsupported(f"{key!r} is both a node and a subgraph")
+        del nodes[key]
+    for group in blocks.values():
+        group.members = [key for key in group.members if key not in blocks]
+    for edge in edges:
+        # What each end covers: a block, every node in it.
+        covers = []
+        for end in ("src", "dst"):
+            key = getattr(edge, end)
+            if key not in blocks:
+                covers.append({key})
+                continue
+            inside = blocks[key].node_keys()
+            if not inside:
+                raise Unsupported(f"edge to empty subgraph {key!r}")
+            setattr(edge, end + "_cluster", key)
+            setattr(edge, end, inside[0])
+            covers.append(set(inside))
+        if (edge.src_cluster or edge.dst_cluster) and covers[0] & covers[1]:
+            raise Unsupported("edge between a subgraph and its own contents")
 
 
 # -- sizing ----------------------------------------------------------------
@@ -595,6 +649,29 @@ def _cluster_boxes(chart, measurer):
     return [boxes[group.key] for group in chart.all_subgraphs()]
 
 
+def _clip_to_frame(points, frame):
+    """`points` up to where they first enter `frame` -- an edge to a whole
+    block ends at its frame, not at the node it was laid out to. Unchanged
+    if they never do, or start inside it."""
+    x0, y0, w, h = frame
+    x1, y1 = x0 + w, y0 + h
+    for index, ((px, py), (qx, qy)) in enumerate(zip(points, points[1:])):
+        if x0 <= px <= x1 and y0 <= py <= y1:
+            return points if index == 0 else points[:index + 1]
+        # Liang-Barsky: the fraction of the segment at which it enters.
+        enter, leave = 0.0, 1.0
+        for delta, near, far in ((qx - px, x0 - px, x1 - px), (qy - py, y0 - py, y1 - py)):
+            if delta == 0:
+                if near > 0 or far < 0:
+                    enter, leave = 1.0, 0.0
+                continue
+            t_near, t_far = sorted((near / delta, far / delta))
+            enter, leave = max(enter, t_near), min(leave, t_far)
+        if enter <= leave:
+            return points[:index + 1] + [(px + (qx - px) * enter, py + (qy - py) * enter)]
+    return points
+
+
 def _build_scene(chart, measurer):
     for node in chart.nodes.values():
         _size_node(node, measurer)
@@ -608,9 +685,17 @@ def _build_scene(chart, measurer):
                 edge.label, wrap=False, scale=EDGE_LABEL_FONT_SCALE)
             edge_room[index] = ((text_h if vertical else text_w)
                                 + 2 * LABEL_PAD + 2 * EDGE_LABEL_CLEARANCE)
+    paths = _group_paths(chart)
+    for edge in chart.edges:
+        # A block's end counts as being where the block is, not inside it.
+        for end in ("src", "dst"):
+            cluster = getattr(edge, end + "_cluster")
+            if cluster is not None:
+                path = paths[getattr(edge, end)]
+                setattr(edge, end + "_path", path[:path.index(cluster)])
     cells, routes, width, height = layered.layout(
         chart.nodes, chart.edges, chart.direction, edge_room=edge_room,
-        groups=_group_paths(chart))
+        groups=paths)
 
     for key, (w, h) in original_sizes.items():
         chart.nodes[key].w, chart.nodes[key].h = w, h
@@ -626,6 +711,7 @@ def _build_scene(chart, measurer):
     for group, x, y, w, h, title_h in clusters:
         scene.add(sc.Rect(x, y, w, h, radius=CLUSTER_RADIUS,
                           fill=sc.CLUSTER, stroke=sc.EDGE, dashed=True))
+    frames = {group.key: (x, y, w, h) for group, x, y, w, h, _title_h in clusters}
 
     # Edges first so a node's fill covers the stub of any line that
     # overshot its boundary, rather than the line being drawn over the box.
@@ -639,6 +725,10 @@ def _build_scene(chart, measurer):
             points = layered.self_loop_points(cells[edge.src])
         else:
             points = layered.edge_points(cells, routes, index, edge)
+        if edge.dst_cluster:
+            points = _clip_to_frame(points, frames[edge.dst_cluster])
+        if edge.src_cluster:
+            points = _clip_to_frame(points[::-1], frames[edge.src_cluster])[::-1]
         drawn = layered.curved(points, chart.curve, [
             (n.x - n.w / 2, n.y - n.h / 2, n.w, n.h) for key, n in chart.nodes.items()
             if key not in (edge.src, edge.dst)])

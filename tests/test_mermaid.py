@@ -90,6 +90,24 @@ def test_chain_declares_every_hop():
     assert [(e.src, e.dst) for e in chart.edges] == [("A", "B"), ("B", "C"), ("C", "D")]
 
 
+@pytest.mark.parametrize("link", ["---", "===", "-.-"])
+def test_a_chain_of_unlabelled_links_is_not_read_as_a_label(link):
+    """`-- B --` inside `A --- B --- C` looks like a label between dashes,
+    which used to turn B into the label of one link from A to C."""
+    chart = mermaid.parse(f"flowchart TD\n  A {link} B {link} C\n")
+    assert [(e.src, e.dst, e.label) for e in chart.edges] == [("A", "B", ""), ("B", "C", "")]
+
+
+@pytest.mark.parametrize("link, style", [
+    ("-.yes.->", "dotted"), ("-. yes .->", "dotted"),
+    ("==yes==>", "thick"), ("== yes ==>", "thick"),
+])
+def test_a_dotted_or_thick_label_may_touch_its_dashes(link, style):
+    chart = mermaid.parse(f"flowchart TD\n  A {link} B\n")
+    edge, = chart.edges
+    assert (edge.src, edge.dst, edge.label, edge.style, edge.head) == ("A", "B", "yes", style, "arrow")
+
+
 def test_bare_reference_takes_its_id_as_label_until_declared():
     chart = mermaid.parse("flowchart TD\n  A --> B\n  B[Real label]\n")
     assert chart.nodes["A"].text == "A"
@@ -291,6 +309,47 @@ def test_sibling_frames_sharing_only_some_layers_stay_apart():
     assert set(frames) == {"Edge", "ECS", "FC", "AC", "Data"}
     for node, mine in owners.items():
         assert {key for key, frame in frames.items() if within(text[node], frame)} == mine, node
+
+
+def test_an_edge_to_a_subgraph_ends_at_its_frame():
+    """Mermaid lets either end of an edge name a subgraph, and draws the
+    edge to the frame -- not to a node conjured up with the block's id."""
+    for direction in ("TD", "LR"):
+        source = (f"flowchart {direction}\n"
+                  "  subgraph S[Store]\n    K1[Inside one]\n    K2[Inside two]\n  end\n"
+                  "  R[Outside] -.bootstraps.-> S\n")
+        chart = mermaid.parse(source)
+        assert set(chart.nodes) == {"K1", "K2", "R"}
+        edge, = chart.edges
+        assert edge.dst_cluster == "S"
+        scene = build(source)
+        frame = max((shape for shape in boxes(scene)
+                     if getattr(shape, "fill", None) == sc.CLUSTER), key=lambda f: f.h)
+        line, = [shape for shape in scene.shapes if isinstance(shape, sc.Line)]
+        x, y = line.points[-1]
+        on_left_or_right = abs(x - frame.x) < 0.5 or abs(x - (frame.x + frame.w)) < 0.5
+        on_top_or_bottom = abs(y - frame.y) < 0.5 or abs(y - (frame.y + frame.h)) < 0.5
+        assert (frame.x - 0.5 <= x <= frame.x + frame.w + 0.5
+                and frame.y - 0.5 <= y <= frame.y + frame.h + 0.5
+                and (on_left_or_right or on_top_or_bottom)), (direction, x, y, frame)
+
+
+def test_an_edge_from_a_subgraph_starts_at_its_frame():
+    chart = mermaid.parse(
+        "flowchart TD\n  subgraph S\n    K\n  end\n  S --> R\n")
+    edge, = chart.edges
+    assert (edge.src, edge.src_cluster, edge.dst) == ("K", "S", "R")
+    build("flowchart TD\n  subgraph S\n    K\n  end\n  S --> R\n")
+
+
+@pytest.mark.parametrize("source", [
+    "flowchart TD\n  subgraph S\n    K\n  end\n  S[Node too] --> R\n",   # node or block?
+    "flowchart TD\n  subgraph S\n    K\n  end\n  S --> K\n",             # into itself
+    "flowchart TD\n  subgraph S\n    subgraph T\n      K\n    end\n  end\n  S --> T\n",
+])
+def test_an_ambiguous_edge_to_a_subgraph_falls_back(source):
+    with pytest.raises(mermaid.Unsupported):
+        mermaid.parse(source)
 
 
 def test_a_frame_that_would_swallow_a_foreign_node_falls_back():
