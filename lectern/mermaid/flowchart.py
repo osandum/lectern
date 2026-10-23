@@ -225,27 +225,24 @@ def _split_unquoted(line, sep):
     return parts
 
 
-def _has_node_list(statement):
-    """Whether `statement` uses mermaid's `A & B --> C` node lists: an `&`
-    between nodes, as opposed to one in a label -- quoted, inside a node's
-    shape brackets, or between an edge label's pipes, all of which mermaid
-    reads as text. Called after _normalize_mid_labels, so a `-- a & b -->`
-    label is already in its pipe form."""
-    quoted, in_pipes, depth = False, False, 0
-    for ch in statement:
-        if ch == '"':
-            quoted = not quoted
-        elif quoted:
-            continue
-        elif ch in "[({":
-            depth += 1
-        elif ch in "])}":
-            depth = max(0, depth - 1)
-        elif ch == "|" and depth == 0:
-            in_pipes = not in_pipes
-        elif ch == "&" and depth == 0 and not in_pipes:
-            return True
-    return False
+_AMPERSAND_RE = re.compile(r"\s*&\s*")
+
+
+def _parse_nodes(statement, pos):
+    """Parse one end of a link: a node, or an `A & B & C` node list.
+
+    Returns ([(key, text_or_None, shape_or_None), ...], new_pos). An `&`
+    inside a label -- quoted, within shape brackets or between an edge
+    label's pipes -- never gets here, as _parse_node and _parse_link
+    consume those whole."""
+    found = []
+    while True:
+        key, text, shape, pos = _parse_node(statement, pos)
+        found.append((key, text, shape))
+        match = _AMPERSAND_RE.match(statement, pos)
+        if not match:
+            return found, pos
+        pos = match.end()
 
 
 def _parse_node(statement, pos):
@@ -391,20 +388,23 @@ def parse(source):
         if any(lowered.startswith(prefix) for prefix in _IGNORED_STATEMENTS):
             continue
         statement = _normalize_mid_labels(statement)
-        if _has_node_list(statement):
-            raise Unsupported("`&` node lists are not supported")
-        pos = 0
-        key, text, shape, pos = _parse_node(statement, 0)
-        touch(key, text, shape)
+        group, pos = _parse_nodes(statement, 0)
+        for key, text, shape in group:
+            touch(key, text, shape)
         while pos < len(statement):
             link = _parse_link(statement, pos)
             if link is None:
                 raise Unsupported(f"unparsed trailing {statement[pos:][:16]!r}")
             style, label, head, tail, pos = link
-            next_key, text, shape, pos = _parse_node(statement, pos)
-            touch(next_key, text, shape)
-            edges.append(FlowEdge(key, next_key, label, style, head, tail))
-            key = next_key
+            next_group, pos = _parse_nodes(statement, pos)
+            for key, text, shape in next_group:
+                touch(key, text, shape)
+            # `A & B --> C & D` links every node on one side to every
+            # node on the other, in mermaid's order.
+            for src, _, _ in group:
+                for dst, _, _ in next_group:
+                    edges.append(FlowEdge(src, dst, label, style, head, tail))
+            group = next_group
     if open_blocks:
         raise Unsupported("unclosed subgraph")
     if not nodes:

@@ -174,12 +174,20 @@ def group_paths(paths, edges, routes):
     return extended
 
 
-def grouped_sort(layer, score, paths, depth=0):
+def grouped_sort(layer, score, paths, depth=0, rank=None):
     """Sort `layer` by `score`, keeping every group's members next to each
     other: a group sorts as one block, by its members' mean score, and its
     members are sorted the same way inside it. This is dagre's
     sortSubgraph, and what keeps a node that isn't a block's from landing
-    between two that are."""
+    between two that are.
+
+    `rank` (see group_rank) then puts the groups among themselves in one
+    order that every layer shares: the slots the groups landed in keep
+    their place between the ungrouped cells, and are refilled in rank
+    order. Sorted layer by layer, two groups spanning the same layers
+    could come out in opposite orders in two of them, and there is no
+    placing two frames side by side when each has to be left of the
+    other."""
     scores = {cell.key: score(cell) for cell in layer}
     blocks = {}
     for cell in layer:
@@ -191,11 +199,32 @@ def grouped_sort(layer, score, paths, depth=0):
     for (grouped, _key), members in blocks.items():
         if grouped:
             members = grouped_sort(members, lambda cell: scores[cell.key],
-                                   paths, depth + 1)
+                                   paths, depth + 1, rank)
         mean = sum(scores[cell.key] for cell in members) / len(members)
-        ordered.append((mean, members))
+        ordered.append((mean, grouped, _key, members))
     ordered.sort(key=lambda item: item[0])
-    return [cell for _mean, members in ordered for cell in members]
+    if rank:
+        slots = [i for i, item in enumerate(ordered) if item[1]]
+        groups = sorted((ordered[i] for i in slots), key=lambda item: rank[item[2]])
+        for i, item in zip(slots, groups):
+            ordered[i] = item
+    return [cell for *_head, members in ordered for cell in members]
+
+
+def group_rank(layers, paths):
+    """One order for all the groups, taken from where their cells sit on
+    average across the layers: group -> its index in that order. Only
+    siblings are ever compared (grouped_sort works one nesting level at a
+    time), so one order over every group serves all levels."""
+    seen = {}
+    for layer in layers:
+        last = max(len(layer) - 1, 1)
+        for cell in layer:
+            for group in paths.get(cell.key, ()):
+                seen.setdefault(group, []).append(cell.order / last)
+    # Ties go to first appearance, so the order doesn't depend on hashing.
+    ordered = sorted(seen, key=lambda group: sum(seen[group]) / len(seen[group]))
+    return {group: index for index, group in enumerate(ordered)}
 
 
 def order_layers(layers, up, down, passes=4, paths=None):
@@ -211,6 +240,7 @@ def order_layers(layers, up, down, passes=4, paths=None):
         cell_list[:] = grouped_sort(cell_list, lambda cell: cell.order, paths)
         for position, cell in enumerate(cell_list):
             cell.order = position
+    rank = group_rank(layers, paths)
 
     def sweep(neighbours, ordered_layers):
         for cell_list in ordered_layers:
@@ -220,7 +250,7 @@ def order_layers(layers, up, down, passes=4, paths=None):
                 # its current position rather than being swept to the
                 # front, which is what a 0 barycentre would do.
                 return sum(positions) / len(positions) if positions else cell.order
-            cell_list[:] = grouped_sort(cell_list, barycentre, paths)
+            cell_list[:] = grouped_sort(cell_list, barycentre, paths, rank=rank)
             for position, cell in enumerate(cell_list):
                 cell.order = position
 
@@ -229,6 +259,14 @@ def order_layers(layers, up, down, passes=4, paths=None):
             sweep(up, layers[1:])
         else:
             sweep(down, layers[-2::-1])
+        rank = group_rank(layers, paths)
+    # The last sweep was sorted by the rank before it; one more pass puts
+    # every layer in the final one, which is what place() keeps to.
+    for cell_list in layers:
+        cell_list[:] = grouped_sort(cell_list, lambda cell: cell.order, paths, rank=rank)
+        for position, cell in enumerate(cell_list):
+            cell.order = position
+    return rank
 
 
 def _cross_size(cell, vertical):
@@ -239,7 +277,7 @@ def _rank_size(cell, vertical):
     return cell.h if vertical else cell.w
 
 
-def place(layers, up, down, vertical, rank_gaps, paths=None):
+def place(layers, up, down, vertical, rank_gaps, paths=None, rank=None):
     """Assign every cell a centre on both axes.
 
     Rank axis: layers are stacked by their tallest (widest) member, the
@@ -250,8 +288,9 @@ def place(layers, up, down, vertical, rank_gaps, paths=None):
     well-aligned as one with only predecessors.
 
     `paths` (see group_paths) keeps each group's cells together in every
-    layer, and then clears the cross-axis band the group occupies of
-    everything that isn't in it (fence_groups).
+    layer, in the order `rank` (see group_rank) gives the groups, and then
+    clears the cross-axis band the group occupies of everything that isn't
+    in it (fence_groups).
     """
     paths = paths or {}
     cells_by_key = {cell.key: cell for layer in layers for cell in layer}
@@ -298,10 +337,11 @@ def place(layers, up, down, vertical, rank_gaps, paths=None):
                 if keys:
                     positions[cell.key][0] = sum(
                         positions[cells_by_key[k].key][0] for k in keys) / len(keys)
-            layer[:] = grouped_sort(layer, lambda cell: positions[cell.key][0], paths)
+            layer[:] = grouped_sort(layer, lambda cell: positions[cell.key][0],
+                                    paths, rank=rank)
             separate(layer)
 
-    fence_groups(layers, positions, paths, vertical)
+    fence_groups(layers, positions, paths, vertical, rank)
 
     # Nothing above pins the diagram to the origin; shift it there so the
     # scene's own box starts at (0, 0).
@@ -317,65 +357,152 @@ def place(layers, up, down, vertical, rank_gaps, paths=None):
                 cell.x, cell.y = rank, cross
 
 
-def fence_groups(layers, positions, paths, vertical):
-    """Push every cell that isn't a group's out of the band the group
-    spans across the layers it occupies.
+def fence_groups(layers, positions, paths, vertical, rank=None):
+    """Move cells along the cross axis, as little as possible, until every
+    group's cells sit in a band of their own: whatever isn't the group's
+    stays clear of it in every layer the group spans.
 
     Keeping a group's cells contiguous within each layer isn't enough for a
     frame: the frame is one rectangle over all of its layers, and an
-    outsider sitting in a layer the group has few cells in can still land
-    inside it on the cross axis. Each layer's outsiders before the group's
-    block go below the band, those after it above, the way dagre's border
-    nodes hold them out. Moving a cell can widen another group's band, so
-    this repeats until nothing moves.
+    outsider sitting in a layer the group has few cells in -- or none --
+    can still land inside it on the cross axis. So, the way dagre's border
+    nodes do it, each group gets a left and a right border shared by all
+    of its layers, and every layer becomes a sequence -- cells, and the
+    borders of the groups it passes through -- whose neighbours must keep
+    a minimum distance apart. A group spanning a layer it has no cells in
+    still has its borders there: among its sibling groups where `rank`
+    puts it, and among the ungrouped cells by which side of its middle
+    they are on.
+
+    Since `rank` gives sibling groups one order in every layer, those
+    distances form an acyclic graph, and one pass each way solves it: the
+    first pushes cells right only as far as they must go, the second left,
+    and the average of the two -- both satisfy every distance, so their
+    average does too -- keeps the diagram from drifting to one side.
+    Pushing cells apart a group at a time instead, until nothing moved,
+    could go round in circles: cells squeezed between two frames that
+    each pushed them into the other.
     """
-    # Ordered, not a set: string hashing is salted per process, and the
-    # same diagram must lay out the same way every time it's opened.
     groups = list(dict.fromkeys(group for path in paths.values() for group in path))
     if not groups:
         return
+    rank = rank or {group: index for index, group in enumerate(groups)}
 
     def half(cell):
         return _cross_size(cell, vertical) / 2
 
-    def members(group, layer):
-        return [i for i, cell in enumerate(layer)
-                if group in paths.get(cell.key, ())]
+    lineage, spans, everyone = {}, {}, {}
+    for index, layer in enumerate(layers):
+        for cell in layer:
+            path = paths.get(cell.key, ())
+            for depth, group in enumerate(path):
+                lineage.setdefault(group, path[:depth + 1])
+                first, _last = spans.get(group, (index, index))
+                spans[group] = (first, index)
+                everyone.setdefault(group, []).append(positions[cell.key][0])
+    children = {}
+    for group in sorted(groups, key=lambda group: rank[group]):
+        parent = lineage[group][-2] if len(lineage[group]) > 1 else None
+        children.setdefault(parent, []).append(group)
+    middle = {group: sum(xs) / len(xs) for group, xs in everyone.items()}
 
-    for _ in range(4 * len(groups)):
-        moved = False
-        for group in groups:
-            spanned = [layer for layer in layers if members(group, layer)]
-            ranks = range(layers.index(spanned[0]), layers.index(spanned[-1]) + 1)
-            inside = [cell for layer in spanned for cell in layer
-                      if group in paths.get(cell.key, ())]
-            low = min(positions[c.key][0] - half(c) for c in inside) - NODE_GAP
-            high = max(positions[c.key][0] + half(c) for c in inside) + NODE_GAP
-            for rank in ranks:
-                layer = layers[rank]
-                own = members(group, layer)
-                if own:
-                    before, after = range(own[0]), range(own[-1] + 1, len(layer))
-                else:
-                    middle = (low + high) / 2
-                    split = sum(1 for cell in layer if positions[cell.key][0] < middle)
-                    before, after = range(split), range(split, len(layer))
-                limit = low
-                for i in reversed(before):
-                    cell = layer[i]
-                    if positions[cell.key][0] + half(cell) > limit + 1e-6:
-                        positions[cell.key][0] = limit - half(cell)
-                        moved = True
-                    limit = positions[cell.key][0] - half(cell) - NODE_GAP
-                limit = high
-                for i in after:
-                    cell = layer[i]
-                    if positions[cell.key][0] - half(cell) < limit - 1e-6:
-                        positions[cell.key][0] = limit + half(cell)
-                        moved = True
-                    limit = positions[cell.key][0] + half(cell) + NODE_GAP
-        if not moved:
-            break
+    def sequence(group, cells, index):
+        """`cells` (the ones inside `group` in this layer, in layer order)
+        with the borders of every group they pass through, and of each
+        group spanning this layer without a cell in it."""
+        depth = len(lineage[group]) if group else 0
+        items = []          # a cell, or (child group, its cells here)
+        for cell in cells:
+            path = paths.get(cell.key, ())
+            if len(path) <= depth:
+                items.append(cell)
+            elif items and isinstance(items[-1], tuple) and items[-1][0] == path[depth]:
+                items[-1][1].append(cell)
+            else:
+                items.append((path[depth], [cell]))
+        for child in children.get(group, ()):
+            first, last = spans[child]
+            if not first <= index <= last or any(
+                    isinstance(item, tuple) and item[0] == child for item in items):
+                continue
+            # Between the sibling groups `rank` puts either side of it ...
+            low, high = 0, len(items)
+            for at, item in enumerate(items):
+                if isinstance(item, tuple):
+                    if rank[item[0]] < rank[child]:
+                        low = at + 1
+                    elif high == len(items):
+                        high = at
+            # ... and past the ungrouped cells left of its middle.
+            at = low
+            while at < high and positions[items[at].key][0] < middle[child]:
+                at += 1
+            items.insert(at, (child, []))
+        out = []
+        for item in items:
+            if isinstance(item, tuple):
+                out.append(("<", item[0]))
+                out.extend(sequence(item[0], item[1], index))
+                out.append((">", item[0]))
+            else:
+                out.append(item.key)
+        return out
+
+    sizes = {cell.key: half(cell) for layer in layers for cell in layer}
+    after = {}
+    for index, layer in enumerate(layers):
+        line = sequence(None, layer, index)
+        for a, b in zip(line, line[1:]):
+            # A border has no width, and none of the gap either between
+            # it and what it frames: a frame's padding is already in the
+            # size of its cells (see flowchart's _reserve_cluster_room).
+            inside = (isinstance(a, tuple) and a[0] == "<"
+                      or isinstance(b, tuple) and b[0] == ">")
+            distance = sizes.get(a, 0.0) + sizes.get(b, 0.0) + (0.0 if inside else NODE_GAP)
+            links = after.setdefault(a, {})
+            links[b] = max(links.get(b, 0.0), distance)
+
+    order = _topological(list(sizes), after)
+    if order is None:
+        return      # can't happen with a consistent `rank`; leave it be
+    before = {}
+    for a, links in after.items():
+        for b, distance in links.items():
+            before.setdefault(b, {})[a] = distance
+    rightward, leftward = {}, {}
+    for key in order:
+        x = positions[key][0] if key in sizes else float("-inf")
+        for a, distance in before.get(key, {}).items():
+            x = max(x, rightward[a] + distance)
+        rightward[key] = x
+    for key in reversed(order):
+        x = positions[key][0] if key in sizes else float("inf")
+        for b, distance in after.get(key, {}).items():
+            x = min(x, leftward[b] - distance)
+        leftward[key] = x
+    for key in sizes:
+        positions[key][0] = (rightward[key] + leftward[key]) / 2
+
+
+def _topological(cells, after):
+    """`cells` and every key linked in `after` (key -> {successor: ...}),
+    each after everything with a link to it; None if there is a cycle."""
+    keys = list(dict.fromkeys(
+        list(cells) + [a for a in after] + [b for links in after.values() for b in links]))
+    waiting = {key: 0 for key in keys}
+    for links in after.values():
+        for b in links:
+            waiting[b] += 1
+    ready = [key for key in keys if not waiting[key]]
+    order = []
+    while ready:
+        key = ready.pop()
+        order.append(key)
+        for b in after.get(key, ()):
+            waiting[b] -= 1
+            if not waiting[b]:
+                ready.append(b)
+    return order if len(order) == len(keys) else None
 
 
 def mirror(cells, direction, width, height):
@@ -415,7 +542,7 @@ def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None,
     cells, layers, routes = build_layers(nodes, edges)
     up, down = neighbour_map(edges, cells, routes)
     paths = group_paths(groups or {}, edges, routes)
-    order_layers(layers, up, down, paths=paths)
+    rank = order_layers(layers, up, down, paths=paths)
     rank_gaps = [rank_gap] * len(layers)
     # Labelled edges crossing a gap from (or to) the same node fan out of
     # one point, so their labels all want the same spot beside it. The gap
@@ -435,7 +562,7 @@ def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None,
                 bundles[(low, end)] = bundles.get((low, end), 0.0) + room
     for (low, _end), room in bundles.items():
         rank_gaps[low] = max(rank_gaps[low], room)
-    place(layers, up, down, vertical, rank_gaps, paths)
+    place(layers, up, down, vertical, rank_gaps, paths, rank)
     width = max((cell.x + cell.w / 2 for cell in cells.values()), default=0.0)
     height = max((cell.y + cell.h / 2 for cell in cells.values()), default=0.0)
     mirror(cells, direction, width, height)

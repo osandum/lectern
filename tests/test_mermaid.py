@@ -169,7 +169,7 @@ def test_comments_and_presentational_statements_are_ignored():
     "stateDiagram-v2\n  [*] --> Still\n",          # ditto
     "flowchart TD\n  subgraph one\n  A\n",         # unclosed subgraph
     "flowchart TD\n  A\n  end\n",                  # `end` with no subgraph
-    "flowchart TD\n  A --> B & C\n",
+    "flowchart TD\n  A --> B &\n",                # `&` with nothing after it
     "flowchart XY\n  A --> B\n",                   # unknown direction
     "flowchart TD\n  A[unterminated\n",
     "",
@@ -250,6 +250,47 @@ def test_an_outsider_ranked_between_members_is_kept_out_of_the_frame():
             x0, y0, x1, y1 = sc._point_extents(shape)
             assert (x1 <= frame.x or x0 >= frame.x + frame.w
                     or y1 <= frame.y or y0 >= frame.y + frame.h), (direction, shape.text)
+
+
+def test_sibling_frames_sharing_only_some_layers_stay_apart():
+    """Data spans the layers below Edge's, ECS spans both, and in each
+    layer one frame has no node in. Fenced a layer at a time, one block's
+    nodes could land either side of another's, and frames pushing each
+    other's nodes back and forth never settled -- the diagram fell back
+    to source. Cut down from a real document."""
+    scene = build(
+        "flowchart TB\n"
+        "  subgraph Edge\n    WAF\n    CFI\n  end\n"
+        "  subgraph ECS\n"
+        "    subgraph FC\n      FR\n    end\n"
+        "    subgraph AC\n      AR\n    end\n"
+        "  end\n"
+        "  subgraph Data\n    PG\n    S3B\n  end\n"
+        "  User --> CFI --> IALB --> IMG --> S3B\n")
+    owners = {"WAF": {"Edge"}, "CFI": {"Edge"}, "FR": {"ECS", "FC"},
+              "AR": {"ECS", "AC"}, "PG": {"Data"}, "S3B": {"Data"},
+              "User": set(), "IALB": set(), "IMG": set()}
+    text = {shape.text: sc._point_extents(shape)
+            for shape in scene.shapes if isinstance(shape, sc.Text)}
+
+    def within(extents, frame):
+        x0, y0, x1, y1 = extents
+        return (x0 >= frame.x and x1 <= frame.x + frame.w
+                and y0 >= frame.y and y1 <= frame.y + frame.h)
+
+    frames = {}
+    for frame in boxes(scene):
+        if getattr(frame, "fill", None) != sc.CLUSTER:
+            continue
+        # A frame's title is the topmost frame title inside it.
+        titles = [t for t in ("Edge", "ECS", "FC", "AC", "Data") if within(text[t], frame)]
+        title = min(titles, key=lambda t: text[t][1])
+        # Title plates are filled like frames; they are a title high.
+        if frame.h > 2 * (text[title][3] - text[title][1]):
+            frames[title] = frame
+    assert set(frames) == {"Edge", "ECS", "FC", "AC", "Data"}
+    for node, mine in owners.items():
+        assert {key for key, frame in frames.items() if within(text[node], frame)} == mine, node
 
 
 def test_a_frame_that_would_swallow_a_foreign_node_falls_back():
@@ -913,7 +954,21 @@ def test_an_ampersand_in_a_label_is_just_text(statement):
     assert len(chart.edges) == 1
 
 
-@pytest.mark.parametrize("statement", ["A & B --> C", "A --> B & C", 'A["x"] & B'])
-def test_a_node_list_is_still_refused(statement):
-    with pytest.raises(mermaid.Unsupported):
-        mermaid.parse(f"flowchart LR\n  {statement}\n")
+@pytest.mark.parametrize("statement, expected", [
+    ("A & B --> C", [("A", "C"), ("B", "C")]),
+    ("A --> B & C", [("A", "B"), ("A", "C")]),
+    ("A & B --> C & D", [("A", "C"), ("A", "D"), ("B", "C"), ("B", "D")]),
+    ("A --> B & C --> D", [("A", "B"), ("A", "C"), ("B", "D"), ("C", "D")]),
+    ('A["x"] & B', []),
+])
+def test_a_node_list_links_every_node_on_each_side(statement, expected):
+    chart = mermaid.parse(f"flowchart LR\n  {statement}\n")
+    assert [(e.src, e.dst) for e in chart.edges] == expected
+
+
+def test_a_node_list_keeps_shapes_and_the_link_label():
+    chart = mermaid.parse('flowchart LR\n  A[("db")] & B{{hex}} -. "reads" .-> C\n')
+    assert chart.nodes["A"].shape == "cylinder"
+    assert chart.nodes["B"].shape == "hexagon"
+    assert {e.label for e in chart.edges} == {"reads"}
+    assert {e.style for e in chart.edges} == {"dotted"}
