@@ -703,6 +703,32 @@ def test_class_members_come_from_both_spellings():
     assert diagram.entities["PrintItem"].members == ["+str kind"]
 
 
+def test_class_declaration_forms():
+    diagram = mermaid.parse(
+        "classDiagram\n"
+        '  class Recipe["Fineart / Tools::Deploy"]\n'
+        "  class Recipe {\n    call()\n  }\n"            # keeps the label
+        "  class Container { definition_hash() }\n"      # mermaid: one member
+        "  class Port { <<interface>> }\n"
+        "  class Box~Shape~\n"
+        "  class Styled:::hot\n"
+        "  Recipe --> Container\n")
+    entities = diagram.entities
+    assert set(entities) == {"Recipe", "Container", "Port", "Box", "Styled"}
+    assert (entities["Recipe"].title, entities["Recipe"].members) == (
+        "Fineart / Tools::Deploy", ["call()"])
+    assert entities["Container"].members == ["definition_hash()"]
+    assert (entities["Port"].stereotype, entities["Port"].members) == ("interface", [])
+    assert entities["Box"].title == "Box<Shape>"
+
+
+@pytest.mark.parametrize("line", ['class A["unterminated', "class A extra words", "class A { x"])
+def test_an_unparsed_class_declaration_falls_back(line):
+    """These used to keep the first word and quietly drop the rest."""
+    with pytest.raises(mermaid.Unsupported):
+        mermaid.parse(f"classDiagram\n  {line}\n")
+
+
 @pytest.mark.parametrize("relation, tail, head, dashed", [
     ("<|--", "triangle", None, False),
     ("*--", "diamond", None, False),

@@ -56,6 +56,18 @@ _ER_RELATION_RE = re.compile(r"""
 
 _MEMBER_RE = re.compile(r"^(?P<key>[A-Za-z_][\w]*)\s*:\s*(?P<member>.+)$")
 _STEREOTYPE_RE = re.compile(r"^<<(?P<name>.+)>>$")
+# `class Id`, with optional `~Generic~` and `["Label"]`, then nothing, a
+# `{` opening a member block, a whole one-line `{ member }` block, or a
+# `:::style` shorthand (styling is ignored, as in flowcharts). Mermaid's
+# lexer reads a one-line block's text as a single member.
+_CLASS_DECL_RE = re.compile(r"""
+    ^class \s+ (?P<key>[A-Za-z_]\w*)
+    (?: ~ (?P<generic>[^~]+) ~ )?
+    \s* (?: \[ \s* "(?P<label>[^"]*)" \s* \] )?
+    \s* (?: :::[\w-]+ )?
+    \s* (?: (?P<open>\{) \s* (?: (?P<body>[^{}]*?) \s* (?P<close>\}) )? )?
+    $
+""", re.X | re.I)
 
 
 class Entity:
@@ -178,11 +190,31 @@ def _parse_common(source, header_re, kind):
             direction = "TD" if raw == "TB" else raw
             continue
 
+        if kind == "classDiagram" and line.lower().startswith("class "):
+            declaration = _CLASS_DECL_RE.match(line)
+            if not declaration:
+                raise Unsupported(f"unparsed class declaration {line!r}")
+            key = declaration.group("key")
+            # Only a line that gives a label sets the title, so a later
+            # bare `class Id {` doesn't undo an earlier `class Id["..."]`.
+            title = parse_label(declaration.group("label") or "") or None
+            if declaration.group("generic"):
+                title = f"{title or key}<{declaration.group('generic').strip()}>"
+            entity = touch(key, title)
+            if declaration.group("close"):
+                body = parse_label(declaration.group("body"))
+                stereotype = _STEREOTYPE_RE.match(body)
+                if stereotype:
+                    entity.stereotype = stereotype.group("name").strip()
+                elif body:
+                    entity.members.append(body)
+            elif declaration.group("open"):
+                open_entity = entity
+            continue
+
         if line.endswith("{"):
-            # `class Foo {` / `Foo {` -- the brace opens a member list.
+            # `Foo {` -- the brace opens a member list.
             title = line[:-1].strip()
-            if title.lower().startswith("class "):
-                title = title[6:].strip()
             if not title:
                 raise Unsupported("block with no entity name")
             key = title.split()[0]
@@ -204,10 +236,6 @@ def _parse_common(source, header_re, kind):
                 link = parse_click(line)
                 if link is not None:
                     hrefs[link[0]] = link[1]
-                continue
-            if line.lower().startswith("class "):
-                key = line[6:].strip().split()[0]
-                touch(key, key)
                 continue
             member = _MEMBER_RE.match(line)
             if member:
