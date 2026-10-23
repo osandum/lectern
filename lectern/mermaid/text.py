@@ -21,6 +21,7 @@ gi.require_version("PangoCairo", "1.0")
 from gi.repository import GLib, Pango, PangoCairo
 
 import cairo
+import html
 import re
 
 # Body text in a diagram, in nominal 96dpi pixels. Slightly under the
@@ -39,10 +40,24 @@ WRAP_CHARS = 28
 _STYLE_TAG_RE = re.compile(r"<(/?)(b|strong|i|em)>", re.I)
 _STYLE_TAGS = {"b": "b", "strong": "b", "i": "i", "em": "i"}
 
+# Mermaid's own spelling of an entity, for characters its grammar would
+# otherwise take as syntax: `#quot;`, `#35;`.
+_MERMAID_ENTITY_RE = re.compile(r"(?<!&)#(\w+);")
+
+
+def _text(text):
+    """Markup for plain label text. Labels being HTML, character
+    references in them (`&lt;`, and mermaid's `#lt;`) stand for the
+    character. They're decoded here, between the tags, never before
+    finding them: `&lt;b&gt;` is a way of *showing* `<b>`."""
+    text = _MERMAID_ENTITY_RE.sub(
+        lambda m: f"&#{m.group(1)};" if m.group(1).isdigit() else f"&{m.group(1)};", text)
+    return GLib.markup_escape_text(html.unescape(text), -1)
+
 
 def label_markup(text):
     """Pango markup for a label: `<b>`/`<strong>` bold, `<i>`/`<em>`
-    italic, everything else escaped. Tags that don't nest properly are
+    italic, character references decoded, everything else escaped. Tags that don't nest properly are
     left as visible text rather than guessed at, for the same reason
     parse_label leaves unknown tags alone."""
     out, stack, pos = [], [], 0
@@ -50,15 +65,15 @@ def label_markup(text):
         tag = _STYLE_TAGS[match.group(2).lower()]
         if match.group(1):
             if not stack or stack.pop() != tag:
-                return GLib.markup_escape_text(text, -1)
+                return _text(text)
         else:
             stack.append(tag)
-        out.append(GLib.markup_escape_text(text[pos:match.start()], -1))
+        out.append(_text(text[pos:match.start()]))
         out.append(f"<{match.group(1)}{tag}>")
         pos = match.end()
     if stack:
-        return GLib.markup_escape_text(text, -1)
-    out.append(GLib.markup_escape_text(text[pos:], -1))
+        return _text(text)
+    out.append(_text(text[pos:]))
     return "".join(out)
 
 

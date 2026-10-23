@@ -150,6 +150,10 @@ def test_br_becomes_a_line_break():
     ("List<String> & co", "List&lt;String&gt; &amp; co"),   # not ours: escaped
     ("<b>open", "&lt;b&gt;open"),                           # unbalanced: verbatim
     ("<b><i>x</b></i>", "&lt;b&gt;&lt;i&gt;x&lt;/b&gt;&lt;/i&gt;"),
+    ("&lt;app&gt;-&lt;env&gt;", "&lt;app&gt;-&lt;env&gt;"),  # references decoded ...
+    ("&lt;b&gt;x&lt;/b&gt;", "&lt;b&gt;x&lt;/b&gt;"),       # ... into text, not tags
+    ("<b>&amp;</b> &#35;1", "<b>&amp;</b> #1"),
+    ("#quot;hi#quot; #9829;", "&quot;hi&quot; ♥"),   # mermaid's spelling
 ])
 def test_label_markup(label, markup):
     assert textlib.label_markup(label) == markup
