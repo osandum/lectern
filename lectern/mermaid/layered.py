@@ -778,6 +778,8 @@ def self_loop_points(cell):
 ORTHOGONAL = "orthogonal"
 # Between the ports of one side of a node, at most.
 PORT_SPACING = 18.0
+# ... and on a side too crowded for that (see _place_ports).
+MIN_PORT_SPACING = 12.0
 # Ports closer than this across are lined up (see orthogonal_routes).
 SNAP = 4.0
 # Between two tracks across one gap, at least.
@@ -850,7 +852,7 @@ def orthogonal_routes(cells, routes, edges, vertical, label_sizes=None, bands=No
     for index, (w, h) in (label_sizes or {}).items():
         if index in routes and not routes[index]:
             clear[index] = (w if vertical else h) / 2 + TRACK_CLEARANCE
-    port = _place_ports(cells, hops, centre, halves, facing, clear)
+    port, pinned = _place_ports(cells, hops, centre, halves, facing, clear, vertical)
     # Ends a pixel or two out of line would draw as a step too small to
     # read as anything but a glitch: one moves to meet the other, if it is
     # a node's and that keeps it on its side.
@@ -860,7 +862,7 @@ def orthogonal_routes(cells, routes, edges, vertical, label_sizes=None, bands=No
             continue
         for end, mine, target in ((1, b, port[(hop, 0)]), (0, a, port[(hop, 1)])):
             cell = cells[mine]
-            if not getattr(cell, "virtual", False) \
+            if not getattr(cell, "virtual", False) and (hop, end) not in pinned \
                     and abs(target - centre(cell)[0]) <= halves(cell)[0] * 0.75:
                 port[(hop, end)] = target
                 break
@@ -915,7 +917,15 @@ def orthogonal_routes(cells, routes, edges, vertical, label_sizes=None, bands=No
             counts)
 
 
-def _place_ports(cells, hops, centre, halves, facing, clear):
+def _pointed(cell, vertical):
+    """Whether `cell`'s sides facing along the rank axis are curved or
+    come to a point: a diamond's, a circle's, and an upright cylinder's
+    top and bottom."""
+    return (getattr(cell, "shape", None) in ("diamond", "circle")
+            or bool(getattr(cell, "cap", 0.0)) and vertical)
+
+
+def _place_ports(cells, hops, centre, halves, facing, clear, vertical):
     """(hop, end) -> where across its layer the hop meets its cell.
 
     A virtual is met where it is. A node's side gets one port per hop
@@ -928,6 +938,12 @@ def _place_ports(cells, hops, centre, halves, facing, clear):
     neighbours as well, so far as the side allows. Each side aims at where
     the other ends are, which moves as they are placed in turn, so it
     takes a few rounds to settle.
+
+    The one exception is a lone hop on a side that is curved or pointed
+    (`_pointed`): it meets the middle, the top of the rim or the vertex.
+    Anywhere else it lands on a slope and looks like a near miss.
+
+    Returns the ports and the set of those pinned like that.
     """
     port = {}
     sides = {}
@@ -937,8 +953,12 @@ def _place_ports(cells, hops, centre, halves, facing, clear):
             if not getattr(cells[mine], "virtual", False):
                 key = (mine, facing(cells[mine], cells[other]))
                 sides.setdefault(key, []).append((hop, end))
+    pinned = {attached[0] for (key, _side), attached in sides.items()
+              if len(attached) == 1 and _pointed(cells[key], vertical)}
     for _round in range(3):
         for (key, _side), attached in sides.items():
+            if attached[0] in pinned:
+                continue
             cell = cells[key]
             middle = centre(cell)[0]
             # Not right out to the corners, and on a diamond or a circle
@@ -951,22 +971,40 @@ def _place_ports(cells, hops, centre, halves, facing, clear):
                 other = port[(hop, 1 - end)]
                 wanted.append((min(max(other, low), high), other, hop, end))
             wanted.sort()
-            step = min(PORT_SPACING, 2 * half / (len(wanted) - 1)) if len(wanted) > 1 else 0.0
-            spots = [w[0] for w in wanted]
             room = [clear.get(hops[hop][0], 0.0) for _want, _other, hop, _end in wanted]
-            apart = [max(step, room[i] + room[i + 1]) for i in range(len(spots) - 1)]
-            if sum(apart) > high - low:
-                # More asked for than the side has: everyone gives up the
-                # same share, and every port stays on its side.
-                apart = [gap * (high - low) / sum(apart) for gap in apart]
-            for i in range(1, len(spots)):
-                spots[i] = max(spots[i], spots[i - 1] + apart[i - 1])
-            spots[-1] = min(spots[-1], high)
-            for i in range(len(spots) - 2, -1, -1):
-                spots[i] = min(spots[i], spots[i + 1] - apart[i])
+            spots = None
+            # On a crowded side the usual spacing can push a port off the
+            # line its edge would otherwise run straight along; a tighter
+            # one is then worth it if that keeps more edges straight.
+            for spacing in (PORT_SPACING, MIN_PORT_SPACING):
+                step = min(spacing, 2 * half / (len(wanted) - 1)) if len(wanted) > 1 else 0.0
+                apart = [max(step, room[i] + room[i + 1]) for i in range(len(wanted) - 1)]
+                if sum(apart) > high - low:
+                    # Labels wanting more room than the side has: they will
+                    # have to find it further along their edges anyway (see
+                    # place_labels), and squeezing the ports apart only bends
+                    # edges that could have run straight.
+                    apart = [step] * len(apart)
+                tried = _spread([w[0] for w in wanted], apart, high)
+                straight = sum(abs(spot - other) < 0.5
+                               for spot, (_want, other, _hop, _end) in zip(tried, wanted))
+                if spots is None or straight > best:
+                    spots, best = tried, straight
             for spot, (_want, _other, hop, end) in zip(spots, wanted):
                 port[(hop, end)] = spot
-    return port
+    return port, pinned
+
+
+def _spread(spots, apart, high):
+    """`spots` (ascending) moved as little as they must to be `apart[i]`
+    from their next, without going past `high`."""
+    spots = list(spots)
+    for i in range(1, len(spots)):
+        spots[i] = max(spots[i], spots[i - 1] + apart[i - 1])
+    spots[-1] = min(spots[-1], high)
+    for i in range(len(spots) - 2, -1, -1):
+        spots[i] = min(spots[i], spots[i + 1] - apart[i])
+    return spots
 
 
 def _dedupe(points):

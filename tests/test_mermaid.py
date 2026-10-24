@@ -687,6 +687,42 @@ def test_a_square_edge_label_hides_no_other_edge(source):
         assert len(under) == 1
 
 
+# Every cylinder has one edge in and one out, and Nomad's top is too
+# narrow for its three edges at the usual port spacing.
+PIPELINE = """flowchart TB
+  G["GitHub / Forgejo<br/>/ SVN on Codebase"] --> J["Jenkins<br/>Docker · JDK 8–21"]
+  J -->|"Maven release"| AF[("Artifactory")]
+  J -->|"Jib / docker build"| DG[("degas:5000<br/>registry")]
+  J -->|"nomad job run"| NM["Nomad"]
+  AF -->|"artifact block"| NM
+  DG -->|"docker pull"| NM
+"""
+
+
+def test_a_lone_square_edge_meets_a_cylinder_in_the_middle():
+    # Off-centre, it lands on the slope of the rim and looks like a miss.
+    scene = build(PIPELINE)
+    tops = sorted((s for s in scene.shapes if isinstance(s, sc.Ellipse)), key=lambda s: s.x)
+    bodies = sorted((s for s in scene.shapes if isinstance(s, sc.Polygon)),
+                    key=lambda s: min(x for x, _y in s.points))
+    ends = [p for s in scene.shapes if isinstance(s, sc.Line)
+            for p in (s.points[0], s.points[-1])]
+    assert len(tops) == len(bodies) == 2
+    for top, body in zip(tops, bodies):
+        bottom = max(y for _x, y in body.points)
+        mine = [x for x, y in ends
+                if top.x <= x <= top.x + top.w and top.y - 1 <= y <= bottom + 1]
+        assert len(mine) == 2       # one in, one out
+        assert all(x == pytest.approx(top.x + top.w / 2) for x in mine)
+
+
+def test_a_crowded_side_squeezes_its_ports_to_keep_an_edge_straight(monkeypatch):
+    routes = square_routes(PIPELINE, monkeypatch)
+    # Artifactory --> Nomad: straight down, both ends in the middle of the
+    # cylinder, with Nomad's other two ports packed in beside it.
+    assert sum(1 for points in routes if len(points) == 2) >= 3
+
+
 def test_rounded_corners_keep_the_end_segments():
     route = [(0.0, 0.0), (0.0, 50.0), (80.0, 50.0), (80.0, 100.0)]
     path = layered.rounded(route)
