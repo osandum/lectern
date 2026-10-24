@@ -95,7 +95,7 @@ const FAMILY = {
 
 const casesDir = join(here, "..", "cases");
 const byFamily = {};
-for (const file of (await readdir(casesDir)).sort()) {
+for (const file of (await readdir(casesDir)).filter((f) => f.endsWith(".json")).sort()) {
   const family = file.split(".").at(-2);
   for (const c of JSON.parse(await readFile(join(casesDir, file), "utf8")))
     (byFamily[family] ??= []).push(c);

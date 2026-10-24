@@ -691,6 +691,1272 @@
     }
    ]
   },
+  "lectern:probe-keyword-prefix-style": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "styleguide",
+     "text": "styleguide",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "styleguide",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-keyword-prefix-class": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "classy",
+     "text": "classy",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "classy",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-keyword-prefix-graph": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "graphql",
+     "text": "graphql",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "graphql",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-keyword-prefix-subgraph": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "subgraphs",
+     "text": "subgraphs",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "subgraphs",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-keyword-prefix-default": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "defaults",
+     "text": "defaults",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "defaults",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-keyword-end-alone": {
+   "error": "Parse error on line 2:"
+  },
+  "lectern:probe-keyword-end-prefix": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "endpoint",
+     "text": "endpoint",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "endpoint",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-keyword-href": {
+   "error": "Parse error on line 2:"
+  },
+  "lectern:probe-keyword-call": {
+   "error": "Parse error on line 2:"
+  },
+  "lectern:probe-link-target-id": {
+   "error": "Parse error on line 2:"
+  },
+  "lectern:probe-v-prefix": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "validate",
+     "text": "validate",
+     "labelType": "text"
+    },
+    {
+     "id": "v",
+     "text": "v",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "validate",
+     "end": "v",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-paren-in-edge-text": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "text (x)",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-bracket-in-edge-text": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "text [x]",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-pipe-in-edge-text": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "a|b",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-quote-in-edge-text": {
+   "error": "Parse error on line 2:"
+  },
+  "lectern:probe-head-letter-before-link": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "text",
+     "labelType": "text",
+     "length": 2
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-head-letter-x-before-link": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "box",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-thick-text-with-dashes": {
+   "error": "Lexical error on line 2. Unrecognized text."
+  },
+  "lectern:probe-dotted-text-with-dots": {
+   "error": "Lexical error on line 2. Unrecognized text."
+  },
+  "lectern:probe-tilde-in-label": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "a ~~~ b",
+     "type": "square",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-quote-then-text": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "ab",
+     "type": "square",
+     "labelType": "string"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-multiline-label": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "one\ntwo",
+     "type": "square",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-trailing-comment": {
+   "error": "Parse error on line 2:"
+  },
+  "lectern:probe-semicolons": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    },
+    {
+     "id": "C",
+     "text": "C",
+     "labelType": "text"
+    },
+    {
+     "id": "D",
+     "text": "D",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    },
+    {
+     "start": "C",
+     "end": "D",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-amp-unspaced": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A&B",
+     "text": "A&B",
+     "labelType": "text"
+    },
+    {
+     "id": "C",
+     "text": "C",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A&B",
+     "end": "C",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-amp-before-link": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    },
+    {
+     "id": "C",
+     "text": "C",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "C",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    },
+    {
+     "start": "B",
+     "end": "C",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-direction-mid-line": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [],
+   "edges": [],
+   "subgraphs": []
+  },
+  "lectern:probe-subgraph-multiword-ref": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "X",
+     "text": "X",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "X",
+     "end": "A",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": [
+    {
+     "id": "subGraph0",
+     "title": "one two",
+     "nodes": [
+      "A"
+     ],
+     "labelType": "text"
+    }
+   ]
+  },
+  "lectern:probe-subgraph-direction": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": [
+    {
+     "id": "S",
+     "title": "S",
+     "nodes": [
+      "B",
+      "A"
+     ],
+     "labelType": "text"
+    }
+   ]
+  },
+  "lectern:probe-click-before-node": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-colon-id": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "a:b",
+     "text": "a:b",
+     "labelType": "text"
+    },
+    {
+     "id": "c",
+     "text": "c",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "a:b",
+     "end": "c",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-dash-id": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "my-node",
+     "text": "my-node",
+     "labelType": "text"
+    },
+    {
+     "id": "other-node",
+     "text": "other-node",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "my-node",
+     "end": "other-node",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-dot-id": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "a.b",
+     "text": "a.b",
+     "labelType": "text"
+    },
+    {
+     "id": "c",
+     "text": "c",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "a.b",
+     "end": "c",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-unicode-id": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "Città",
+     "text": "Città",
+     "labelType": "text"
+    },
+    {
+     "id": "Æble",
+     "text": "Æble",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "Città",
+     "end": "Æble",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-number-id": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "1",
+     "text": "1",
+     "labelType": "text"
+    },
+    {
+     "id": "2",
+     "text": "2",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "1",
+     "end": "2",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-long-link": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    },
+    {
+     "id": "C",
+     "text": "C",
+     "labelType": "text"
+    },
+    {
+     "id": "D",
+     "text": "D",
+     "labelType": "text"
+    },
+    {
+     "id": "E",
+     "text": "E",
+     "labelType": "text"
+    },
+    {
+     "id": "F",
+     "text": "F",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 4
+    },
+    {
+     "start": "C",
+     "end": "D",
+     "type": "arrow_point",
+     "stroke": "thick",
+     "text": "",
+     "labelType": "text",
+     "length": 3
+    },
+    {
+     "start": "E",
+     "end": "F",
+     "type": "arrow_point",
+     "stroke": "dotted",
+     "text": "",
+     "labelType": "text",
+     "length": 3
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-open-links": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    },
+    {
+     "id": "C",
+     "text": "C",
+     "labelType": "text"
+    },
+    {
+     "id": "D",
+     "text": "D",
+     "labelType": "text"
+    },
+    {
+     "id": "E",
+     "text": "E",
+     "labelType": "text"
+    },
+    {
+     "id": "F",
+     "text": "F",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_open",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    },
+    {
+     "start": "C",
+     "end": "D",
+     "type": "arrow_open",
+     "stroke": "thick",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    },
+    {
+     "start": "E",
+     "end": "F",
+     "type": "arrow_open",
+     "stroke": "dotted",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-both-heads": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    },
+    {
+     "id": "C",
+     "text": "C",
+     "labelType": "text"
+    },
+    {
+     "id": "D",
+     "text": "D",
+     "labelType": "text"
+    },
+    {
+     "id": "E",
+     "text": "E",
+     "labelType": "text"
+    },
+    {
+     "id": "F",
+     "text": "F",
+     "labelType": "text"
+    },
+    {
+     "id": "G",
+     "text": "G",
+     "labelType": "text"
+    },
+    {
+     "id": "H",
+     "text": "H",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "double_arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    },
+    {
+     "start": "C",
+     "end": "D",
+     "type": "double_arrow_circle",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    },
+    {
+     "start": "E",
+     "end": "F",
+     "type": "double_arrow_cross",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    },
+    {
+     "start": "G",
+     "end": "H",
+     "type": "double_arrow_point",
+     "stroke": "dotted",
+     "text": "text",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-mismatched-text-link": {
+   "error": "Parse error on line 4:"
+  },
+  "lectern:probe-odd-shape": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "odd",
+     "type": "odd",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-doublecircle": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "double",
+     "type": "doublecircle",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-empty-label": {
+   "error": "Parse error on line 2:"
+  },
+  "lectern:probe-space-label": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "",
+     "type": "square",
+     "labelType": "string"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-entity-in-label": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "a ﬂ°amp¶ß b ﬂ°°59¶ß c",
+     "type": "square",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-html-in-label": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "<b>bold</b> and <i>it</i>",
+     "type": "square",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-edge-id": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-graph-no-direction": {
+   "type": "flowchart-v2",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
+  "lectern:probe-direction-arrows": {
+   "type": "flowchart-v2",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "text": "A",
+     "labelType": "text"
+    },
+    {
+     "id": "B",
+     "text": "B",
+     "labelType": "text"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "type": "arrow_point",
+     "stroke": "normal",
+     "text": "",
+     "labelType": "text",
+     "length": 1
+    }
+   ],
+   "subgraphs": []
+  },
   "flow-arrows.spec.js:16": {
    "type": "flowchart-v2",
    "direction": "TB",
