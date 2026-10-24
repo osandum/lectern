@@ -730,6 +730,59 @@ def test_rounded_corners_keep_the_end_segments():
     assert path[1] == (0.0, 45.0) and path[-2] == (80.0, 55.0)
 
 
+def test_a_run_across_hops_a_run_along_where_they_cross():
+    across = [(0.0, 50.0), (100.0, 50.0)]
+    along = [(40.0, 0.0), (40.0, 100.0)]
+    assert layered.crossings({"a": across, "b": along}, vertical=True) == {"a": {0: [40.0]}}
+    # Drawn left to right, the other way: the across run is the vertical.
+    assert layered.crossings({"a": across, "b": along}, vertical=False) == {"b": {0: [50.0]}}
+
+
+@pytest.mark.parametrize("along", [
+    [(40.0, 0.0), (40.0, 50.0)],        # a T: ends on the run
+    [(0.0, 50.0), (0.0, 100.0)],        # meets it at its end
+])
+def test_lines_that_only_meet_dont_hop(along):
+    assert layered.crossings({"a": [(0.0, 50.0), (100.0, 50.0)], "b": along}, True) == {}
+
+
+def test_a_hop_is_a_half_circle_up_over_the_crossing():
+    path = layered.rounded([(0.0, 50.0), (100.0, 50.0)], hops={0: [40.0]})
+    assert path[0] == (0.0, 50.0) and path[-1] == (100.0, 50.0)
+    top = min(path, key=lambda p: p[1])
+    assert top == pytest.approx((40.0, 50.0 - layered.HOP_RADIUS))
+    off = [x for x, y in path if y < 50.0 - 1e-6]
+    assert min(off) >= 40.0 - layered.HOP_RADIUS and max(off) <= 40.0 + layered.HOP_RADIUS
+
+
+def test_crossings_close_together_are_hopped_as_one():
+    path = layered.rounded([(0.0, 50.0), (100.0, 50.0)], hops={0: [40.0, 44.0]})
+    raised = [x for x, y in path if y == pytest.approx(50.0 - layered.HOP_RADIUS)]
+    # One bump, level across both crossings, not two half circles.
+    assert min(raised) == pytest.approx(40.0) and max(raised) == pytest.approx(44.0)
+    assert sum(1 for (x1, y1), (x2, y2) in zip(path, path[1:])
+               if y1 == pytest.approx(50.0) and y2 < 50.0 - 1e-6) == 1
+
+
+def test_a_crossing_too_close_to_a_corner_is_not_hopped():
+    route = [(0.0, 0.0), (0.0, 50.0), (100.0, 50.0)]
+    near = layered.CORNER_RADIUS + layered.HOP_RADIUS - 1
+    assert layered.rounded(route, hops={1: [near]}) == layered.rounded(route)
+
+
+@pytest.mark.parametrize("direction", ["TB", "LR"])
+def test_crossing_square_edges_are_drawn_with_a_hop(direction, monkeypatch):
+    drawn = []
+    rounded = layered.rounded
+
+    def spy(points, *args, hops=None, **kwargs):
+        drawn.append(hops)
+        return rounded(points, *args, hops=hops, **kwargs)
+    monkeypatch.setattr(layered, "rounded", spy)
+    build(FANNED.replace("flowchart TB", f"flowchart {direction}"))
+    assert any(drawn)
+
+
 def test_a_source_is_ranked_just_above_what_it_points_at():
     # Longest-path ranking left S on top with an edge spanning three
     # ranks, crossing everything in between.

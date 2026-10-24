@@ -753,6 +753,7 @@ def _build_scene(chart, measurer):
             cells, {index: route for index, route in routes.items()
                     if chart.edges[index].style != INVISIBLE},
             chart.edges, vertical, label_sizes, bands)
+    paths = {}
     for index, edge in enumerate(chart.edges):
         if edge.style == INVISIBLE:
             continue    # ranked above, drawn never
@@ -766,8 +767,18 @@ def _build_scene(chart, measurer):
             points = _clip_to_frame(points, frames[edge.dst_cluster])
         if edge.src_cluster:
             points = _clip_to_frame(points[::-1], frames[edge.src_cluster])[::-1]
+        paths[index] = points
+    # Where two right-angled edges cross, one hops the other, which is
+    # what keeps a crossing from reading as a junction.
+    hops = layered.crossings(
+        {index: points for index, points in paths.items()
+         if chart.edges[index].src != chart.edges[index].dst},
+        vertical) if orthogonal else {}
+
+    for index, points in paths.items():
+        edge = chart.edges[index]
         if orthogonal:
-            drawn = layered.rounded(points)
+            drawn = layered.rounded(points, hops=hops.get(index))
         else:
             drawn = layered.curved(points, chart.curve, [
                 (n.x - n.w / 2, n.y - n.h / 2, n.w, n.h) for key, n in chart.nodes.items()

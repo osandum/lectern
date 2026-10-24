@@ -16,6 +16,8 @@ boxes look like -- a flowchart's shapes, a class diagram's compartments --
 is the caller's business entirely, and is why this file draws nothing.
 """
 
+import math
+
 RANK_GAP = 46.0        # between one layer and the next
 NODE_GAP = 26.0        # between siblings within a layer
 VIRTUAL_W = 14.0       # cross-axis room reserved for an edge passing a layer
@@ -1056,31 +1058,119 @@ def run_anchor(points, vertical):
     return best
 
 
-def rounded(points, radius=CORNER_RADIUS):
+def crossings(paths, vertical):
+    """Key -> {segment index: [distances from the segment's start]}: where
+    each path's runs *across* the layers cross another path's run along
+    them, the places `rounded` draws a hop. `paths` maps a key to an
+    orthogonal route (see orthogonal_routes).
+
+    Only the runs across hop, the way GitHub draws it: across is where an
+    edge goes out of its way, and along is the line a reader follows from
+    one layer to the next. A run meeting another only at an end -- a T, or
+    two edges into one port -- is no crossing.
+    """
+    across, along = [], []
+    for key, points in paths.items():
+        for index, ((x1, y1), (x2, y2)) in enumerate(zip(points, points[1:])):
+            if abs(y1 - y2) < 1e-6 and abs(x1 - x2) > 1e-6:
+                (across if vertical else along).append((key, index, x1, y1, x2, y2))
+            elif abs(x1 - x2) < 1e-6 and abs(y1 - y2) > 1e-6:
+                (along if vertical else across).append((key, index, x1, y1, x2, y2))
+    found = {}
+    for key, index, x1, y1, x2, y2 in across:
+        for other, _index, u1, v1, u2, v2 in along:
+            if other == key:
+                continue
+            if vertical:    # across horizontal, along vertical
+                x, y = u1, y1
+                hit = (min(x1, x2) + 0.5 < x < max(x1, x2) - 0.5
+                       and min(v1, v2) + 0.5 < y < max(v1, v2) - 0.5)
+                distance = abs(x - x1)
+            else:
+                x, y = x1, v1
+                hit = (min(y1, y2) + 0.5 < y < max(y1, y2) - 0.5
+                       and min(u1, u2) + 0.5 < x < max(u1, u2) - 0.5)
+                distance = abs(y - y1)
+            if hit:
+                found.setdefault(key, {}).setdefault(index, []).append(distance)
+    return found
+
+
+def rounded(points, radius=CORNER_RADIUS, hops=None):
     """`points` with each corner rounded off to a quarter circle of up to
     `radius` -- less where a segment is too short to take it -- flattened
     into straight pieces like `curved`'s, so heads and labels work on it
-    the same way. The first and last segments stay as they are."""
-    if len(points) < 3:
-        return list(points)
+    the same way. The first and last segments stay as they are.
+
+    `hops` (segment index -> distances along it, see crossings) are where
+    another line crosses; the segment jumps it with a half circle of
+    HOP_RADIUS, bulging up (or left). Crossings closer together than one
+    hop's width are jumped as one, and one too close to a corner to fit a
+    hop is drawn plain.
+    """
+    hops = hops or {}
+    radii = [0.0] * len(points)
+    for i in range(1, len(points) - 1):
+        r = min(radius, _distance(points[i - 1], points[i]) / 2,
+                _distance(points[i], points[i + 1]) / 2)
+        radii[i] = r if r >= 0.5 else 0.0
     out = [points[0]]
-    for (x0, y0), (x1, y1), (x2, y2) in zip(points, points[1:], points[2:]):
-        a = ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5
-        b = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
-        r = min(radius, a / 2, b / 2)
-        if r < 0.5:
-            out.append((x1, y1))
+    for i, ((x0, y0), (x1, y1)) in enumerate(zip(points, points[1:])):
+        if i and radii[i]:
+            out += _corner(points[i - 1], points[i], points[i + 1], radii[i])
+        elif i:
+            out.append(points[i])
+        length = _distance((x0, y0), (x1, y1))
+        if not length or i not in hops:
             continue
-        # Quadratic from r before the corner to r after, the corner its
-        # control point: close enough to an arc at this size.
-        p = (x1 + (x0 - x1) * r / a, y1 + (y0 - y1) * r / a)
-        q = (x1 + (x2 - x1) * r / b, y1 + (y2 - y1) * r / b)
-        for step in range(5):
-            t = step / 4
-            out.append(((1 - t) ** 2 * p[0] + 2 * (1 - t) * t * x1 + t * t * q[0],
-                        (1 - t) ** 2 * p[1] + 2 * (1 - t) * t * y1 + t * t * q[1]))
+        ux, uy = (x1 - x0) / length, (y1 - y0) / length
+        nx, ny = (0.0, -1.0) if abs(uy) < 1e-6 else (-1.0, 0.0)
+        room_from, room_to = radii[i] + 0.5, length - radii[i + 1] - 0.5
+        for start, end in _hop_groups(sorted(hops[i])):
+            if start - HOP_RADIUS < room_from or end + HOP_RADIUS > room_to:
+                continue
+            for centre, first, last in ((start, math.pi, math.pi / 2), (end, math.pi / 2, 0.0)):
+                for step in range(_HOP_STEPS + 1):
+                    angle = first + (last - first) * step / _HOP_STEPS
+                    along = centre + HOP_RADIUS * math.cos(angle)
+                    up = HOP_RADIUS * math.sin(angle)
+                    out.append((x0 + ux * along + nx * up, y0 + uy * along + ny * up))
     out.append(points[-1])
     return out
+
+
+# A line-crossing hop's radius, and the straight pieces each quarter of
+# it is drawn as.
+HOP_RADIUS = 4.0
+_HOP_STEPS = 4
+
+
+def _distance(a, b):
+    return ((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2) ** 0.5
+
+
+def _corner(before, corner, after, r):
+    """A rounded corner: a quadratic from r before it to r after, the
+    corner its control point -- close enough to an arc at this size."""
+    (x0, y0), (x1, y1), (x2, y2) = before, corner, after
+    a, b = _distance(before, corner), _distance(corner, after)
+    p = (x1 + (x0 - x1) * r / a, y1 + (y0 - y1) * r / a)
+    q = (x1 + (x2 - x1) * r / b, y1 + (y2 - y1) * r / b)
+    return [((1 - t) ** 2 * p[0] + 2 * (1 - t) * t * x1 + t * t * q[0],
+             (1 - t) ** 2 * p[1] + 2 * (1 - t) * t * y1 + t * t * q[1])
+            for t in (step / 4 for step in range(5))]
+
+
+def _hop_groups(distances):
+    """Sorted crossing distances -> (first, last) of each run of them too
+    close together to hop one at a time."""
+    groups = []
+    for d in distances:
+        if groups and d - groups[-1][1] < 2 * HOP_RADIUS + 2:
+            groups[-1][1] = d
+        else:
+            groups.append([d, d])
+    return [tuple(g) for g in groups]
 
 
 # Mermaid's own default for flowcharts; "linear" is the straight route.
