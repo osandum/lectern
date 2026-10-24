@@ -151,7 +151,195 @@ def lectern_flowchart(source):
     }
 
 
-COMPARE = {"flowchart": (mermaid_flowchart, lectern_flowchart)}
+# mermaid's sequence message types (sequenceDb's LINETYPE) -> how Lectern
+# models them: (dotted, arrowhead) for a message, or the event they are.
+_MESSAGES = {0: (False, "arrow"), 1: (True, "arrow"), 5: (False, None), 6: (True, None),
+             3: (False, "cross"), 4: (True, "cross"), 24: (False, "open"), 25: (True, "open")}
+_BLOCKS = {10: ("start", "loop"), 11: ("end",), 12: ("start", "alt"), 13: ("divider",),
+           14: ("end",), 15: ("start", "opt"), 16: ("end",), 19: ("start", "par"),
+           20: ("divider",), 21: ("end",), 22: ("start", "rect"), 23: ("end",),
+           27: ("start", "critical"), 28: ("divider",), 29: ("end",),
+           30: ("start", "break"), 31: ("end",)}
+_PLACEMENTS = {0: "left", 1: "right", 2: "over"}
+
+
+def mermaid_sequence(result):
+    """A recorded sequence diagram in the plain form: participants in
+    order, then every event. Whether a participant is drawn as an actor is
+    not in it -- Lectern draws them all as boxes, a matter of looks like
+    styling."""
+    if "error" in result:
+        return None
+    if "actors" not in result:
+        return {"type": result["type"]}
+    events = []
+    for m in result["messages"]:
+        kind = m["type"]
+        if kind in _MESSAGES:
+            dotted, head = _MESSAGES[kind]
+            events.append(["message", m["from"], m["to"], _text(m["message"]), dotted, head])
+        elif kind == 2:
+            keys = [m["from"]] if m["from"] == m["to"] else [m["from"], m["to"]]
+            events.append(["note", _PLACEMENTS[m["placement"]], keys, _text(m["message"])])
+        elif kind in (17, 18):
+            events.append(["activate" if kind == 17 else "deactivate", m["from"]])
+        elif kind in _BLOCKS:
+            block = list(_BLOCKS[kind])
+            # A rect's "label" is its colour, which isn't drawn as text.
+            label = "" if block == ["start", "rect"] else _text(m["message"])
+            events.append(block + ([label] if block[0] != "end" else []))
+        else:
+            events.append(["mermaid", kind])   # nothing Lectern has a name for
+    return {
+        "participants": [[a["name"], _text(a["description"])] for a in result["actors"]],
+        "events": events,
+    }
+
+
+def lectern_sequence(source):
+    from lectern.mermaid import sequence
+    from lectern.mermaid.common import Unsupported
+    try:
+        diagram = sequence.parse(source)
+    except Unsupported:
+        return None
+    events = []
+    for event in diagram.events:
+        if isinstance(event, sequence.Message):
+            events.append(["message", event.src, event.dst, _shown(event.text),
+                           event.dotted, event.head])
+            # The `+`/`-` shorthand: mermaid records the activation as
+            # an event of its own, right after the message.
+            if event.activation == "+":
+                events.append(["activate", event.dst])
+            elif event.activation == "-":
+                events.append(["deactivate", event.src])
+        elif isinstance(event, sequence.Note):
+            events.append(["note", event.placement, event.keys, _shown(event.text)])
+        elif isinstance(event, sequence.Activation):
+            events.append(["activate" if event.start else "deactivate", event.key])
+        elif isinstance(event, sequence.BlockStart):
+            events.append(["start", event.kind, _shown(event.label)])
+        elif isinstance(event, sequence.BlockDivider):
+            events.append(["divider", _shown(event.label)])
+        else:
+            events.append(["end"])
+    return {
+        "participants": [[key, _shown(p.label)] for key, p in diagram.participants.items()],
+        "events": events,
+    }
+
+
+# mermaid's class relation types (classDb's relationType) -> Lectern's end
+# glyphs, and its ER cardinalities -> Lectern's.
+_UML_ENDS = {"none": None, 0: "diamond-open", 1: "triangle", 2: "diamond", 3: "arrow"}
+_CARDINALITIES = {"ONLY_ONE": "one", "ZERO_OR_ONE": "zero-one",
+                  "ZERO_OR_MORE": "zero-many", "ONE_OR_MORE": "one-many"}
+
+
+def _member(text):
+    """A class member as shown: mermaid escapes a leading visibility
+    sign so its markdown doesn't read it as a list item."""
+    return _text(text.replace("\\", "", 1) if text.startswith("\\") else text)
+
+
+def mermaid_class(result):
+    if "error" in result:
+        return None
+    if "classes" not in result:
+        return {"type": result["type"]}
+    if result["notes"] or result["namespaces"]:
+        return {"notes": result["notes"], "namespaces": result["namespaces"]}
+    return {
+        "direction": "TD" if result["direction"] == "TB" else result["direction"],
+        "entities": {c["id"]: {
+            "title": _text(c["label"]) + (f"<{c['type']}>" if c.get("type") else ""),
+            "stereotypes": c["annotations"],
+            "members": sorted(_member(m) for m in c["members"] + c["methods"]),
+        } for c in result["classes"]},
+        "relations": [{
+            "src": r["id1"], "dst": r["id2"],
+            "ends": [_UML_ENDS.get(r["type1"], r["type1"]), _UML_ENDS.get(r["type2"], r["type2"])],
+            "dashed": r["lineType"] == 1, "label": _text(r.get("title", "")),
+            "cards": ["" if r.get(k, "none") == "none" else _text(r[k])
+                      for k in ("relationTitle1", "relationTitle2")],
+        } for r in result["relations"]],
+        "links": {c["id"]: _url(c["link"]) for c in result["classes"] if c.get("link")},
+    }
+
+
+def mermaid_er(result):
+    if "error" in result:
+        return None
+    if "entities" not in result:
+        return {"type": result["type"]}
+
+    def attribute(a):
+        words = [a["type"], a["name"]]
+        if a.get("keys"):
+            words.append(", ".join(a["keys"]))
+        if a.get("comment"):
+            words.append(f'"{a["comment"]}"')
+        return " ".join(words)
+    return {
+        "direction": "TD" if result["direction"] == "TB" else result["direction"],
+        "entities": {e["name"]: {
+            "title": _text(e["alias"] or e["name"]),
+            "stereotypes": [],
+            "members": sorted(attribute(a) for a in e["attributes"]),
+        } for e in result["entities"]},
+        # mermaid names the cardinalities from the far end: cardA is the
+        # one drawn at entity B.
+        "relations": [{
+            "src": r["entityA"], "dst": r["entityB"],
+            "ends": [_CARDINALITIES.get(r["cardB"], r["cardB"]),
+                     _CARDINALITIES.get(r["cardA"], r["cardA"])],
+            "dashed": r["relType"] == "NON_IDENTIFYING", "label": _text(r["roleA"]),
+            "cards": ["", ""],
+        } for r in result["relationships"]],
+        "links": {},
+    }
+
+
+def _lectern_entities(parse, source):
+    from lectern.mermaid.common import Unsupported
+    try:
+        diagram = parse(source)
+    except Unsupported:
+        return None
+    return {
+        "direction": diagram.direction,
+        "entities": {key: {
+            "title": _shown(entity.title),
+            "stereotypes": [entity.stereotype] if entity.stereotype else [],
+            # As written, but spaced the way mermaid shows an ER key list.
+            "members": sorted(_shown(re.sub(r"\s*,\s*", ", ", " ".join(m.split())))
+                              for m in entity.members),
+        } for key, entity in diagram.entities.items()},
+        "relations": [{
+            "src": r.src, "dst": r.dst, "ends": [r.tail, r.head], "dashed": r.dashed,
+            "label": _shown(r.label), "cards": [r.src_card, r.dst_card],
+        } for r in diagram.relations],
+        "links": {key: _url(e.href) for key, e in diagram.entities.items() if e.href},
+    }
+
+
+def lectern_class(source):
+    from lectern.mermaid import entities
+    return _lectern_entities(entities.parse_class, source)
+
+
+def lectern_er(source):
+    from lectern.mermaid import entities
+    return _lectern_entities(entities.parse_er, source)
+
+
+COMPARE = {
+    "flowchart": (mermaid_flowchart, lectern_flowchart),
+    "sequence": (mermaid_sequence, lectern_sequence),
+    "class": (mermaid_class, lectern_class),
+    "er": (mermaid_er, lectern_er),
+}
 
 
 def outcome(family, case, result):
