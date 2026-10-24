@@ -87,10 +87,17 @@ def parse_init(source):
 
 
 def curve_setting(source, section, default):
-    """The edge curve a directive asks `section` (e.g. "flowchart") for.
-    Only "linear" is drawn as asked; mermaid's other curves are all ways of
-    rounding the corners, and draw as the default basis spline -- a
-    slightly different curve misstates nothing."""
+    """The edge curve a directive asks `section` (e.g. "flowchart") for:
+    "linear" as asked, mermaid's step curves as right angles, and every
+    other curve as the basis spline -- they are all ways of rounding the
+    corners, and a slightly different curve misstates nothing. `default`
+    if none is asked for."""
     config = parse_init(source).get(section)
     curve = config.get("curve") if isinstance(config, dict) else None
-    return "linear" if curve == "linear" else default
+    if curve is None:
+        return default
+    if curve == "linear":
+        return "linear"
+    if isinstance(curve, str) and curve.startswith("step"):
+        return "orthogonal"
+    return "basis"

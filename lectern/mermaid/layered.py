@@ -619,7 +619,7 @@ def mirror(cells, direction, width, height):
 
 
 def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None,
-           groups=None, label_sizes=None):
+           groups=None, label_sizes=None, square=None):
     """Rank, order and place `nodes`. Returns (cells, routes, width,
     height); the nodes themselves come back with x/y/rank filled in.
 
@@ -647,6 +647,10 @@ def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None,
     layer then keeps a slot for the label beside the boxes in it, rather
     than the label being dropped wherever the edge happens to run (see
     label_anchor).
+
+    `square` is the indices of the edges that will be drawn at right
+    angles (see orthogonal_routes), if any. A gap whose runs need more
+    tracks than fit in it is widened to fit them.
     """
     vertical = direction in VERTICAL_DIRECTIONS
     rank_nodes(nodes, edges)
@@ -680,6 +684,18 @@ def layout(nodes, edges, direction, rank_gap=RANK_GAP, edge_room=None,
     for (low, _end), room in bundles.items():
         rank_gaps[low] = max(rank_gaps[low], room)
     place(layers, up, down, vertical, rank_gaps, paths, rank)
+    if square is not None:
+        _routes, tracks = orthogonal_routes(
+            cells, {index: routes[index] for index in square}, edges, vertical,
+            label_sizes)
+        shift = 0.0
+        for index, gap in enumerate(rank_gaps[:-1]):
+            shift += max(0.0, (tracks.get(index, 0) + 1) * TRACK_SPACING - gap)
+            for cell in layers[index + 1]:
+                if vertical:
+                    cell.y += shift
+                else:
+                    cell.x += shift
     width = max((cell.x + cell.w / 2 for cell in cells.values()), default=0.0)
     height = max((cell.y + cell.h / 2 for cell in cells.values()), default=0.0)
     mirror(cells, direction, width, height)
@@ -753,6 +769,280 @@ def self_loop_points(cell):
         (cell.x + cell.w * 0.2, top - reach * 0.6),
         (cell.x + cell.w * 0.2, top),
     ]
+
+
+# -- orthogonal routing ----------------------------------------------------
+
+# Edges drawn as runs along and across the layers, the way GitHub draws a
+# flowchart, rather than as curves.
+ORTHOGONAL = "orthogonal"
+# Between the ports of one side of a node, at most.
+PORT_SPACING = 18.0
+# Ports closer than this across are lined up (see orthogonal_routes).
+SNAP = 4.0
+# Between two tracks across one gap, at least.
+TRACK_SPACING = 12.0
+# Clear line kept between two runs sharing a track.
+TRACK_CLEARANCE = 6.0
+# Radius a route's corners are rounded to, where its segments allow it.
+CORNER_RADIUS = 5.0
+
+
+def rank_bands(cells, vertical):
+    """Rank -> (low, high): the stretch of the rank axis its layer spans."""
+    bands = {}
+    for cell in cells.values():
+        along, half = (cell.y, cell.h / 2) if vertical else (cell.x, cell.w / 2)
+        low, high = bands.get(cell.rank, (along - half, along + half))
+        bands[cell.rank] = (min(low, along - half), max(high, along + half))
+    return bands
+
+
+def orthogonal_routes(cells, routes, edges, vertical, label_sizes=None, bands=None):
+    """Edge index -> an orthogonal route, for every edge in `routes`
+    between two distinct cells; and the upper rank of each gap -> the
+    tracks its runs take up.
+
+    Each edge leaves its node through a port on the side facing the way
+    it goes -- one per edge, spread along the side in the order of where
+    the edges are headed, so the edges out of one node don't start on top
+    of each other and needn't cross on the way out. Between two layers it
+    runs straight on if its ends line up, and otherwise along the rank
+    axis to a track in the gap, across it, and on into the next layer.
+    Runs across one gap that overlap get tracks of their own, stacked so
+    that two edges heading the same way don't cross where they needn't
+    (`_assign_tracks`). Through a layer it passes, it runs straight
+    through its virtual node (see Virtual).
+
+    `label_sizes` (edge index -> plate (w, h)) keeps the ports beside a
+    labelled edge's far enough away for its plate not to cover them.
+    `bands` (see rank_bands) are the layers' extents if not the cells'
+    own: a flowchart's subgraph frames sit in room its nodes were grown by
+    for the layout, and a track run through a frame's title band would
+    vanish under the title.
+    """
+    def centre(cell):
+        return (cell.x, cell.y) if vertical else (cell.y, cell.x)
+
+    def halves(cell):       # (half across the layer, half along it)
+        return (cell.w / 2, cell.h / 2) if vertical else (cell.h / 2, cell.w / 2)
+
+    def point(across, along):
+        return (across, along) if vertical else (along, across)
+
+    bands = bands or rank_bands(cells, vertical)
+
+    hops = []       # (edge index, from key, to key)
+    for index, edge in enumerate(edges):
+        if edge.src == edge.dst or index not in routes:
+            continue
+        chain = [edge.src] + routes[index] + [edge.dst]
+        hops += [(index, a, b) for a, b in zip(chain, chain[1:])]
+
+    def facing(cell, other):
+        """+1 if `other` lies further along the rank axis than `cell`."""
+        return 1 if centre(other)[1] > centre(cell)[1] else -1
+
+    # Half a label's plate across, for an edge between adjacent layers:
+    # its label goes beside its ports. One spanning more has a slot of its
+    # own in a layer in between (see layout's `label_sizes`).
+    clear = {}
+    for index, (w, h) in (label_sizes or {}).items():
+        if index in routes and not routes[index]:
+            clear[index] = (w if vertical else h) / 2 + TRACK_CLEARANCE
+    port = _place_ports(cells, hops, centre, halves, facing, clear)
+    # Ends a pixel or two out of line would draw as a step too small to
+    # read as anything but a glitch: one moves to meet the other, if it is
+    # a node's and that keeps it on its side.
+    for hop, (_index, a, b) in enumerate(hops):
+        offset = port[(hop, 1)] - port[(hop, 0)]
+        if not 0 < abs(offset) < SNAP:
+            continue
+        for end, mine, target in ((1, b, port[(hop, 0)]), (0, a, port[(hop, 1)])):
+            cell = cells[mine]
+            if not getattr(cell, "virtual", False) \
+                    and abs(target - centre(cell)[0]) <= halves(cell)[0] * 0.75:
+                port[(hop, end)] = target
+                break
+
+    def end_point(key, other, across):
+        """Where a hop from `key` toward `other` leaves its outline."""
+        cell = cells[key]
+        middle, along = centre(cell)
+        half_across, half_along = halves(cell)
+        side = facing(cell, cells[other])
+        offset = min(1.0, abs(across - middle) / half_across) if half_across else 0.0
+        shape = getattr(cell, "shape", None)
+        if shape == "diamond":
+            half_along *= 1 - offset
+        elif shape == "circle":
+            half_along *= (1 - offset * offset) ** 0.5
+        elif getattr(cell, "cap", 0.0) and vertical:
+            half_along -= cell.cap * (1 - (1 - offset * offset) ** 0.5)
+        return across, along + side * half_along
+
+    pieces = {}
+    runs = {}       # upper rank of a gap -> [(hop, from across, to across)]
+    for hop, (index, a, b) in enumerate(hops):
+        start = end_point(a, b, port[(hop, 0)])
+        end = end_point(b, a, port[(hop, 1)])
+        pieces[hop] = [start, end]
+        if abs(start[0] - end[0]) > 0.5:
+            upper, lower = sorted((cells[a].rank, cells[b].rank))
+            from_across, to_across = (start[0], end[0]) if cells[a].rank == upper \
+                else (end[0], start[0])
+            runs.setdefault(upper, []).append((hop, from_across, to_across))
+    counts = {}
+    for upper, gap_runs in runs.items():
+        tracks = _assign_tracks(gap_runs)
+        counts[upper] = count = max(tracks.values()) + 1
+        # The gap's edge on the upper rank's side first: its high end, unless
+        # the diagram is drawn backwards (BT, RL) and the ranks run the
+        # other way.
+        if sum(bands[upper]) <= sum(bands[upper + 1]):
+            top, bottom = bands[upper][1], bands[upper + 1][0]
+        else:
+            top, bottom = bands[upper][0], bands[upper + 1][1]
+        for hop, from_across, to_across in gap_runs:
+            along = top + (bottom - top) * (tracks[hop] + 1) / (count + 1)
+            start, end = pieces[hop]
+            pieces[hop] = [start, (start[0], along), (end[0], along), end]
+
+    out = {}
+    for hop, (index, a, b) in enumerate(hops):
+        out.setdefault(index, []).extend(pieces[hop])
+    return ({index: [point(*p) for p in _dedupe(points)] for index, points in out.items()},
+            counts)
+
+
+def _place_ports(cells, hops, centre, halves, facing, clear):
+    """(hop, end) -> where across its layer the hop meets its cell.
+
+    A virtual is met where it is. A node's side gets one port per hop
+    attached to it, each as close to the hop's other end as the side and
+    its neighbours allow -- so a hop whose ends line up is drawn straight,
+    and the rest bend no more than they must -- kept in the order of those
+    other ends, so the hops leaving one side don't cross each other, and
+    at least PORT_SPACING apart, or as far apart as the side has room for.
+    A labelled hop's port keeps `clear` (edge index -> distance) from its
+    neighbours as well, so far as the side allows. Each side aims at where
+    the other ends are, which moves as they are placed in turn, so it
+    takes a few rounds to settle.
+    """
+    port = {}
+    sides = {}
+    for hop, (_index, a, b) in enumerate(hops):
+        for end, mine, other in ((0, a, b), (1, b, a)):
+            port[(hop, end)] = centre(cells[mine])[0]
+            if not getattr(cells[mine], "virtual", False):
+                key = (mine, facing(cells[mine], cells[other]))
+                sides.setdefault(key, []).append((hop, end))
+    for _round in range(3):
+        for (key, _side), attached in sides.items():
+            cell = cells[key]
+            middle = centre(cell)[0]
+            # Not right out to the corners, and on a diamond or a circle
+            # no further out than its outline is still facing this way.
+            half = halves(cell)[0] * (0.5 if getattr(cell, "shape", None)
+                                      in ("diamond", "circle") else 0.75)
+            low, high = middle - half, middle + half
+            wanted = []
+            for hop, end in attached:
+                other = port[(hop, 1 - end)]
+                wanted.append((min(max(other, low), high), other, hop, end))
+            wanted.sort()
+            step = min(PORT_SPACING, 2 * half / (len(wanted) - 1)) if len(wanted) > 1 else 0.0
+            spots = [w[0] for w in wanted]
+            room = [clear.get(hops[hop][0], 0.0) for _want, _other, hop, _end in wanted]
+            apart = [max(step, room[i] + room[i + 1]) for i in range(len(spots) - 1)]
+            if sum(apart) > high - low:
+                # More asked for than the side has: everyone gives up the
+                # same share, and every port stays on its side.
+                apart = [gap * (high - low) / sum(apart) for gap in apart]
+            for i in range(1, len(spots)):
+                spots[i] = max(spots[i], spots[i - 1] + apart[i - 1])
+            spots[-1] = min(spots[-1], high)
+            for i in range(len(spots) - 2, -1, -1):
+                spots[i] = min(spots[i], spots[i + 1] - apart[i])
+            for spot, (_want, _other, hop, end) in zip(spots, wanted):
+                port[(hop, end)] = spot
+    return port
+
+
+def _dedupe(points):
+    out = []
+    for p in points:
+        if not out or abs(p[0] - out[-1][0]) > 1e-6 or abs(p[1] - out[-1][1]) > 1e-6:
+            out.append(p)
+    return out
+
+
+def _assign_tracks(gap_runs):
+    """Hop -> track (0 nearest the upper layer) for runs across one gap,
+    given as (hop, across where it leaves the upper layer, across where it
+    enters the lower).
+
+    Two runs heading right cross needlessly if the one ending further left
+    is on the higher track: its drop into the lower layer cuts through
+    the other's run. So runs heading right are stacked by where they end,
+    furthest right highest, runs heading left the mirror image, and each
+    takes the highest track where it overlaps nothing already there.
+    """
+    rightward = sorted((r for r in gap_runs if r[2] > r[1]), key=lambda r: -r[2])
+    leftward = sorted((r for r in gap_runs if r[2] < r[1]), key=lambda r: r[2])
+    tracks, taken = {}, []
+    for hop, a, b in rightward + leftward:
+        low, high = min(a, b) - TRACK_CLEARANCE, max(a, b) + TRACK_CLEARANCE
+        track = 0
+        while track < len(taken) and any(l < high and low < h for l, h in taken[track]):
+            track += 1
+        if track == len(taken):
+            taken.append([])
+        taken[track].append((low, high))
+        tracks[hop] = track
+    return tracks
+
+
+def run_anchor(points, vertical):
+    """The middle of a route's longest run along the rank axis: where a
+    label goes on a right-angled edge. A run across a gap is the worst
+    place for one -- the plate covers the tracks either side of it, where
+    other edges run -- while the runs along are where the gap was sized
+    for labels (layout's `edge_room`). None if the route has no such run."""
+    best, best_length = None, 0.0
+    for (x1, y1), (x2, y2) in zip(points, points[1:]):
+        if (x1 == x2) if vertical else (y1 == y2):
+            length = abs(y2 - y1) if vertical else abs(x2 - x1)
+            if length > best_length:
+                best, best_length = ((x1 + x2) / 2, (y1 + y2) / 2), length
+    return best
+
+
+def rounded(points, radius=CORNER_RADIUS):
+    """`points` with each corner rounded off to a quarter circle of up to
+    `radius` -- less where a segment is too short to take it -- flattened
+    into straight pieces like `curved`'s, so heads and labels work on it
+    the same way. The first and last segments stay as they are."""
+    if len(points) < 3:
+        return list(points)
+    out = [points[0]]
+    for (x0, y0), (x1, y1), (x2, y2) in zip(points, points[1:], points[2:]):
+        a = ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5
+        b = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+        r = min(radius, a / 2, b / 2)
+        if r < 0.5:
+            out.append((x1, y1))
+            continue
+        # Quadratic from r before the corner to r after, the corner its
+        # control point: close enough to an arc at this size.
+        p = (x1 + (x0 - x1) * r / a, y1 + (y0 - y1) * r / a)
+        q = (x1 + (x2 - x1) * r / b, y1 + (y2 - y1) * r / b)
+        for step in range(5):
+            t = step / 4
+            out.append(((1 - t) ** 2 * p[0] + 2 * (1 - t) * t * x1 + t * t * q[0],
+                        (1 - t) ** 2 * p[1] + 2 * (1 - t) * t * y1 + t * t * q[1]))
+    out.append(points[-1])
+    return out
 
 
 # Mermaid's own default for flowcharts; "linear" is the straight route.
@@ -878,7 +1168,7 @@ def _overlap_area(a, b):
     return w * h if w > 0 and h > 0 else 0.0
 
 
-def place_labels(requests, obstacles=()):
+def place_labels(requests, obstacles=(), lines=()):
     """Centres for edge labels that don't sit on top of each other.
 
     `requests` is a list of (edge points, plate width, plate height), or
@@ -898,10 +1188,20 @@ def place_labels(requests, obstacles=()):
     Two labels on edges that leave one node for the same layer are the
     usual collision: their midpoints are a few pixels apart, and every
     label on a short edge has nowhere else to be but its middle.
+
+    `lines` are (owner, polyline) for the lines drawn under the plates,
+    `owner` the index of the request that line is the edge of, or None. A
+    plate hides whatever line it covers, so where it has the choice it
+    covers as little of the other edges as it can -- the right-angled
+    routes of orthogonal_routes run side by side on tracks a few pixels
+    apart, and a label centred on one easily blots out the next.
     """
     taken = list(obstacles)
     centres = []
-    for points, w, h, *rest in requests:
+    strokes = [(owner, (min(x1, x2) - 1.0, min(y1, y2) - 1.0,
+                        abs(x2 - x1) + 2.0, abs(y2 - y1) + 2.0))
+               for owner, line in lines for (x1, y1), (x2, y2) in zip(line, line[1:])]
+    for request, (points, w, h, *rest) in enumerate(requests):
         drawn = rest[0] if rest else None
         anchor = rest[1] if len(rest) > 1 else None
         candidates = [anchor or label_position(points)]
@@ -913,6 +1213,8 @@ def place_labels(requests, obstacles=()):
             plate = (cx - w / 2 - LABEL_CLEARANCE, cy - h / 2 - LABEL_CLEARANCE,
                      w + 2 * LABEL_CLEARANCE, h + 2 * LABEL_CLEARANCE)
             cost = sum(_overlap_area(plate, box) for box in taken)
+            cost += sum(_overlap_area(plate, box) for owner, box in strokes
+                        if owner != request)
             if best_cost is None or cost < best_cost:
                 best, best_cost = (cx, cy, plate), cost
             if cost == 0:

@@ -504,6 +504,7 @@ def test_a_long_edge_label_fits_between_the_nodes_it_joins(direction):
 # A --> C spans two ranks, so it is routed through a virtual node and bends.
 BENT = "flowchart TD\n  A --> B --> C\n  A -- skips B --> C\n"
 LINEAR = "%%{init: {'flowchart': {'curve': 'linear'}}}%%\n"
+BASIS = "%%{init: {'flowchart': {'curve': 'basis'}}}%%\n"
 
 
 @pytest.mark.parametrize("directive, settings", [
@@ -517,12 +518,15 @@ def test_init_directive_is_read_leniently(directive, settings):
     assert parse_init(directive + "\nflowchart TD\n  A\n") == settings
 
 
-def test_flowchart_edges_curve_unless_asked_not_to():
-    assert mermaid.parse(BENT).curve == "basis"
+def test_flowchart_edges_are_square_unless_asked_otherwise():
+    assert mermaid.parse(BENT).curve == "orthogonal"
     assert mermaid.parse(LINEAR + BENT).curve == "linear"
-    # Mermaid's other curves all round corners; they draw as the default.
-    assert mermaid.parse(
-        "%%{init: {'flowchart': {'curve': 'cardinal'}}}%%\n" + BENT).curve == "basis"
+    assert mermaid.parse(BASIS + BENT).curve == "basis"
+    # Mermaid's step curves are right angles too; every other curve is a
+    # way of rounding the corners, and draws as the basis spline.
+    for curve, drawn in (("stepAfter", "orthogonal"), ("cardinal", "basis")):
+        assert mermaid.parse(
+            f"%%{{init: {{'flowchart': {{'curve': '{curve}'}}}}}}%%\n" + BENT).curve == drawn
 
 
 def longest_line(scene):
@@ -555,13 +559,13 @@ def test_a_curve_that_would_cut_through_a_box_is_not_drawn_through_it():
 
 
 def test_a_bent_edge_is_drawn_curved_and_its_label_sits_on_it():
-    curved_line = longest_line(build(BENT))
+    curved_line = longest_line(build(BASIS + BENT))
     straight_line = longest_line(build(LINEAR + BENT))
     # In, through and out of B's layer (see layered.Virtual).
     assert len(straight_line.points) == 4
     assert len(curved_line.points) > 3
 
-    scene = build(BENT)
+    scene = build(BASIS + BENT)
     line = longest_line(scene)
     plate = next(s for s in scene.shapes if isinstance(s, sc.Rect) and s.fill == sc.LABEL_BG)
     centre = (plate.x + plate.w / 2, plate.y + plate.h / 2)
@@ -601,7 +605,7 @@ def inside(point, rect, inset=0.0):
             and rect.y + inset < y < rect.y + rect.h - inset)
 
 
-@pytest.mark.parametrize("prefix", ["", LINEAR])
+@pytest.mark.parametrize("prefix", ["", LINEAR, BASIS])
 def test_a_long_edge_runs_past_the_boxes_in_the_layers_it_crosses(prefix):
     scene = build(prefix + FANNED)
     nodes = [s for s in scene.shapes if isinstance(s, sc.Rect) and s.fill == sc.NODE]
@@ -620,6 +624,74 @@ def test_a_long_edge_label_gets_a_slot_of_its_own():
         crossing = [line for line in lines
                     if any(inside(point, plate) for point in sampled(line))]
         assert len(crossing) == 1
+
+
+# -- right-angled edges ----------------------------------------------------
+
+def square_routes(source, monkeypatch):
+    """The scene's lines with their corners left square."""
+    monkeypatch.setattr(layered, "rounded", lambda points, *args, **kwargs: list(points))
+    return [s.points for s in build(source).shapes if isinstance(s, sc.Line)]
+
+
+@pytest.mark.parametrize("direction", ["TD", "BT", "LR", "RL"])
+def test_square_edges_run_only_along_and_across(direction, monkeypatch):
+    source = FANNED.replace("flowchart TB", f"flowchart {direction}")
+    for points in square_routes(source, monkeypatch):
+        for (x1, y1), (x2, y2) in zip(points, points[1:]):
+            assert abs(x1 - x2) < 1e-6 or abs(y1 - y2) < 1e-6
+
+
+def test_square_edges_out_of_one_side_leave_from_ports_of_their_own(monkeypatch):
+    starts = [points[0] for points in square_routes(
+        "flowchart TD\n  A --> B & C & D\n", monkeypatch)]
+    assert len({round(x, 3) for x, _y in starts}) == 3
+    # ... in the order of where they're going, so they don't cross.
+    ends = [points[-1] for points in square_routes(
+        "flowchart TD\n  A --> B & C & D\n", monkeypatch)]
+    assert [x for x, _y in sorted(starts)] == sorted(x for x, _y in starts)
+    assert sorted(range(3), key=lambda i: starts[i][0]) == \
+        sorted(range(3), key=lambda i: ends[i][0])
+
+
+def test_a_square_edge_between_lined_up_nodes_is_straight(monkeypatch):
+    [points] = square_routes("flowchart TD\n  A --> B\n", monkeypatch)
+    assert len(points) == 2
+
+
+def test_square_edges_never_share_a_run(monkeypatch):
+    across = []
+    for line, points in enumerate(square_routes(FANNED, monkeypatch)):
+        for (x1, y1), (x2, y2) in zip(points, points[1:]):
+            if abs(y1 - y2) < 1e-6 and abs(x1 - x2) > 1e-6:
+                across.append((line, y1, min(x1, x2), max(x1, x2)))
+    for i, (line_a, y_a, low_a, high_a) in enumerate(across):
+        for line_b, y_b, low_b, high_b in across[i + 1:]:
+            if line_a != line_b and abs(y_a - y_b) < 1e-6:
+                assert high_a <= low_b or high_b <= low_a
+
+
+@pytest.mark.parametrize("source", [
+    "flowchart TD\n  A --> B & C\n  A -- label --> D\n",
+    "flowchart TD\n  A -- one --> B\n  A -- two --> C\n  A --> D\n",
+    FANNED,
+])
+def test_a_square_edge_label_hides_no_other_edge(source):
+    # Right-angled edges run side by side a few pixels apart, so a plate
+    # centred on one easily covers the next (layered.place_labels).
+    scene = build(source)
+    plates = [s for s in scene.shapes if isinstance(s, sc.Rect) and s.fill == sc.LABEL_BG]
+    lines = [s for s in scene.shapes if isinstance(s, sc.Line)]
+    for plate in plates:
+        under = [line for line in lines if any(inside(p, plate) for p in sampled(line))]
+        assert len(under) == 1
+
+
+def test_rounded_corners_keep_the_end_segments():
+    route = [(0.0, 0.0), (0.0, 50.0), (80.0, 50.0), (80.0, 100.0)]
+    path = layered.rounded(route)
+    assert path[0] == route[0] and path[-1] == route[-1]
+    assert path[1] == (0.0, 45.0) and path[-2] == (80.0, 55.0)
 
 
 def test_a_source_is_ranked_just_above_what_it_points_at():

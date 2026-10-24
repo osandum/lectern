@@ -29,6 +29,9 @@ NODE_PAD_Y = 9.0
 MIN_NODE_W = 46.0
 LABEL_PAD = 3.0
 CORNER_RADIUS = 7.0
+# How edges are drawn unless an init directive says otherwise: at right
+# angles, the way GitHub draws a flowchart.
+DEFAULT_CURVE = layered.ORTHOGONAL
 EDGE_LABEL_FONT_SCALE = 0.92
 # Line left visible either side of an edge label's plate -- enough to
 # clear an arrowhead and still read as a line, not a plate stuck to a box.
@@ -173,9 +176,9 @@ class Subgraph:
 
 
 class Flowchart:
-    def __init__(self, direction, nodes, edges, subgraphs=(), curve=layered.DEFAULT_CURVE):
+    def __init__(self, direction, nodes, edges, subgraphs=(), curve=DEFAULT_CURVE):
         self.direction = direction
-        self.curve = curve          # "basis" | "linear", see layered.curved
+        self.curve = curve          # "orthogonal" | "basis" | "linear"
         self.nodes = nodes          # ordered dict: key -> FlowNode
         self.edges = edges
         self.subgraphs = list(subgraphs)   # top-level blocks; each may nest
@@ -431,7 +434,7 @@ def parse(source):
         if key in nodes:
             nodes[key].href = href
     return Flowchart(direction, nodes, edges, subgraphs,
-                     curve_setting(source, "flowchart", layered.DEFAULT_CURVE))
+                     curve_setting(source, "flowchart", DEFAULT_CURVE))
 
 
 def _attach_cluster_edges(nodes, edges, subgraphs, declared):
@@ -715,8 +718,13 @@ def _build_scene(chart, measurer):
                 setattr(edge, end + "_path", path[:path.index(cluster)])
     cells, routes, width, height = layered.layout(
         chart.nodes, chart.edges, chart.direction, edge_room=edge_room,
-        groups=paths, label_sizes=label_sizes)
+        groups=paths, label_sizes=label_sizes,
+        square=[index for index, edge in enumerate(chart.edges) if edge.style != INVISIBLE]
+        if chart.curve == layered.ORTHOGONAL else None)
 
+    # The layers' extents with the room reserved for frames still in them,
+    # which is what right-angled edges keep their tracks out of.
+    bands = layered.rank_bands(cells, vertical)
     for key, (w, h) in original_sizes.items():
         chart.nodes[key].w, chart.nodes[key].h = w, h
     clusters = _cluster_boxes(chart, measurer)
@@ -738,20 +746,33 @@ def _build_scene(chart, measurer):
     # Their labels follow once every line is down, placed clear of each
     # other and of the nodes (layered.place_labels).
     labels = []
+    drawn_lines = []    # (edge index, drawn path), for place_labels
+    orthogonal = chart.curve == layered.ORTHOGONAL
+    if orthogonal:
+        square, _tracks = layered.orthogonal_routes(
+            cells, {index: route for index, route in routes.items()
+                    if chart.edges[index].style != INVISIBLE},
+            chart.edges, vertical, label_sizes, bands)
     for index, edge in enumerate(chart.edges):
         if edge.style == INVISIBLE:
             continue    # ranked above, drawn never
         if edge.src == edge.dst:
             points = layered.self_loop_points(cells[edge.src])
+        elif orthogonal:
+            points = square[index]
         else:
             points = layered.edge_points(cells, routes, index, edge)
         if edge.dst_cluster:
             points = _clip_to_frame(points, frames[edge.dst_cluster])
         if edge.src_cluster:
             points = _clip_to_frame(points[::-1], frames[edge.src_cluster])[::-1]
-        drawn = layered.curved(points, chart.curve, [
-            (n.x - n.w / 2, n.y - n.h / 2, n.w, n.h) for key, n in chart.nodes.items()
-            if key not in (edge.src, edge.dst)])
+        if orthogonal:
+            drawn = layered.rounded(points)
+        else:
+            drawn = layered.curved(points, chart.curve, [
+                (n.x - n.w / 2, n.y - n.h / 2, n.w, n.h) for key, n in chart.nodes.items()
+                if key not in (edge.src, edge.dst)])
+        drawn_lines.append((index, drawn))
         scene.add(sc.Line(
             drawn,
             dashed=_DASHED[edge.style],
@@ -762,8 +783,10 @@ def _build_scene(chart, measurer):
         if edge.label:
             text_w, text_h = measurer.size(
                 edge.label, wrap=False, scale=EDGE_LABEL_FONT_SCALE)
-            labels.append((points, drawn, edge, text_w, text_h,
-                           layered.label_anchor(cells, routes, index)))
+            anchor = layered.label_anchor(cells, routes, index)
+            if anchor is None and orthogonal:
+                anchor = layered.run_anchor(points, vertical)
+            labels.append((points, drawn, edge, text_w, text_h, anchor, index))
 
     obstacles = [(n.x - n.w / 2, n.y - n.h / 2, n.w, n.h) for n in chart.nodes.values()]
     # A frame's title wins over an edge label drawn where it is (see the
@@ -772,11 +795,13 @@ def _build_scene(chart, measurer):
               for group, x, y, w, _h, title_h in clusters]
     obstacles += [(tx - LABEL_PAD, ty - LABEL_PAD, tw + 2 * LABEL_PAD, th + 2 * LABEL_PAD)
                   for tx, ty, tw, th in titles if tw]
+    owner = {label[-1]: request for request, label in enumerate(labels)}
     centres = layered.place_labels(
         [(points, w + 2 * LABEL_PAD, h + 2 * LABEL_PAD, drawn, anchor)
-         for points, drawn, _edge, w, h, anchor in labels],
-        obstacles)
-    for (_points, _drawn, edge, text_w, text_h, _anchor), (cx, cy) in zip(labels, centres):
+         for points, drawn, _edge, w, h, anchor, _index in labels],
+        obstacles,
+        [(owner.get(index), line) for index, line in drawn_lines])
+    for (_points, _drawn, edge, text_w, text_h, _anchor, _index), (cx, cy) in zip(labels, centres):
         scene.add(sc.Rect(
             cx - text_w / 2 - LABEL_PAD, cy - text_h / 2 - LABEL_PAD,
             text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD,
