@@ -53,7 +53,8 @@ class Virtual:
 
 
 def rank_nodes(nodes, edges):
-    """Longest-path ranking over the edges that aren't back edges.
+    """Longest-path ranking over the edges that aren't back edges, then
+    tightened.
 
     Cycles are normal in these diagrams (any retry loop is one), so the
     back edges a DFS finds are left out of the ranking and simply drawn
@@ -104,6 +105,28 @@ def rank_nodes(nodes, edges):
         for src, dst in forward:
             if rank[dst] < rank[src] + 1:
                 rank[dst] = rank[src] + 1
+                changed = True
+        if not changed:
+            break
+    # Longest-path ranking puts every node as high as it can go, which
+    # leaves a source (or any node with more edges out than in) hanging
+    # far above what it points at, its edges spanning several ranks and
+    # crossing everything in between. Moving such a node down to just
+    # above its nearest successor shortens its edges overall, which is
+    # the improvement network simplex (dagre's ranker) mostly makes.
+    preds = {key: [] for key in nodes}
+    succs = {key: [] for key in nodes}
+    for src, dst in forward:
+        succs[src].append(dst)
+        preds[dst].append(src)
+    for _ in range(len(nodes)):
+        changed = False
+        for key in nodes:
+            if len(succs[key]) <= len(preds[key]):
+                continue
+            lowest = min(rank[dst] for dst in succs[key]) - 1
+            if rank[key] < lowest:
+                rank[key] = lowest
                 changed = True
         if not changed:
             break
@@ -244,11 +267,12 @@ def group_rank(layers, paths):
     return {group: index for index, group in enumerate(ordered)}
 
 
-def order_layers(layers, up, down, passes=4, paths=None):
+def order_layers(layers, up, down, passes=8, paths=None):
     """Barycentre sweeps: repeatedly reorder each layer by the average
-    position of its neighbours in the layer just processed. Two or three
-    passes get most of the crossings a diagram-sized graph has; more stops
-    paying."""
+    position of its neighbours in the layer just processed, each sweep
+    followed by `transpose`. A sweep can make things worse as well as
+    better, so the ordering with the fewest crossings seen is the one
+    kept, the way dagre does it."""
     paths = paths or {}
     cells_by_key = {cell.key: cell for layer in layers for cell in layer}
     for cell_list in layers:
@@ -271,19 +295,78 @@ def order_layers(layers, up, down, passes=4, paths=None):
             for position, cell in enumerate(cell_list):
                 cell.order = position
 
+    def settle():
+        # A sweep sorts by the rank from before it; this puts every layer
+        # in the current one, which is what place() keeps to.
+        for cell_list in layers:
+            cell_list[:] = grouped_sort(cell_list, lambda cell: cell.order, paths, rank=rank)
+            for position, cell in enumerate(cell_list):
+                cell.order = position
+        transpose(layers, up, down, paths)
+
+    settle()
+    best = ([list(layer) for layer in layers], rank, count_crossings(layers, down))
     for index in range(passes):
         if index % 2 == 0:
             sweep(up, layers[1:])
         else:
             sweep(down, layers[-2::-1])
         rank = group_rank(layers, paths)
-    # The last sweep was sorted by the rank before it; one more pass puts
-    # every layer in the final one, which is what place() keeps to.
-    for cell_list in layers:
-        cell_list[:] = grouped_sort(cell_list, lambda cell: cell.order, paths, rank=rank)
+        settle()
+        crossings = count_crossings(layers, down)
+        if crossings < best[2]:
+            best = ([list(layer) for layer in layers], rank, crossings)
+    kept, rank, _crossings = best
+    for cell_list, cells in zip(layers, kept):
+        cell_list[:] = cells
         for position, cell in enumerate(cell_list):
             cell.order = position
     return rank
+
+
+def count_crossings(layers, down):
+    """How many pairs of edges cross between adjacent layers, as ordered."""
+    total = 0
+    for upper, lower in zip(layers, layers[1:]):
+        position = {cell.key: index for index, cell in enumerate(lower)}
+        ends = [(index, position[key]) for index, cell in enumerate(upper)
+                for key in down[cell.key] if key in position]
+        total += sum(1 for a, (a_top, a_bottom) in enumerate(ends)
+                     for b_top, b_bottom in ends[a + 1:]
+                     if (a_top - b_top) * (a_bottom - b_bottom) < 0)
+    return total
+
+
+def _pair_crossings(left, right, neighbours):
+    """Crossings between the edges of `left` and of `right`, in that order
+    in their layer, into one of the layers next to it."""
+    return sum(1 for a in neighbours[left.key] for b in neighbours[right.key]
+               if a.order > b.order)
+
+
+def transpose(layers, up, down, paths):
+    """Swap neighbours within a layer wherever that crosses fewer edges,
+    until no swap helps. Barycentres only look at one side at a time, and
+    only at averages, so they leave crossings a single swap undoes. Only
+    cells in the same groups are swapped, which keeps every group
+    contiguous (see grouped_sort)."""
+    cells = {cell.key: cell for layer in layers for cell in layer}
+    up = {key: [cells[k] for k in keys] for key, keys in up.items() if key in cells}
+    down = {key: [cells[k] for k in keys] for key, keys in down.items() if key in cells}
+    improved = True
+    while improved:
+        improved = False
+        for layer in layers:
+            for index in range(len(layer) - 1):
+                left, right = layer[index], layer[index + 1]
+                if paths.get(left.key, ()) != paths.get(right.key, ()):
+                    continue
+                kept = _pair_crossings(left, right, up) + _pair_crossings(left, right, down)
+                swapped = _pair_crossings(right, left, up) + _pair_crossings(right, left, down)
+                if swapped < kept:
+                    layer[index], layer[index + 1] = right, left
+                    left.order, right.order = right.order, left.order
+                    improved = True
 
 
 def _cross_size(cell, vertical):
@@ -360,8 +443,6 @@ def place(layers, up, down, vertical, rank_gaps, paths=None, rank=None):
                 if keys:
                     positions[cell.key][0] = sum(
                         positions[cells_by_key[k].key][0] for k in keys) / len(keys)
-            layer[:] = grouped_sort(layer, lambda cell: positions[cell.key][0],
-                                    paths, rank=rank)
             separate(layer)
 
     fence_groups(layers, positions, paths, vertical, rank)

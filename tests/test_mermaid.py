@@ -622,6 +622,28 @@ def test_a_long_edge_label_gets_a_slot_of_its_own():
         assert len(crossing) == 1
 
 
+def test_a_source_is_ranked_just_above_what_it_points_at():
+    # Longest-path ranking left S on top with an edge spanning three
+    # ranks, crossing everything in between.
+    chart = mermaid.parse("flowchart TD\n  A --> B --> C --> D\n  S --> D\n")
+    mermaid.build_scene(chart, mermaid.ui_font())
+    assert chart.nodes["S"].rank == chart.nodes["D"].rank - 1
+
+
+def test_transpose_swaps_neighbours_that_cross():
+    class Cell:
+        def __init__(self, key, order):
+            self.key, self.order = key, order
+    top = [Cell("a", 0), Cell("b", 1)]
+    bottom = [Cell("x", 0), Cell("y", 1)]
+    up = {"a": [], "b": [], "x": ["b"], "y": ["a"]}
+    down = {"a": ["y"], "b": ["x"], "x": [], "y": []}
+    layers = [top, bottom]
+    assert layered.count_crossings(layers, down) == 1
+    layered.transpose(layers, up, down, {})
+    assert layered.count_crossings(layers, down) == 0
+
+
 def test_a_cylinder_has_an_elliptical_top_and_edges_meet_its_rim():
     scene = build("flowchart TD\n  A --> B[(db)]\n")
     [top] = [s for s in scene.shapes if isinstance(s, sc.Ellipse)]
