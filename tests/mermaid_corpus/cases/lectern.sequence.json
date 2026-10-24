@@ -1,0 +1,72 @@
+[
+  {
+    "id": "lectern:probe-quoted-alias",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  participant G as \"GitHub\"\n  A->>G: push\n"
+  },
+  {
+    "id": "lectern:probe-alias-with-break",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  actor D as Developer<br/>(Slack)\n  D->>B: hi\n"
+  },
+  {
+    "id": "lectern:probe-quoted-message",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  A->>B: \"deploying …\"\n"
+  },
+  {
+    "id": "lectern:probe-hash-comment",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  A->>B: claim game #123\n  B->>A: ok\n"
+  },
+  {
+    "id": "lectern:probe-semicolons",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  A->>B: one; B->>A: two\n"
+  },
+  {
+    "id": "lectern:probe-semicolon-in-note",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  A->>B: hi\n  Note over A: a;<br/>b\n"
+  },
+  {
+    "id": "lectern:probe-entity-survives",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  A->>B: say #quot;hi#quot; #35;1\n"
+  },
+  {
+    "id": "lectern:probe-wrap-prefix",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  A->>B:wrap: long text\n  Note right of B:nowrap: note\n"
+  },
+  {
+    "id": "lectern:probe-autonumber-start-step",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  autonumber 5 2\n  A->>B: one\n  B->>A: two\n"
+  },
+  {
+    "id": "lectern:probe-autonumber-off",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  autonumber\n  A->>B: one\n  autonumber off\n  B->>A: two\n"
+  },
+  {
+    "id": "lectern:probe-autonumber-decimals",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  autonumber 1.5 .25\n  A->>B: one\n  B->>A: two\n"
+  },
+  {
+    "id": "lectern:probe-uppercase-keywords",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  PARTICIPANT A\n  Loop every day\n  A->>B: hi\n  END\n"
+  },
+  {
+    "id": "lectern:probe-percent-in-message",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  A->>B: 50%% done\n"
+  },
+  {
+    "id": "lectern:probe-deactivate-inactive",
+    "origin": "lectern: probe for #41",
+    "source": "sequenceDiagram\n  A->>B: hi\n  deactivate B\n"
+  }
+]

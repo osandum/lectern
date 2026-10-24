@@ -21,30 +21,36 @@ prints where each family stands.
 """
 import html
 import json
+import os
 import pathlib
 import re
 import sys
 import urllib.parse
 
 HERE = pathlib.Path(__file__).parent
+# MERMAID_CORPUS points at another corpus directory (cases/, recorded/),
+# e.g. to check documents of your own without them going near the
+# repository. The tests always use this one.
+CORPUS = pathlib.Path(os.environ.get("MERMAID_CORPUS", HERE))
 FAMILIES = ("flowchart", "sequence", "class", "er")
 
 
 def cases(family):
     """Every case of `family`, in file order: dicts of id, origin, source."""
     out = []
-    for path in sorted((HERE / "cases").glob(f"*.{family}.json")):
+    for path in sorted((CORPUS / "cases").glob(f"*.{family}.json")):
         out += json.loads(path.read_text())
     return out
 
 
 def recorded(family):
-    return json.loads((HERE / "recorded" / f"{family}.json").read_text())["results"]
+    return json.loads((CORPUS / "recorded" / f"{family}.json").read_text())["results"]
 
 
 def deviations():
     """Case id -> why Lectern currently deviates from mermaid there."""
-    return json.loads((HERE / "deviations.json").read_text())
+    path = CORPUS / "deviations.json"
+    return json.loads(path.read_text()) if path.exists() else {}
 
 
 # -- mermaid's side --------------------------------------------------------
@@ -183,6 +189,10 @@ def mermaid_sequence(result):
             events.append(["note", _PLACEMENTS[m["placement"]], keys, _text(m["message"])])
         elif kind in (17, 18):
             events.append(["activate" if kind == 17 else "deactivate", m["from"]])
+        elif kind == 26:
+            numbering = m["message"]
+            events.append(["autonumber", numbering.get("start"), numbering.get("step"),
+                           numbering.get("visible", False)])
         elif kind in _BLOCKS:
             block = list(_BLOCKS[kind])
             # A rect's "label" is its colour, which isn't drawn as text.
@@ -218,6 +228,8 @@ def lectern_sequence(source):
             events.append(["note", event.placement, event.keys, _shown(event.text)])
         elif isinstance(event, sequence.Activation):
             events.append(["activate" if event.start else "deactivate", event.key])
+        elif isinstance(event, sequence.Autonumber):
+            events.append(["autonumber", event.start, event.step, event.visible])
         elif isinstance(event, sequence.BlockStart):
             events.append(["start", event.kind, _shown(event.label)])
         elif isinstance(event, sequence.BlockDivider):
@@ -301,7 +313,7 @@ def mermaid_er(result):
     }
 
 
-def _lectern_entities(parse, source):
+def _lectern_entities(parse, source, member):
     from lectern.mermaid.common import Unsupported
     try:
         diagram = parse(source)
@@ -312,9 +324,7 @@ def _lectern_entities(parse, source):
         "entities": {key: {
             "title": _shown(entity.title),
             "stereotypes": [entity.stereotype] if entity.stereotype else [],
-            # As written, but spaced the way mermaid shows an ER key list.
-            "members": sorted(_shown(re.sub(r"\s*,\s*", ", ", " ".join(m.split())))
-                              for m in entity.members),
+            "members": sorted(_shown(member(m.text)) for m in entity.members),
         } for key, entity in diagram.entities.items()},
         "relations": [{
             "src": r.src, "dst": r.dst, "ends": [r.tail, r.head], "dashed": r.dashed,
@@ -326,12 +336,14 @@ def _lectern_entities(parse, source):
 
 def lectern_class(source):
     from lectern.mermaid import entities
-    return _lectern_entities(entities.parse_class, source)
+    return _lectern_entities(entities.parse_class, source, lambda m: " ".join(m.split()))
 
 
 def lectern_er(source):
     from lectern.mermaid import entities
-    return _lectern_entities(entities.parse_er, source)
+    # An attribute as written, spaced the way mermaid shows its key list.
+    return _lectern_entities(entities.parse_er, source,
+                             lambda m: re.sub(r"\s*,\s*", ", ", " ".join(m.split())))
 
 
 COMPARE = {

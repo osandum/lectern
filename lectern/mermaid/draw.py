@@ -8,8 +8,9 @@ stroke widths, arrowheads, absolute font sizes -- follows along.
 import cairo
 
 import gi
+gi.require_version("Pango", "1.0")
 gi.require_version("PangoCairo", "1.0")
-from gi.repository import PangoCairo
+from gi.repository import Pango, PangoCairo
 
 from . import scene as sc
 from . import text as textlib
@@ -204,6 +205,10 @@ def _draw_text(cr, palette, scene, shape, base_font):
         bold=shape.bold, italic=shape.italic, mono=shape.mono,
         width=shape.w, align=shape.align,
     )
+    if shape.underline:
+        attributes = layout.get_attributes() or Pango.AttrList()
+        attributes.insert(Pango.attr_underline_new(Pango.Underline.SINGLE))
+        layout.set_attributes(attributes)
     cr.move_to(shape.x, shape.y)
     PangoCairo.show_layout(cr, layout)
     # show_layout paints glyphs but leaves the move_to's current point

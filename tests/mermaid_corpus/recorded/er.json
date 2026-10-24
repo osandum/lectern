@@ -1,6 +1,99 @@
 {
  "mermaid": "11.17.2",
  "results": {
+  "lectern:probe-alias": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "p",
+     "alias": "Person",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "lectern:probe-quoted-alias": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "p",
+     "alias": "A Person",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "lectern:probe-style-shorthand": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "P",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "lectern:probe-backquoted": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "P",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "my.type",
+       "name": "my.name",
+       "keys": [
+        "PK"
+       ]
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "lectern:probe-block-trailing-text": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "P",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "extra",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
   "erDiagram.spec.js:19": {
    "type": "er",
    "direction": "TB",

@@ -34,6 +34,19 @@ node record.mjs    # after adding cases, or after changing the pin
 Then run the tests. A case that newly deviates either gets fixed or
 goes into `deviations.json`, with its reason.
 
+## Checking your own documents
+
+To compare Lectern against mermaid on diagrams that mustn't go into this
+public repository, put them in a corpus directory of your own,
+`<dir>/cases/<anything>.<family>.json`, and point `MERMAID_CORPUS` at it:
+
+```sh
+MERMAID_CORPUS=<dir> node record/record.mjs
+MERMAID_CORPUS=<dir> python tests/mermaid_corpus/conformance.py
+```
+
+The recordings go to `<dir>/recorded/`, and nothing is written here.
+
 Two more tools look inside mermaid's flowchart lexer:
 - `node tokens.mjs '<source>'` prints the tokens mermaid's lexer makes
   of a source, with the lexer state after each.

@@ -7,10 +7,11 @@ don't, is a *stack* -- `loop`/`alt`/`opt`/`par` frames nest, and a frame's
 height isn't known until its `end` turns up, so frames are opened during
 the row walk and only turned into geometry when they close.
 """
+import math
 import re
 
 from . import scene as sc
-from .common import Unsupported, parse_label
+from .common import Unsupported, decode_entities, label_lines, preprocess
 
 # -- geometry, in nominal 96dpi pixels -------------------------------------
 
@@ -28,6 +29,7 @@ ACTIVATION_W = 9.0
 FRAME_PAD = 12.0           # around the rows a loop/alt frame encloses
 FRAME_LABEL_PAD = 4.0
 LABEL_SCALE = 0.92
+BADGE_SCALE = 0.75         # an `autonumber` number
 LIFELINE_TAIL = 12.0
 
 # `->>` and friends. The line is dotted when the dashes are doubled, and
@@ -44,20 +46,26 @@ _MESSAGE_RE = re.compile(r"""
     :\s*(?P<text>.*)$
 """, re.X)
 
+# mermaid's sequence lexer is case-insensitive throughout.
 _PARTICIPANT_RE = re.compile(
-    r"^(?:participant|actor)\s+(?P<key>[A-Za-z0-9_]+)(?:\s+as\s+(?P<label>.+))?$")
+    r"^(?:participant|actor)\s+(?P<key>[A-Za-z0-9_]+)(?:\s+as\s+(?P<label>.+))?$", re.I)
 _NOTE_RE = re.compile(
     r"^note\s+(?P<where>left of|right of|over)\s+(?P<who>[^:]+):\s*(?P<text>.*)$",
     re.I)
-_ACTIVATE_RE = re.compile(r"^(?P<verb>activate|deactivate)\s+(?P<key>[A-Za-z0-9_]+)$")
+_ACTIVATE_RE = re.compile(r"^(?P<verb>activate|deactivate)\s+(?P<key>[A-Za-z0-9_]+)$", re.I)
+# `autonumber`, from a start, by a step, or `off`. mermaid's numbers take
+# two decimals at most; anything else is a syntax error there.
+_NUMBER = r"\d+(?:\.\d{1,2})?|\.\d{1,2}"
+_AUTONUMBER_RE = re.compile(
+    rf"^autonumber(?:\s+(?P<off>off)|\s+(?P<start>{_NUMBER})(?:\s+(?P<step>{_NUMBER}))?)?$", re.I)
+# A message's `wrap:`/`nowrap:` prefix sets how mermaid wraps it; it isn't
+# text (sequenceDb.parseMessage).
+_WRAP_RE = re.compile(r"^:?(?:no)?wrap:")
 
 # Frames. `par` uses "and" where `alt` uses "else"; both mean "divider,
 # new compartment, same frame".
 _BLOCK_OPENERS = ("loop", "alt", "opt", "par", "critical", "break", "rect")
 _BLOCK_DIVIDERS = ("else", "and", "option")
-
-# Statements that are accepted and have no effect on what gets drawn.
-_IGNORED = ("autonumber", "%%")
 
 
 class Participant:
@@ -70,7 +78,7 @@ class Participant:
 
 
 class Message:
-    __slots__ = ("src", "dst", "text", "dotted", "head", "activation")
+    __slots__ = ("src", "dst", "text", "dotted", "head", "activation", "number")
 
     def __init__(self, src, dst, text, dotted, head, activation):
         self.src = src
@@ -82,6 +90,18 @@ class Message:
         # the source as it leaves -- mermaid's shorthand for a matching
         # activate/deactivate pair.
         self.activation = activation
+        self.number = None      # shown beside the line, from `autonumber`
+
+
+class Autonumber:
+    """`autonumber`: from here on, messages are numbered -- from `start`
+    by `step` where given, else carrying on -- or, `visible` false, not."""
+    __slots__ = ("start", "step", "visible")
+
+    def __init__(self, start, step, visible):
+        self.start = start
+        self.step = step
+        self.visible = visible
 
 
 class Note:
@@ -129,18 +149,35 @@ class SequenceDiagram:
         return _build_scene(self, measurer)
 
 
+def _statements(source):
+    """The statements of a source, as mermaid's sequence lexer divides
+    them: `#` starts a comment that runs to the end of the line, and `;`
+    ends a statement as a newline does -- in message text too, which
+    stops at either. Entities are encoded first (common.preprocess), so
+    the `#` and `;` of a `#quot;` are neither."""
+    out = []
+    for raw_line in preprocess(source).split("\n"):
+        for statement in raw_line.split("#")[0].split(";"):
+            if statement.strip():
+                out.append(statement.strip())
+    return out
+
+
+def _text(raw):
+    """Message, note and label text as sequenceDb.parseMessage keeps it:
+    trimmed, a `wrap:`/`nowrap:` prefix dropped, quotes and all else kept."""
+    return label_lines(decode_entities(_WRAP_RE.sub("", raw.strip(), count=1)))
+
+
 def parse(source):
-    lines = []
-    for raw_line in source.splitlines():
-        line = raw_line.split("%%")[0].strip().rstrip(";")
-        if line:
-            lines.append(line)
+    lines = _statements(source)
     if not lines or lines[0].split()[0].lower() != "sequencediagram":
         raise Unsupported("not a sequenceDiagram header")
 
     participants = {}
     events = []
     depth = 0
+    active = {}         # participant key -> how many activations are open
 
     def touch(key, label=None):
         participant = participants.get(key)
@@ -150,14 +187,26 @@ def parse(source):
             participant.label = label
         return participant
 
+    def activate(key, start):
+        # mermaid throws on deactivating a participant that isn't active.
+        if not start and not active.get(key):
+            raise Unsupported(f"deactivating {key!r}, which isn't active")
+        active[key] = active.get(key, 0) + (1 if start else -1)
+
     for line in lines[1:]:
         lowered = line.lower()
-        if any(lowered.startswith(prefix) for prefix in _IGNORED):
-            continue
 
         declaration = _PARTICIPANT_RE.match(line)
         if declaration:
-            touch(declaration.group("key"), parse_label(declaration.group("label") or "") or None)
+            touch(declaration.group("key"), _text(declaration.group("label") or "") or None)
+            continue
+
+        numbering = _AUTONUMBER_RE.match(line)
+        if numbering:
+            start, step = numbering.group("start"), numbering.group("step")
+            events.append(Autonumber(float(start) if start else None,
+                                     float(step) if step else None,
+                                     not numbering.group("off")))
             continue
 
         note = _NOTE_RE.match(line)
@@ -168,14 +217,15 @@ def parse(source):
             for key in keys:
                 touch(key)
             placement = note.group("where").lower().replace(" of", "")
-            events.append(Note(placement, keys, parse_label(note.group("text"))))
+            events.append(Note(placement, keys, _text(note.group("text"))))
             continue
 
         activation = _ACTIVATE_RE.match(line)
         if activation:
-            touch(activation.group("key"))
-            events.append(Activation(
-                activation.group("key"), activation.group("verb").lower() == "activate"))
+            key, start = activation.group("key"), activation.group("verb").lower() == "activate"
+            touch(key)
+            activate(key, start)
+            events.append(Activation(key, start))
             continue
 
         keyword = lowered.split()[0]
@@ -184,14 +234,14 @@ def parse(source):
             # rgb(200,200,255)"), which is presentation we don't apply --
             # so it gets a frame with no label instead of one captioned
             # with a colour literal.
-            caption = "" if keyword == "rect" else parse_label(line[len(keyword):])
+            caption = "" if keyword == "rect" else _text(line[len(keyword):])
             events.append(BlockStart(keyword, caption))
             depth += 1
             continue
         if keyword in _BLOCK_DIVIDERS:
             if depth == 0:
                 raise Unsupported(f"{keyword!r} outside a block")
-            events.append(BlockDivider(parse_label(line[len(keyword):])))
+            events.append(BlockDivider(_text(line[len(keyword):])))
             continue
         if lowered == "end":
             if depth == 0:
@@ -203,20 +253,43 @@ def parse(source):
         message = _MESSAGE_RE.match(line)
         if not message:
             raise Unsupported(f"unparsed statement {line!r}")
-        touch(message.group("src"))
-        touch(message.group("dst"))
+        src, dst, shorthand = message.group("src"), message.group("dst"), message.group("activation")
+        touch(src)
+        touch(dst)
+        if shorthand:
+            activate(dst if shorthand == "+" else src, shorthand == "+")
         events.append(Message(
-            message.group("src"), message.group("dst"), parse_label(message.group("text")),
+            src, dst, _text(message.group("text")),
             dotted=len(message.group("dashes")) == 2,
             head=_ARROWS[message.group("glyph")],
-            activation=message.group("activation"),
+            activation=shorthand,
         ))
 
     if depth:
         raise Unsupported("unclosed block")
     if not participants:
         raise Unsupported("no participants")
+    _number_messages(events)
     return SequenceDiagram(participants, events)
+
+
+def _number_messages(events):
+    """Number the messages as mermaid's renderer does under `autonumber`:
+    every message counts, shown or not, from 1 by 1 until a later
+    `autonumber` says otherwise, rounded to two decimals as it goes."""
+    number, step, shown = 1.0, 1.0, False
+    for event in events:
+        if isinstance(event, Autonumber):
+            # `start || sequenceIndex`: 0 means "carry on", as in mermaid.
+            number = event.start or number
+            step = event.step or step
+            shown = event.visible
+        elif isinstance(event, Message):
+            if shown:
+                # As JavaScript prints a number: no ".0", and otherwise the
+                # shortest form that reads back the same, as repr gives.
+                event.number = str(int(number)) if number == int(number) else repr(number)
+            number = math.floor((number + step) * 100 + 0.5) / 100
 
 
 # -- layout ----------------------------------------------------------------
@@ -324,6 +397,16 @@ def _arrow_points(src_x, dst_x, y, activations):
             return x
         return x + (ACTIVATION_W / 2 if other > x else -ACTIVATION_W / 2)
     return (offset(src_x, dst_x), y), (offset(dst_x, src_x), y)
+
+
+def _number_badge(scene, measurer, number, x, y):
+    """An `autonumber` number in a disc on the line where the message
+    leaves its sender, where mermaid puts it."""
+    text_w, text_h = measurer.size(number, wrap=False, scale=BADGE_SCALE)
+    diameter = max(text_h, text_w + 4.0) + 2.0
+    scene.add(sc.Ellipse(x - diameter / 2, y - diameter / 2, diameter, diameter,
+                         fill=sc.NODE_ALT, stroke=sc.EDGE))
+    scene.add(sc.Text(x - text_w / 2, y - text_h / 2, text_w, text_h, number, scale=BADGE_SCALE))
 
 
 def _build_scene(diagram, measurer):
@@ -436,6 +519,7 @@ def _build_scene(diagram, measurer):
                     scene.add(sc.Text(
                         x + SELF_MESSAGE_W + 6, top + SELF_MESSAGE_H / 2 - text_h / 2,
                         text_w, text_h, event.text, align="left", scale=LABEL_SCALE))
+                start = points[0]
             else:
                 start, end = _arrow_points(src.x, dst.x, line_y, activations)
                 scene.add(sc.Line([start, end], dashed=event.dotted, head=event.head))
@@ -444,6 +528,8 @@ def _build_scene(diagram, measurer):
                     scene.add(sc.Text(
                         middle - text_w / 2, line_y - text_h - 3, text_w, text_h,
                         event.text, scale=LABEL_SCALE))
+            if event.number:
+                _number_badge(scene, measurer, event.number, *start)
         elif isinstance(event, Note):
             text_w, text_h = row.label_size
             width = text_w + 2 * NOTE_PAD_X

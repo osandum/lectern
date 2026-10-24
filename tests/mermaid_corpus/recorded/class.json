@@ -1,6 +1,141 @@
 {
  "mermaid": "11.17.2",
  "results": {
+  "lectern:probe-method-return": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "A",
+     "label": "A",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+run(int n) : bool",
+      "\\-go()",
+      "count() : int"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "lectern:probe-attribute-classifiers": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "A",
+     "label": "A",
+     "annotations": [],
+     "members": [
+      "\\+int total",
+      "\\#String name"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "lectern:probe-nested-generics": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "A",
+     "label": "A",
+     "annotations": [],
+     "members": [
+      "Map~String, List&lt;Int~&gt; index"
+     ],
+     "methods": [
+      "\\+put(K&lt;T&gt; k) : V&lt;T&gt;"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "lectern:probe-quoted-member": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "A",
+     "label": "A",
+     "annotations": [],
+     "members": [
+      "\"quoted\""
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "lectern:probe-acc-descr-block": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "A",
+     "label": "A",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "lectern:probe-blank-label": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "A",
+     "label": " ",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "lectern:probe-namespace": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "A",
+     "label": "A",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "N",
+     "classes": [
+      "A"
+     ]
+    }
+   ]
+  },
+  "lectern:probe-block-without-class": {
+   "error": "Lexical error on line 2. Unrecognized text."
+  },
   "classDiagram.spec.ts:34": {
    "type": "classDiagram",
    "direction": "TB",

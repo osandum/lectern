@@ -1,0 +1,42 @@
+[
+  {
+    "id": "lectern:probe-method-return",
+    "origin": "lectern: probe for #41",
+    "source": "classDiagram\n  class A {\n    +run(int n) bool\n    -go()$\n    count()* int\n  }\n"
+  },
+  {
+    "id": "lectern:probe-attribute-classifiers",
+    "origin": "lectern: probe for #41",
+    "source": "classDiagram\n  class A {\n    +int total$\n    #String name*\n  }\n"
+  },
+  {
+    "id": "lectern:probe-nested-generics",
+    "origin": "lectern: probe for #41",
+    "source": "classDiagram\n  class A {\n    Map~String, List~Int~~ index\n    +put(K~T~ k) V~T~\n  }\n"
+  },
+  {
+    "id": "lectern:probe-quoted-member",
+    "origin": "lectern: probe for #41",
+    "source": "classDiagram\n  class A {\n    \"quoted\"\n  }\n"
+  },
+  {
+    "id": "lectern:probe-acc-descr-block",
+    "origin": "lectern: probe for #41",
+    "source": "classDiagram\n  accDescr {\n    one\n    two\n  }\n  class A\n"
+  },
+  {
+    "id": "lectern:probe-blank-label",
+    "origin": "lectern: probe for #41",
+    "source": "classDiagram\n  class A[\" \"]\n"
+  },
+  {
+    "id": "lectern:probe-namespace",
+    "origin": "lectern: probe for #41",
+    "source": "classDiagram\n  namespace N {\n    class A\n  }\n"
+  },
+  {
+    "id": "lectern:probe-block-without-class",
+    "origin": "lectern: probe for #41",
+    "source": "classDiagram\n  A {\n    +int x\n  }\n"
+  }
+]

@@ -20,7 +20,7 @@ import re
 
 from . import layered
 from . import scene as sc
-from .common import Unsupported, curve_setting, parse_label
+from .common import Unsupported, curve_setting, decode_entities, parse_label, preprocess
 
 # -- geometry, in nominal 96dpi pixels -------------------------------------
 
@@ -139,36 +139,10 @@ class Flowchart:
 # -- shape data, markdown strings, shapes without a drawing here -- raises
 # Unsupported, as does anything mermaid refuses.
 
-_FRONT_MATTER_RE = re.compile(r"^-{3}\s*[\n\r](.*?[\n\r])-{3}\s*[\n\r]+", re.S)
-_DIRECTIVE_RE = re.compile(
-    r"%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?", re.I)
-_COMMENT_RE = re.compile(r"^\s*%%(?!{)[^\n]+\n?", re.M)
-_TAG_RE = re.compile(r"<(\w+)([^>]*)>")
-
-
 def _preprocess(source):
-    """What mermaid does to a source before its parser sees it
-    (preprocessDiagram, Diagram.fromText, flowParser.ts): line endings
-    normalized, front matter, directives and whole-line `%%` comments
-    removed, `#name;` entities encoded so their `#` and `;` aren't read as
-    syntax, and a newline appended."""
-    text = source.replace("\r\n", "\n").replace("\r", "\n")
-    text = _TAG_RE.sub(lambda m: "<" + m.group(1) + re.sub(r'="([^"]*)"', r"='\1'", m.group(2)) + ">",
-                       text)
-    text = _FRONT_MATTER_RE.sub("", text, count=1)
-    text = _DIRECTIVE_RE.sub("", text)
-    text = _COMMENT_RE.sub("", text).lstrip()
-    text = re.sub(r"style.*:\S*#.*;", lambda m: m.group()[:-1], text)
-    text = re.sub(r"classDef.*:\S*#.*;", lambda m: m.group()[:-1], text)
-    text = re.sub(r"#\w+;", lambda m: ("ﬂ°°" if re.fullmatch(r"\+?\d+", m.group()[1:-1])
-                                       else "ﬂ°") + m.group()[1:-1] + "¶ß", text)
-    return re.sub(r"}\s*\n", "}\n", text + "\n")
-
-
-def _decoded(text):
-    """Undo _preprocess's entity encoding, back to mermaid's own `#name;`
-    spelling -- which label drawing decodes (text.label_markup)."""
-    return text.replace("ﬂ°°", "#").replace("ﬂ°", "#").replace("¶ß", ";")
+    """The source as mermaid's flowchart parser gets it: the common steps
+    (common.preprocess), then flowParser.ts's own tidying up."""
+    return re.sub(r"}\s*\n", "}\n", preprocess(source))
 
 
 # mermaid's directions, vertex types, edge types and strokes -> Lectern's.
@@ -292,16 +266,16 @@ class _FlowDb:
         for key, vertex in self.vertices.items():
             if vertex["type"] not in _SHAPES:
                 raise Unsupported(f"no drawing for the {vertex['type']!r} shape")
-            nodes[key] = FlowNode(key, parse_label(_decoded(vertex["text"])), _SHAPES[vertex["type"]])
+            nodes[key] = FlowNode(key, parse_label(decode_entities(vertex["text"])), _SHAPES[vertex["type"]])
         edges = []
         for start, end, link in self.edges:
             tail, head = _ENDS[link["type"]]
-            label = parse_label(_decoded(_label(link["text"]))) if "text" in link else ""
+            label = parse_label(decode_entities(_label(link["text"]))) if "text" in link else ""
             edges.append(FlowEdge(start, end, label, _STROKES[link["stroke"]], head, tail))
         keys = [group["id"] for group in self.subgraphs]
         if len(keys) != len(set(keys)):
             raise Unsupported("a subgraph id defined twice")
-        blocks = {group["id"]: Subgraph(group["id"], parse_label(_decoded(group["title"])))
+        blocks = {group["id"]: Subgraph(group["id"], parse_label(decode_entities(group["title"])))
                   for group in self.subgraphs}
         for group in self.subgraphs:
             block = blocks[group["id"]]

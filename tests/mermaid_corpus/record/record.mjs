@@ -93,7 +93,10 @@ const FAMILY = {
   classDiagram: "class", class: "class", er: "er",
 };
 
-const casesDir = join(here, "..", "cases");
+// MERMAID_CORPUS points both at another corpus directory, e.g. to check
+// documents of your own without them going near the repository.
+const corpus = process.env.MERMAID_CORPUS ?? join(here, "..");
+const casesDir = join(corpus, "cases");
 const byFamily = {};
 for (const file of (await readdir(casesDir)).filter((f) => f.endsWith(".json")).sort()) {
   const family = file.split(".").at(-2);
@@ -116,7 +119,7 @@ for (const [family, cases] of Object.entries(byFamily)) {
       results[id] = { error: String(error.message ?? error).split("\n")[0] };
     }
   }
-  const out = join(here, "..", "recorded", `${family}.json`);
+  const out = join(corpus, "recorded", `${family}.json`);
   await mkdir(dirname(out), { recursive: true });
   await writeFile(out, JSON.stringify({ mermaid: version, results }, null, 1) + "\n");
   const failed = Object.values(results).filter((r) => r.error).length;
