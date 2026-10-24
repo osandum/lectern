@@ -1,0 +1,136 @@
+// mermaid's flowchart grammar, transcribed rule for rule from flow.jison
+// (mermaid 11.17.2), as Lark EBNF.
+//
+// This file is not read at run time. build-aux/mermaid/generate.py has
+// Lark build its LALR(1) table, written out as _flowchart_tables.py and
+// run by parsing.py. The terminals are only declared here: the tokens
+// come from mermaid's own lexer, generated from its compiled form into
+// _flowchart_lexer.py. The token names are jison's.
+//
+// The `-> name`s are the actions in flowchart.py's _Actions, which mirror
+// what flow.jison's actions do to mermaid's flowDb.
+
+start: graph_config document
+
+graph_config: (SPACE | NEWLINE)* GRAPH (NODIR | DIR first_sep)
+first_sep: SEMI | NEWLINE | space_list NEWLINE
+
+document: line*
+?line: statement | SEMI | NEWLINE | SPACE
+
+statement: vertex_statement separator                               -> stmt_vertex
+         | style_statement separator                                -> stmt_ignored
+         | link_style_statement separator                           -> stmt_ignored
+         | class_def_statement separator                            -> stmt_ignored
+         | class_statement separator                                -> stmt_ignored
+         | click_statement separator                                -> stmt_ignored
+         | SUBGRAPH SPACE text_no_tags SQS text SQE separator document END -> subgraph_titled
+         | SUBGRAPH SPACE text_no_tags separator document END       -> subgraph_bare
+         | SUBGRAPH separator document END                          -> subgraph_anon
+         | DIRECTION                                                -> stmt_ignored
+         | ACC_TITLE ACC_TITLE_VALUE                                -> stmt_ignored
+         | ACC_DESCR ACC_DESCR_VALUE                                -> stmt_ignored
+         | ACC_DESCR_MULTILINE_VALUE                                -> stmt_ignored
+
+?separator: NEWLINE | SEMI
+
+shape_data: SHAPE_DATA+
+
+vertex_statement: vertex_statement link node shape_data             -> vs_link_data
+                | vertex_statement link node                        -> vs_link
+                | vertex_statement link node space_list             -> vs_link
+                | node space_list                                   -> vs_node
+                | node shape_data                                   -> vs_node_data
+                | node                                              -> vs_node
+
+node: styled_vertex                                                 -> node_one
+    | node shape_data space_list AMP space_list styled_vertex       -> node_more_data
+    | node space_list AMP space_list styled_vertex                  -> node_more
+
+styled_vertex: vertex
+             | vertex STYLE_SEPARATOR id_string
+
+vertex: id_string SQS text SQE                                      -> v_square
+      | id_string DOUBLECIRCLESTART text DOUBLECIRCLEEND            -> v_doublecircle
+      | id_string PS PS text PE PE                                  -> v_circle
+      | id_string ELLIPSESTART text ELLIPSEEND                      -> v_ellipse
+      | id_string STADIUMSTART text STADIUMEND                      -> v_stadium
+      | id_string SUBROUTINESTART text SUBROUTINEEND                -> v_subroutine
+      | id_string VERTEX_WITH_PROPS_START NODE_STRING COLON NODE_STRING PIPE text SQE -> v_props
+      | id_string CYLINDERSTART text CYLINDEREND                    -> v_cylinder
+      | id_string PS text PE                                        -> v_round
+      | id_string DIAMOND_START text DIAMOND_STOP                   -> v_diamond
+      | id_string DIAMOND_START DIAMOND_START text DIAMOND_STOP DIAMOND_STOP -> v_hexagon
+      | id_string TAGEND text SQE                                   -> v_odd
+      | id_string TRAPSTART text TRAPEND                            -> v_trapezoid
+      | id_string INVTRAPSTART text INVTRAPEND                      -> v_inv_trapezoid
+      | id_string TRAPSTART text INVTRAPEND                         -> v_lean_right
+      | id_string INVTRAPSTART text TRAPEND                         -> v_lean_left
+      | id_string                                                   -> v_plain
+
+link: link_statement arrow_text                                     -> link_piped
+    | link_statement arrow_text SPACE                               -> link_piped
+    | link_statement                                                -> link_plain
+    | START_LINK edge_text LINK                                     -> link_texted
+    | LINK_ID START_LINK edge_text LINK                             -> link_texted
+
+link_statement: LINK
+              | LINK_ID LINK
+
+arrow_text: PIPE text PIPE
+
+// jison's text rules all read `t: token | t token | STR | MD_STR`: a
+// string may be followed by more text, which joins it.
+edge_text: (EDGE_TEXT | STR | MD_STR) EDGE_TEXT*                    -> text
+text: (TEXT | TAGSTART | TAGEND | UNICODE_TEXT | STR | MD_STR) (TEXT | TAGSTART | TAGEND | UNICODE_TEXT)*
+text_no_tags: (_no_tags_token | STR | MD_STR) _no_tags_token*       -> text
+_no_tags_token: NUM | NODE_STRING | SPACE | MINUS | AMP | UNICODE_TEXT | COLON | MULT | BRKT
+              | START_LINK | STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR
+              | SUBGRAPH | END | DOWN | UP
+
+class_def_statement: CLASSDEF SPACE id_string SPACE styles
+class_statement: CLASS SPACE id_string SPACE id_string
+
+click_statement: CLICK CALLBACKNAME
+               | CLICK CALLBACKNAME SPACE STR
+               | CLICK CALLBACKNAME CALLBACKARGS
+               | CLICK CALLBACKNAME CALLBACKARGS SPACE STR
+               | CLICK HREF STR                                     -> click_link
+               | CLICK HREF STR SPACE STR                           -> click_link
+               | CLICK HREF STR SPACE LINK_TARGET                   -> click_link
+               | CLICK HREF STR SPACE STR SPACE LINK_TARGET         -> click_link
+               | CLICK alpha_num
+               | CLICK alpha_num SPACE STR
+               | CLICK STR                                          -> click_link
+               | CLICK STR SPACE STR                                -> click_link
+               | CLICK STR SPACE LINK_TARGET                        -> click_link
+               | CLICK STR SPACE STR SPACE LINK_TARGET              -> click_link
+
+style_statement: STYLE SPACE id_string SPACE styles
+
+link_style_statement: LINKSTYLE SPACE DEFAULT SPACE styles
+                    | LINKSTYLE SPACE num_list SPACE styles
+                    | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alpha_num SPACE styles
+                    | LINKSTYLE SPACE num_list SPACE INTERPOLATE SPACE alpha_num SPACE styles
+                    | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alpha_num
+                    | LINKSTYLE SPACE num_list SPACE INTERPOLATE SPACE alpha_num
+
+num_list: NUM (COMMA NUM)*
+styles: style (COMMA style)*
+style: (NUM | NODE_STRING | COLON | SPACE | BRKT | STYLE)+
+
+id_string: (NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | AMP | BRKT | MULT | UNICODE_TEXT)+
+alpha_num: (NUM | UNICODE_TEXT | NODE_STRING | DIR | DOWN | MINUS | COMMA | COLON | AMP | BRKT | MULT)+
+
+space_list: SPACE+
+
+// Every token mermaid's lexer can produce. QUOTE, SEP and the rest no rule
+// uses are there so that one in the input fails the parse, as in jison.
+%declare ACC_DESCR ACC_DESCR_MULTILINE_VALUE ACC_DESCR_VALUE ACC_TITLE ACC_TITLE_VALUE AMP BRKT
+%declare CALLBACKARGS CALLBACKNAME CLASS CLASSDEF CLICK COLON COMMA CYLINDEREND CYLINDERSTART
+%declare DEFAULT DIAMOND_START DIAMOND_STOP DIR DIRECTION DOUBLECIRCLEEND DOUBLECIRCLESTART DOWN
+%declare EDGE_TEXT ELLIPSEEND ELLIPSESTART END GRAPH HREF INTERPOLATE INVTRAPEND INVTRAPSTART
+%declare LINK LINKSTYLE LINK_ID LINK_TARGET MD_STR MINUS MULT NEWLINE NODE_STRING NODIR NUM PCT
+%declare PE PIPE PS QUOTE SEMI SEP SHAPE_DATA SPACE SQE SQS STADIUMEND STADIUMSTART START_LINK
+%declare STR STYLE STYLE_SEPARATOR SUBGRAPH SUBROUTINEEND SUBROUTINESTART TAGEND TAGSTART TEXT
+%declare TRAPEND TRAPSTART UNICODE_TEXT UNIT UP VERTEX_WITH_PROPS_START

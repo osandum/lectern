@@ -34,14 +34,20 @@ node record.mjs    # after adding cases, or after changing the pin
 Then run the tests. A case that newly deviates either gets fixed or
 goes into `deviations.json`, with its reason.
 
-Two more tools look inside mermaid's flowchart lexer. `node tokens.mjs
-'<source>'` prints the tokens mermaid's lexer makes of a source, with
-the lexer state after each. `node lexer_rules.mjs` dumps the compiled
-lexer as JSON: every rule's regex, the rules each state has active, and
-the rule actions. Read the compiled rules rather than `flow.jison`,
-because jison doesn't compile them the way they read. For example, an
-unescaped `-` or `=` inside a lookahead never matches, and jison drops
-the `;` and `#` from `(?!\n|;|#)`.
+Two more tools look inside mermaid's flowchart lexer:
+- `node tokens.mjs '<source>'` prints the tokens mermaid's lexer makes
+  of a source, with the lexer state after each.
+- `node lexer_rules.mjs` records the compiled lexer in
+  `recorded/flowchart-lexer.json`: every rule's regex, the rules each
+  state has active, and the rule actions. Lectern's flowchart lexer is
+  generated from that file (`build-aux/mermaid/generate.py lexer`), so
+  after moving the mermaid pin, run this as well as `record.mjs`, then
+  regenerate.
+
+Read the compiled rules rather than `flow.jison`, because jison doesn't
+compile them the way they read. For example, an unescaped `-` or `=`
+inside a lookahead never matches, and jison drops the `;` and `#` from
+`(?!\n|;|#)`.
 
 ## Outcomes
 

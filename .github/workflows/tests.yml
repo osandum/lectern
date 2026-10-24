@@ -41,7 +41,7 @@ jobs:
         run: |
           python3 -m venv .venv --system-site-packages
           .venv/bin/pip install -e .
-          .venv/bin/pip install pytest
+          .venv/bin/pip install pytest lark
 
       - name: Report the versions actually under test
         run: |
@@ -100,7 +100,7 @@ jobs:
         run: |
           python3 -m venv .venv --system-site-packages
           .venv/bin/pip install -e .
-          .venv/bin/pip install pytest
+          .venv/bin/pip install pytest lark
 
       - name: Report the versions actually under test
         run: |

@@ -23,7 +23,7 @@ from markdown_it.tree import SyntaxTreeNode
 from lectern import mermaid
 from lectern.document import make_parser
 from lectern.mermaid import flowchart, layered, scene as sc, text as textlib
-from lectern.mermaid.common import parse_init
+from lectern.mermaid.common import Unsupported, parse_init
 from lectern.renderer import MarkdownRenderer
 from lectern.tags import create_tag_table
 
@@ -177,13 +177,20 @@ def test_comments_and_presentational_statements_are_ignored():
     chart = mermaid.parse(
         "flowchart TD\n"
         "%% a comment\n"
-        "  A --> B  %% trailing\n"
+        "  A --> B\n"
         "  style A fill:#f9f\n"
         "  classDef big font-size:20px\n"
         "  click A callback\n"
     )
     assert list(chart.nodes) == ["A", "B"]
     assert len(chart.edges) == 1
+
+
+def test_a_comment_after_code_falls_back_as_mermaid_refuses_it():
+    # Only a whole line is a `%%` comment to mermaid; after code it is a
+    # syntax error, and the diagram doesn't render on GitHub either.
+    with pytest.raises(Unsupported):
+        mermaid.parse("flowchart TD\n  A --> B  %% trailing\n")
 
 
 @pytest.mark.parametrize("source", [
@@ -203,16 +210,27 @@ def test_unsupported_sources_raise(source):
 
 # -- subgraphs -------------------------------------------------------------
 
-def test_subgraph_membership_follows_first_mention():
+def test_a_subgraph_holds_every_node_named_inside_it():
     chart = mermaid.parse(
         "flowchart TD\n"
+        "  A --> D\n"
         "  subgraph s[Inside]\n    A --> B\n  end\n"
         "  B --> C\n")
     group, = chart.subgraphs
     assert group.key == "s" and group.title == "Inside"
-    # C is named outside the block; B is named inside it first and again
-    # outside, which doesn't move it.
-    assert group.node_keys() == ["A", "B"]
+    # mermaid's rule: named inside the block, it's a member -- A too,
+    # though named outside before. Naming B outside afterwards doesn't
+    # move it, and C was never named inside.
+    assert set(group.node_keys()) == {"A", "B"}
+
+
+def test_a_node_stays_in_the_first_subgraph_to_close_around_it():
+    chart = mermaid.parse(
+        "flowchart TD\n"
+        "  subgraph outer\n    subgraph inner\n      A\n    end\n    A --> B\n  end\n")
+    outer, = chart.subgraphs
+    inner, = outer.children
+    assert inner.members == ["A"] and outer.members == ["B"]
 
 
 def test_a_bare_subgraph_title_is_its_own_id():
@@ -1136,9 +1154,10 @@ def test_flowchart_click_links_its_node():
     assert chart.nodes["B"].href == "b.md"
 
 
-def test_a_click_may_precede_the_node_it_names():
+def test_a_click_before_the_node_it_names_is_dropped():
+    # mermaid links only a node that exists by the time the click is read.
     chart = mermaid.parse('flowchart LR\n  click B "b.md"\n  A --> B\n')
-    assert chart.nodes["B"].href == "b.md"
+    assert chart.nodes["B"].href is None
 
 
 def test_a_click_on_an_undeclared_id_conjures_no_node():
