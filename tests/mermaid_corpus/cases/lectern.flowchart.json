@@ -1,0 +1,307 @@
+[
+  {
+    "id": "lectern:3385f35-dash-chain",
+    "origin": "lectern 3385f35: an unlabelled chain is not a label",
+    "source": "flowchart LR\n  A --- B --- C\n"
+  },
+  {
+    "id": "lectern:3385f35-dotted-label",
+    "origin": "lectern 3385f35: a label may touch its dashes",
+    "source": "flowchart LR\n  A -.text.-> B\n  C ==text==> D\n"
+  },
+  {
+    "id": "lectern:3385f35-edge-to-subgraph",
+    "origin": "lectern 3385f35: an edge naming a subgraph",
+    "source": "flowchart LR\n  R --> S\n  subgraph S\n    A --> B\n  end\n"
+  },
+  {
+    "id": "lectern:5c77131-node-lists",
+    "origin": "lectern 5c77131: & node lists",
+    "source": "flowchart LR\n  A & B --> C & D\n"
+  },
+  {
+    "id": "lectern:5c77131-node-list-shapes",
+    "origin": "lectern 5c77131: & lists keep shapes and labels",
+    "source": "flowchart LR\n  A[(\"db\")] & B{{hex}} -. \"reads\" .-> C\n"
+  },
+  {
+    "id": "lectern:c2b866c-ampersand-label",
+    "origin": "lectern c2b866c: & inside a label",
+    "source": "flowchart LR\n  A[\"salt & pepper\"] --> B[R&D]\n"
+  },
+  {
+    "id": "lectern:4621696-semicolon-label",
+    "origin": "lectern 4621696: ; inside a quoted label",
+    "source": "flowchart LR\n  A[\"one; two\"] --> B\n"
+  },
+  {
+    "id": "lectern:47b1f8f-click",
+    "origin": "lectern 47b1f8f: click links",
+    "source": "flowchart LR\n  A --> B\n  click A \"https://example.com\" \"tip\"\n  click B href \"https://example.org\" _blank\n"
+  },
+  {
+    "id": "lectern:0f8ff97-character-reference",
+    "origin": "lectern 0f8ff97: character references",
+    "source": "flowchart LR\n  A[\"say #quot;hi#quot; #35;1\"] --> B\n"
+  },
+  {
+    "id": "lectern:br-and-backslash-n",
+    "origin": "lectern: both line-break spellings",
+    "source": "flowchart TD\n  A[\"one<br/>two\"] --> B[\"three\\nfour\"]\n"
+  },
+  {
+    "id": "lectern:kitchen-sink-1",
+    "origin": "lectern tests/fixtures/kitchen_sink.md",
+    "source": "flowchart LR\n    Open([Open file]) --> Parse[markdown-it-py]\n    Parse --> Walk{Node type?}\n    Walk -- block --> Buffer[(TextBuffer)]\n    Walk -- table --> Grid[[Gtk.Grid]]\n    Walk -. mermaid .-> Scene((Scene))\n    Buffer --> Show[Present window]\n    Grid --> Show\n    Scene --> Show\n"
+  },
+  {
+    "id": "lectern:kitchen-sink-2",
+    "origin": "lectern tests/fixtures/kitchen_sink.md",
+    "source": "flowchart TD\n    Watch[Watch the file] --> Changed{Changed?}\n    Changed -->|yes| Reload[Re-render]\n    Reload --> Watch\n    Changed -->|no| Watch\n"
+  },
+  {
+    "id": "lectern:kitchen-sink-3",
+    "origin": "lectern tests/fixtures/kitchen_sink.md",
+    "source": "flowchart TD\n    Source[\"Markdown\\nsource\"] --> Walk{Node type?}\n    subgraph Pass[\"One walk, two outputs\"]\n        subgraph Screen[\"Screen\"]\n            Buffer[(TextBuffer)]\n        end\n        subgraph Paper[\"Paper\"]\n            Model[\"print_model\\nPrintItem list\"]\n        end\n    end\n    Walk --> Buffer\n    Walk --> Model\n    Model ~~~ Note[\"Same walk, same order\"]\n"
+  },
+  {
+    "id": "lectern:probe-keyword-prefix-style",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  styleguide --> B\n"
+  },
+  {
+    "id": "lectern:probe-keyword-prefix-class",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A --> classy\n"
+  },
+  {
+    "id": "lectern:probe-keyword-prefix-graph",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  graphql --> B\n"
+  },
+  {
+    "id": "lectern:probe-keyword-prefix-subgraph",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  subgraphs --> B\n"
+  },
+  {
+    "id": "lectern:probe-keyword-prefix-default",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  defaults --> B\n"
+  },
+  {
+    "id": "lectern:probe-keyword-end-alone",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A --> end\n"
+  },
+  {
+    "id": "lectern:probe-keyword-end-prefix",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A --> endpoint\n"
+  },
+  {
+    "id": "lectern:probe-keyword-href",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  href --> B\n"
+  },
+  {
+    "id": "lectern:probe-keyword-call",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  call me --> B\n"
+  },
+  {
+    "id": "lectern:probe-link-target-id",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  _blank --> B\n"
+  },
+  {
+    "id": "lectern:probe-v-prefix",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  validate --> v\n"
+  },
+  {
+    "id": "lectern:probe-paren-in-edge-text",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A -- text (x) --> B\n"
+  },
+  {
+    "id": "lectern:probe-bracket-in-edge-text",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A -- text [x] --> B\n"
+  },
+  {
+    "id": "lectern:probe-pipe-in-edge-text",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A -- a|b --> B\n"
+  },
+  {
+    "id": "lectern:probe-quote-in-edge-text",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A -- say \"hi\" --> B\n"
+  },
+  {
+    "id": "lectern:probe-head-letter-before-link",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A -- text o--> B\n"
+  },
+  {
+    "id": "lectern:probe-head-letter-x-before-link",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A -- box --> B\n"
+  },
+  {
+    "id": "lectern:probe-thick-text-with-dashes",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A == a-b == c ==> B\n"
+  },
+  {
+    "id": "lectern:probe-dotted-text-with-dots",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A -. a.b .-> B\n"
+  },
+  {
+    "id": "lectern:probe-tilde-in-label",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A[a ~~~ b] --> B\n"
+  },
+  {
+    "id": "lectern:probe-quote-then-text",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A[\"a\"b] --> B\n"
+  },
+  {
+    "id": "lectern:probe-multiline-label",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A[one\ntwo] --> B\n"
+  },
+  {
+    "id": "lectern:probe-trailing-comment",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A --> B %% not a comment here\n"
+  },
+  {
+    "id": "lectern:probe-semicolons",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A-->B; C-->D;\n"
+  },
+  {
+    "id": "lectern:probe-amp-unspaced",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A&B --> C\n"
+  },
+  {
+    "id": "lectern:probe-amp-before-link",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A & B--> C\n"
+  },
+  {
+    "id": "lectern:probe-direction-mid-line",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A --> B direction TB\n"
+  },
+  {
+    "id": "lectern:probe-subgraph-multiword-ref",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  subgraph one two\n    A\n  end\n  X --> A\n"
+  },
+  {
+    "id": "lectern:probe-subgraph-direction",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  subgraph S\n    direction TB\n    A --> B\n  end\n"
+  },
+  {
+    "id": "lectern:probe-click-before-node",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  click A \"https://example.com\"\n  A --> B\n"
+  },
+  {
+    "id": "lectern:probe-colon-id",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  a:b --> c\n"
+  },
+  {
+    "id": "lectern:probe-dash-id",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  my-node --> other-node\n"
+  },
+  {
+    "id": "lectern:probe-dot-id",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  a.b --> c\n"
+  },
+  {
+    "id": "lectern:probe-unicode-id",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  Città --> Æble\n"
+  },
+  {
+    "id": "lectern:probe-number-id",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  1 --> 2\n"
+  },
+  {
+    "id": "lectern:probe-long-link",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A -----> B\n  C ====> D\n  E -...-> F\n"
+  },
+  {
+    "id": "lectern:probe-open-links",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A --- B\n  C === D\n  E -.- F\n"
+  },
+  {
+    "id": "lectern:probe-both-heads",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A <--> B\n  C o--o D\n  E x--x F\n  G <-. text .-> H\n"
+  },
+  {
+    "id": "lectern:probe-mismatched-text-link",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A -- text ==> B\n"
+  },
+  {
+    "id": "lectern:probe-odd-shape",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A>odd] --> B\n"
+  },
+  {
+    "id": "lectern:probe-doublecircle",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A(((double))) --> B\n"
+  },
+  {
+    "id": "lectern:probe-empty-label",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A[] --> B\n"
+  },
+  {
+    "id": "lectern:probe-space-label",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A[\" \"] --> B\n"
+  },
+  {
+    "id": "lectern:probe-entity-in-label",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A[a #amp; b #59; c] --> B\n"
+  },
+  {
+    "id": "lectern:probe-html-in-label",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A[<b>bold</b> and <i>it</i>] --> B\n"
+  },
+  {
+    "id": "lectern:probe-edge-id",
+    "origin": "lectern: lexer probe for #41",
+    "source": "flowchart LR\n  A e1@--> B\n"
+  },
+  {
+    "id": "lectern:probe-graph-no-direction",
+    "origin": "lectern: lexer probe for #41",
+    "source": "graph\n  A --> B\n"
+  },
+  {
+    "id": "lectern:probe-direction-arrows",
+    "origin": "lectern: lexer probe for #41",
+    "source": "graph >\n  A --> B\n"
+  }
+]

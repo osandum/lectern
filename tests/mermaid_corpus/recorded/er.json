@@ -1,0 +1,2727 @@
+{
+ "mermaid": "11.17.2",
+ "results": {
+  "lectern:probe-alias": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "p",
+     "alias": "Person",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "lectern:probe-quoted-alias": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "p",
+     "alias": "A Person",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "lectern:probe-style-shorthand": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "P",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "lectern:probe-backquoted": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "P",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "my.type",
+       "name": "my.name",
+       "keys": [
+        "PK"
+       ]
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "lectern:probe-block-trailing-text": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "P",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "extra",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:19": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "ISLAND",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "MAINLAND",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:29": {
+   "error": "Parse error on line 2:"
+  },
+  "erDiagram.spec.js:98": {
+   "error": "Parse error on line 2:"
+  },
+  "erDiagram.spec.js:105": {
+   "error": "Parse error on line 2:"
+  },
+  "erDiagram.spec.js:126": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "DUCK-àáâäæãåā",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:133": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "DUCK-BILLED_PLATYPUS",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:141": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "foo",
+     "alias": "bar",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:151": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "foo",
+     "alias": "batman",
+     "attributes": []
+    },
+    {
+     "name": "bar",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "buzz",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "foo",
+     "entityB": "bar",
+     "roleA": "rel",
+     "cardA": "ZERO_OR_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:165": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "buzz",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "foo",
+     "alias": "batman",
+     "attributes": []
+    },
+    {
+     "name": "bar",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "foo",
+     "entityB": "bar",
+     "roleA": "rel",
+     "cardA": "ZERO_OR_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:177": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "_foo",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:190": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "myBookTitle"
+      },
+      {
+       "type": "string",
+       "name": "MYBOOKSUBTITLE_1"
+      },
+      {
+       "type": "string",
+       "name": "author-ref[name](1)"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:206": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "*title"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:216": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "id",
+       "name": "*the_Primary_Key"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:228": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BUILDING",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "public.geometry(point,4326)",
+       "name": "location"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:251": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "HOTEL",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "geo.accuracy"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:263": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "HOTEL",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "geo.accuracy",
+       "keys": [
+        "PK"
+       ],
+       "comment": "the comment"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:276": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "HOTEL",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "my.type",
+       "name": "address"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:288": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "PERSON",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string?",
+       "name": "alias"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:300": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "PERSON",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string?",
+       "name": "alias",
+       "keys": [
+        "UK"
+       ],
+       "comment": "optional display name"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:314": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "title"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:324": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "title",
+       "keys": [
+        "PK"
+       ]
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:334": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "title",
+       "comment": "comment"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:345": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "title",
+       "keys": [
+        "PK"
+       ],
+       "comment": "comment"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:358": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "int",
+       "name": "fk_title",
+       "keys": [
+        "FK"
+       ]
+      },
+      {
+       "type": "string",
+       "name": "pk_author",
+       "keys": [
+        "PK"
+       ]
+      },
+      {
+       "type": "string",
+       "name": "uk_address",
+       "keys": [
+        "UK"
+       ]
+      },
+      {
+       "type": "float",
+       "name": "pk_price",
+       "keys": [
+        "PK"
+       ],
+       "comment": "comment"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:373": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "int",
+       "name": "customer_number",
+       "keys": [
+        "PK",
+        "FK"
+       ],
+       "comment": "comment1"
+      },
+      {
+       "type": "datetime",
+       "name": "customer_status_start_datetime",
+       "keys": [
+        "PK",
+        "UK",
+        "FK"
+       ]
+      },
+      {
+       "type": "datetime",
+       "name": "customer_status_end_datetime",
+       "keys": [
+        "PK",
+        "UK"
+       ],
+       "comment": "comment3"
+      },
+      {
+       "type": "string",
+       "name": "customer_firstname"
+      },
+      {
+       "type": "string",
+       "name": "customer_lastname",
+       "comment": "comment5"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:393": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "type~T~",
+       "name": "type"
+      },
+      {
+       "type": "option~T~",
+       "name": "readable",
+       "comment": "comment"
+      },
+      {
+       "type": "string",
+       "name": "id",
+       "keys": [
+        "PK"
+       ]
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:406": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string[]",
+       "name": "readers",
+       "keys": [
+        "FK"
+       ],
+       "comment": "comment"
+      },
+      {
+       "type": "string[]",
+       "name": "authors",
+       "keys": [
+        "FK"
+       ]
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:417": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "character(10)",
+       "name": "isbn",
+       "keys": [
+        "FK"
+       ]
+      },
+      {
+       "type": "varchar(5)",
+       "name": "postal_code",
+       "comment": "Five digits"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:431": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "title"
+      },
+      {
+       "type": "string",
+       "name": "author"
+      },
+      {
+       "type": "float",
+       "name": "price"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:444": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "title"
+      },
+      {
+       "type": "string",
+       "name": "author"
+      },
+      {
+       "type": "float",
+       "name": "price"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:454": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:463": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:472": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:482": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "title"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:492": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "BOOK",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "title"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:499": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CAR",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "DRIVER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CAR",
+     "entityB": "DRIVER",
+     "roleA": "insured for",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:514": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CAR",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "DRIVER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "LICENSE",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CAR",
+     "entityB": "DRIVER",
+     "roleA": "insured for",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    },
+    {
+     "entityA": "DRIVER",
+     "entityB": "LICENSE",
+     "roleA": "has",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:523": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "TEACHER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "STUDENT",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "TEACHER",
+     "entityB": "STUDENT",
+     "roleA": "is teacher of",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:530": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "NODE",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "NODE",
+     "entityB": "NODE",
+     "roleA": "leads to",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:539": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "TEACHER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "STUDENT",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "TEACHER",
+     "entityB": "STUDENT",
+     "roleA": "is teacher of",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:550": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "TEACHER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "STUDENT",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "TEACHER",
+     "entityB": "STUDENT",
+     "roleA": "is teacher of",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:567": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CAR",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "PERSON",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CAR",
+     "entityB": "PERSON",
+     "roleA": "insured for",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    },
+    {
+     "entityA": "CAR",
+     "entityB": "PERSON",
+     "roleA": "owned by",
+     "cardA": "ONLY_ONE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:584": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:594": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:604": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ZERO_OR_ONE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:614": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ZERO_OR_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:624": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONE_OR_MORE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:634": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ONLY_ONE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:644": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ZERO_OR_ONE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:654": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ZERO_OR_ONE",
+     "cardB": "ONE_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:664": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ONLY_ONE",
+     "cardB": "ZERO_OR_ONE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:674": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:684": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ZERO_OR_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:694": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ZERO_OR_ONE",
+     "cardB": "ZERO_OR_ONE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:704": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:714": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONE_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:724": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:734": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ONE_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:744": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ZERO_OR_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:754": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ZERO_OR_ONE",
+     "cardB": "ONE_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:764": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:774": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:784": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ONLY_ONE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:794": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:804": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "A",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "B",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "A",
+     "entityB": "B",
+     "roleA": "has",
+     "cardA": "ONLY_ONE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:814": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "DELIVERY-ADDRESS",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "DELIVERY-ADDRESS",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:825": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "DELIVERY-ADDRESS",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "DELIVERY-ADDRESS",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:836": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "DELIVERY-ADDRESS",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "DELIVERY-ADDRESS",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:848": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "DELIVERY-ADDRESS",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "DELIVERY-ADDRESS",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:861": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "a",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "1",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "a",
+     "entityB": "1",
+     "roleA": "label",
+     "cardA": "ONLY_ONE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:886": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "a",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "12",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "a",
+     "entityB": "12",
+     "roleA": "label",
+     "cardA": "ONLY_ONE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:900": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "HOUSE",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "ROOM",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "HOUSE",
+     "entityB": "ROOM",
+     "roleA": "contains",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:906": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "HOUSE",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "ROOM",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "HOUSE",
+     "entityB": "ROOM",
+     "roleA": "contains",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:912": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "PERSON",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "POSSESSION",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "PERSON",
+     "entityB": "POSSESSION",
+     "roleA": "owns",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:918": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "PERSON",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "POSSESSION",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "PERSON",
+     "entityB": "POSSESSION",
+     "roleA": "owns",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ZERO_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:926": {
+   "error": "Parse error on line 2:"
+  },
+  "erDiagram.spec.js:932": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:942": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:954": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:967": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:974": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:983": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:993": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "ENTITY1",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "ENTITY2",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:1020": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [],
+   "relationships": []
+  },
+  "erDiagram.spec.js:1044": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [],
+   "relationships": []
+  },
+  "erDiagram.spec.js:1075": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:1083": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:1091": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:1100": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:1109": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "c",
+     "alias": "CUSTOMER",
+     "attributes": []
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:1119": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "PERSON",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "PERSON",
+     "roleA": "allows",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1129": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "ORDER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "ORDER",
+     "roleA": "",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1135": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "ORDER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "ORDER",
+     "roleA": "places",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1141": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "ORDER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "ORDER",
+     "roleA": "places",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1147": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "PROJECT",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "TEAM_MEMBER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "PROJECT",
+     "entityB": "TEAM_MEMBER",
+     "roleA": "parent",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "MD_PARENT",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1170": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "DELIVERY-ADDRESS",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "1",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "DELIVERY-ADDRESS",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONE_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1174": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "DELIVERY-ADDRESS",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "u",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "DELIVERY-ADDRESS",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONE_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1178": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "DELIVERY-ADDRESS",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "2.5",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "DELIVERY-ADDRESS",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONE_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1179": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "DELIVERY-ADDRESS",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "1.5",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "DELIVERY-ADDRESS",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONE_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1180": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "DELIVERY-ADDRESS",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "0.1",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "DELIVERY-ADDRESS",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONE_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1181": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "DELIVERY-ADDRESS",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "99.99",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "DELIVERY-ADDRESS",
+     "roleA": "has",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONE_OR_MORE",
+     "relType": "NON_IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1187": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "u",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      },
+      {
+       "type": "int",
+       "name": "id"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:1191": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "1",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      },
+      {
+       "type": "int",
+       "name": "id"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:1195": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "2.5",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      },
+      {
+       "type": "int",
+       "name": "id"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:1196": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "1.5",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "value"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  },
+  "erDiagram.spec.js:1202": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "u",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "u",
+     "roleA": "has",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1203": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "u",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "ORDER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "u",
+     "entityB": "ORDER",
+     "roleA": "places",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1204": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "u",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "v",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "u",
+     "entityB": "v",
+     "roleA": "connects",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1208": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "1",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "1",
+     "roleA": "has",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1209": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "1",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "ORDER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "1",
+     "entityB": "ORDER",
+     "roleA": "places",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1210": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "1",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "2",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "1",
+     "entityB": "2",
+     "roleA": "connects",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1214": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "2.5",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "2.5",
+     "roleA": "has",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1215": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "1.5",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "ORDER",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "1.5",
+     "entityB": "ORDER",
+     "roleA": "places",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1216": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "2.5",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "5.5",
+     "alias": "",
+     "attributes": []
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "2.5",
+     "entityB": "5.5",
+     "roleA": "connects",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1222": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "CUSTOMER",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "1",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "u",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name"
+      },
+      {
+       "type": "int",
+       "name": "quantity"
+      }
+     ]
+    },
+    {
+     "name": "2.5",
+     "alias": "",
+     "attributes": []
+    },
+    {
+     "name": "ORDER",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "int",
+       "name": "id"
+      },
+      {
+       "type": "date",
+       "name": "created"
+      }
+     ]
+    }
+   ],
+   "relationships": [
+    {
+     "entityA": "CUSTOMER",
+     "entityB": "1",
+     "roleA": "places",
+     "cardA": "ZERO_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    },
+    {
+     "entityA": "1",
+     "entityB": "u",
+     "roleA": "contains",
+     "cardA": "ONE_OR_MORE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    },
+    {
+     "entityA": "2.5",
+     "entityB": "ORDER",
+     "roleA": "processes",
+     "cardA": "ONLY_ONE",
+     "cardB": "ONLY_ONE",
+     "relType": "IDENTIFYING"
+    }
+   ]
+  },
+  "erDiagram.spec.js:1240": {
+   "type": "er",
+   "direction": "TB",
+   "entities": [
+    {
+     "name": "ENTITY",
+     "alias": "",
+     "attributes": [
+      {
+       "type": "string",
+       "name": "name1"
+      },
+      {
+       "type": "int",
+       "name": "value2"
+      },
+      {
+       "type": "float",
+       "name": "point3_5"
+      }
+     ]
+    }
+   ],
+   "relationships": []
+  }
+ }
+}

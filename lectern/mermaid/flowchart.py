@@ -20,7 +20,7 @@ import re
 
 from . import layered
 from . import scene as sc
-from .common import Unsupported, curve_setting, parse_click, parse_label
+from .common import Unsupported, curve_setting, decode_entities, parse_label, preprocess
 
 # -- geometry, in nominal 96dpi pixels -------------------------------------
 
@@ -41,74 +41,6 @@ EDGE_LABEL_CLEARANCE = 16.0
 CLUSTER_PAD = 14.0
 CLUSTER_RADIUS = 8.0
 CLUSTER_TITLE_SCALE = 0.95
-
-_DIRECTIONS = {"TD": "TD", "TB": "TD", "BT": "BT", "LR": "LR", "RL": "RL"}
-
-
-# -- parsing ---------------------------------------------------------------
-
-_HEADER_RE = re.compile(r"^(?:flowchart|graph)(?:\s+(?P<dir>[A-Za-z]{2}))?\s*$")
-_ID_RE = re.compile(r"[A-Za-z0-9_]+")
-_IGNORED_STATEMENTS = ("style ", "classdef ", "class ", "linkstyle ",
-                       "direction ", "%%")
-
-# `subgraph Id[Title]`, `subgraph Id["Title"]`, or a bare `subgraph Title`
-# -- which mermaid treats as both the id and the label.
-_SUBGRAPH_RE = re.compile(r"""
-    ^subgraph \s+
-    (?:
-        (?P<key>[A-Za-z0-9_]+) \s* \[ (?P<bracket>.*) \] \s*
-      | (?P<bare>.+?) \s*
-    )$
-""", re.X | re.I)
-
-# Shape delimiters, longest first -- "[[" has to be tried before "[", or
-# every subroutine node parses as a rect whose text starts with "[". The
-# four slanted forms share the "[/" and "[\" openings and differ only in
-# how they close, so a candidate whose closing delimiter isn't found is
-# skipped rather than treated as a syntax error (see _parse_node).
-_SHAPES = [
-    ("[[", "]]", "subroutine"),
-    ("[(", ")]", "cylinder"),
-    ("([", "])", "stadium"),
-    ("((", "))", "circle"),
-    ("{{", "}}", "hexagon"),
-    ("[/", "/]", "parallelogram"),
-    ("[\\", "\\]", "parallelogram-alt"),
-    ("[/", "\\]", "trapezoid"),
-    ("[\\", "/]", "trapezoid-alt"),
-    ("[", "]", "rect"),
-    ("(", ")", "round"),
-    ("{", "}", "diamond"),
-    (">", "]", "asymmetric"),
-]
-
-# Mermaid spells a labelled link two ways: `A -- text --> B` and
-# `A -->|text| B`. Rewriting the first into the second up front means the
-# link scanner below only has to know one of them. An opening can't be
-# the end of a longer link -- else the `-- B --` in `A --- B --- C` reads
-# as a label -- and, as in mermaid, a dotted or thick label may touch its
-# dashes (`-.text.->`), so long as it doesn't start like a link itself.
-_MID_LABEL_FORMS = [
-    (re.compile(r"(?<![-.])--\s+(?P<text>.+?)\s+(?P<tail>-{2,}[>ox]?)"), "solid"),
-    (re.compile(r"(?<![-.])-\.\s*(?P<text>[^\s.>-].*?)\s*(?P<tail>\.-+[>ox]?)"), "dotted"),
-    (re.compile(r"(?<!=)==\s*(?P<text>[^\s=>].*?)\s*(?P<tail>={2,}[>ox]?)"), "thick"),
-]
-
-_LINK_RE = re.compile(r"""
-    \s*
-    (?P<tail>[<ox])?
-    (?:
-        (?P<invisible>~{3,})
-      | (?P<dotted>-\.-+|-\.)
-      | (?P<thick>={2,})
-      | (?P<solid>-{2,})
-    )
-    (?P<head>[>ox])?
-    (?:\|(?P<label>[^|]*)\|)?
-    \s*
-""", re.X)
-
 
 class FlowNode:
     __slots__ = ("key", "text", "shape", "href", "w", "h", "x", "y", "rank", "order", "cap")
@@ -198,243 +130,319 @@ class Flowchart:
         return _build_scene(self, measurer)
 
 
-def _strip_comment(line):
-    # `%%{init: ...}%%` directives and plain `%%` comments both go; a `%%`
-    # inside a quoted label does not.
-    out, quoted = [], False
-    i = 0
-    while i < len(line):
-        ch = line[i]
-        if ch == '"':
-            quoted = not quoted
-        if not quoted and line.startswith("%%", i):
-            break
-        out.append(ch)
-        i += 1
-    return "".join(out)
+# -- parsing ---------------------------------------------------------------
+#
+# mermaid's own lexer and a transcription of its grammar (flowchart.lark),
+# run by parsing.py from generated tables. The actions below do what
+# flow.jison's do to mermaid's flowDb, and the model they leave behind
+# becomes a Flowchart. Anything mermaid reads that Lectern doesn't draw
+# -- shape data, markdown strings, shapes without a drawing here -- raises
+# Unsupported, as does anything mermaid refuses.
+
+def _preprocess(source):
+    """The source as mermaid's flowchart parser gets it: the common steps
+    (common.preprocess), then flowParser.ts's own tidying up."""
+    return re.sub(r"}\s*\n", "}\n", preprocess(source))
 
 
-def _split_statements(source):
-    statements = []
-    for raw_line in source.splitlines():
-        line = _strip_comment(raw_line)
-        # Semicolons separate statements; mermaid allows but doesn't
-        # require them, so they're a separator here and not a terminator.
-        # One inside a quoted label is just text.
-        for part in _split_unquoted(line, ";"):
-            part = part.strip()
-            if part:
-                statements.append(part)
-    return statements
+# mermaid's directions, vertex types, edge types and strokes -> Lectern's.
+_DIRECTIONS = {"TB": "TD", "TD": "TD", "BT": "BT", "LR": "LR", "RL": "RL",
+               "<": "RL", "^": "BT", ">": "LR", "v": "TD"}
+_SHAPES = {None: "rect", "square": "rect", "round": "round", "circle": "circle",
+           "stadium": "stadium", "subroutine": "subroutine", "cylinder": "cylinder",
+           "diamond": "diamond", "hexagon": "hexagon", "lean_right": "parallelogram",
+           "lean_left": "parallelogram-alt", "trapezoid": "trapezoid",
+           "inv_trapezoid": "trapezoid-alt", "odd": "asymmetric"}
+_ENDS = {"arrow_open": (None, None), "arrow_point": (None, "arrow"),
+         "double_arrow_point": ("arrow", "arrow"), "arrow_circle": (None, "circle"),
+         "double_arrow_circle": ("circle", "circle"), "arrow_cross": (None, "cross"),
+         "double_arrow_cross": ("cross", "cross")}
+_STROKES = {"normal": "solid", "dotted": "dotted", "thick": "thick", "invisible": "invisible"}
 
 
-def _split_unquoted(line, sep):
-    parts, start, quoted = [], 0, False
-    for i, ch in enumerate(line):
-        if ch == '"':
-            quoted = not quoted
-        elif ch == sep and not quoted:
-            parts.append(line[start:i])
-            start = i + 1
-    parts.append(line[start:])
-    return parts
+def _label(text):
+    """A label as addVertex/addSingleLink keep it: trimmed, and unquoted
+    if quoted. Lectern draws no markdown strings."""
+    if text["type"] == "markdown":
+        raise Unsupported("markdown string")
+    label = text["text"].strip()
+    if len(label) >= 2 and label.startswith('"') and label.endswith('"'):
+        label = label[1:-1]
+    return label
 
 
-_AMPERSAND_RE = re.compile(r"\s*&\s*")
+def _link_end(token):
+    """flowDb.destructEndLink: (type, stroke) from a link's closing."""
+    text = token.strip()
+    line, kind = text[:-1], "arrow_open"
+    last = text[-1:]
+    if last in ("x", ">", "o"):
+        kind = {"x": "arrow_cross", ">": "arrow_point", "o": "arrow_circle"}[last]
+        if text.startswith({"x": "x", ">": "<", "o": "o"}[last]):
+            kind = "double_" + kind
+            line = line[1:]
+    stroke = "normal"
+    if line.startswith("="):
+        stroke = "thick"
+    if line.startswith("~"):
+        stroke = "invisible"
+    if "." in line:
+        stroke = "dotted"
+    return {"type": kind, "stroke": stroke}
 
 
-def _parse_nodes(statement, pos):
-    """Parse one end of a link: a node, or an `A & B & C` node list.
-
-    Returns ([(key, text_or_None, shape_or_None), ...], new_pos). An `&`
-    inside a label -- quoted, within shape brackets or between an edge
-    label's pipes -- never gets here, as _parse_node and _parse_link
-    consume those whole."""
-    found = []
-    while True:
-        key, text, shape, pos = _parse_node(statement, pos)
-        found.append((key, text, shape))
-        match = _AMPERSAND_RE.match(statement, pos)
-        if not match:
-            return found, pos
-        pos = match.end()
-
-
-def _parse_node(statement, pos):
-    """Parse `ID`, `ID[text]`, `ID{text}`, ... at `pos`.
-
-    Returns (key, text_or_None, shape_or_None, new_pos). A bare `ID` is a
-    reference, which is why text is optional: `A --> B` declares both ends
-    with no shape of their own, and a later `A[Real label]` fills it in.
-    """
-    match = _ID_RE.match(statement, pos)
-    if not match:
-        raise Unsupported(f"expected a node id at {statement[pos:pos + 12]!r}")
-    key = match.group(0)
-    pos = match.end()
-    opened = False
-    for open_delim, close_delim, shape in _SHAPES:
-        if not statement.startswith(open_delim, pos):
-            continue
-        opened = True
-        start = pos + len(open_delim)
-        if statement.startswith('"', start):
-            end = statement.find('"', start + 1)
-            if end < 0:
-                raise Unsupported("unterminated quoted label")
-            close = statement.find(close_delim, end + 1)
-            text = statement[start:end + 1]
-        else:
-            close = statement.find(close_delim, start)
-            text = statement[start:close] if close >= 0 else ""
-        if close < 0:
-            continue  # try the next shape sharing this opening delimiter
-        return key, parse_label(text), shape, close + len(close_delim)
-    if opened:
-        raise Unsupported(f"unterminated shape on node {key}")
-    return key, None, None, pos
+def _link(end, start=None):
+    """flowDb.destructLink: a link's type and stroke, from its closing and,
+    for one with its text between the dashes, its opening."""
+    info = _link_end(end)
+    if start is None:
+        return info
+    text = start.strip()
+    kind = "arrow_open"
+    if text[:1] in ("<", "x", "o"):
+        kind = {"<": "arrow_point", "x": "arrow_cross", "o": "arrow_circle"}[text[0]]
+        text = text[1:]
+    stroke = "dotted" if "." in text else "thick" if "=" in text else "normal"
+    if stroke != info["stroke"]:
+        raise Unsupported("a link opened and closed with different strokes")
+    if kind == "arrow_open":
+        kind = info["type"]
+    elif kind != info["type"]:
+        raise Unsupported("a link with different heads at either end")
+    else:
+        kind = "double_" + kind
+    return {"type": kind, "stroke": stroke}
 
 
-def _canonical_link(style, tail):
-    """The `-->`-style spelling of a link whose label was written between
-    its dashes, so the one link scanner sees a single form."""
-    head = tail[-1] if tail and tail[-1] in ">ox" else ""
-    body = {"solid": "--", "dotted": "-.-", "thick": "=="}[style]
-    if style == "dotted" and not head:
-        return "-.-"
-    return body + head if head else {"solid": "---", "thick": "==="}[style]
+class _FlowDb:
+    """What mermaid's flowDb records, as far as Lectern draws it."""
+
+    def __init__(self):
+        self.direction = None
+        self.vertices = {}      # id -> {"text", "type", "declared"}, in mermaid's order
+        self.edges = []         # (start, end, link)
+        self.subgraphs = []     # in the order they close: inner ones first
+        self.links = {}
+
+    def add_vertex(self, key, text=None, shape=None):
+        if not key.strip():
+            return
+        vertex = self.vertices.setdefault(key, {"text": None, "type": None, "declared": False})
+        if text is not None:
+            vertex["text"] = _label(text)
+            vertex["declared"] = True
+        elif vertex["text"] is None:
+            vertex["text"] = key
+        if shape is not None:
+            vertex["type"] = shape
+            vertex["declared"] = True
+
+    def add_link(self, starts, ends, link):
+        for start in starts:
+            for end in ends:
+                self.edges.append((start, end, link))
+
+    def add_subgraph(self, key, mentioned, title):
+        """addSubGraph: a block's members are every node its statements
+        mention, and the blocks inside it -- less any node a block closed
+        earlier already took, which is why an inner block keeps its own."""
+        taken = {node for group in self.subgraphs for node in group["nodes"]}
+        nodes = []
+        for item in mentioned:
+            if item.strip() and item not in nodes and item not in taken:
+                nodes.append(item)
+        if title is not None and title["type"] == "markdown":
+            raise Unsupported("markdown subgraph title")
+        key = key or f"subGraph{len(self.subgraphs)}"
+        self.subgraphs.append({"id": key, "title": (title["text"] if title else "").strip(),
+                               "nodes": nodes})
+        return key
+
+    def chart(self, source):
+        direction = _DIRECTIONS.get(self.direction)
+        if direction is None:
+            raise Unsupported(f"unknown direction {self.direction!r}")
+        nodes = {}
+        for key, vertex in self.vertices.items():
+            if vertex["type"] not in _SHAPES:
+                raise Unsupported(f"no drawing for the {vertex['type']!r} shape")
+            nodes[key] = FlowNode(key, parse_label(decode_entities(vertex["text"])), _SHAPES[vertex["type"]])
+        edges = []
+        for start, end, link in self.edges:
+            tail, head = _ENDS[link["type"]]
+            label = parse_label(decode_entities(_label(link["text"]))) if "text" in link else ""
+            edges.append(FlowEdge(start, end, label, _STROKES[link["stroke"]], head, tail))
+        keys = [group["id"] for group in self.subgraphs]
+        if len(keys) != len(set(keys)):
+            raise Unsupported("a subgraph id defined twice")
+        blocks = {group["id"]: Subgraph(group["id"], parse_label(decode_entities(group["title"])))
+                  for group in self.subgraphs}
+        for group in self.subgraphs:
+            block = blocks[group["id"]]
+            for member in group["nodes"]:
+                if member in blocks:
+                    blocks[member].parent = block
+                    block.children.append(blocks[member])
+                else:
+                    block.members.append(member)
+        roots = [blocks[key] for key in keys if blocks[key].parent is None]
+        declared = {key for key, vertex in self.vertices.items() if vertex["declared"]}
+        _attach_cluster_edges(nodes, edges, roots, declared)
+        if not nodes:
+            raise Unsupported("no nodes")
+        for key, href in self.links.items():
+            if key in nodes:
+                nodes[key].href = href
+        return Flowchart(direction, nodes, edges, roots,
+                         curve_setting(source, "flowchart", DEFAULT_CURVE))
 
 
-def _normalize_mid_labels(statement):
-    for pattern, style in _MID_LABEL_FORMS:
-        while True:
-            match = pattern.search(statement)
-            if not match:
-                break
-            label = match.group("text").strip()
-            replacement = f"{_canonical_link(style, match.group('tail'))}|{label}|"
-            statement = statement[:match.start()] + replacement + statement[match.end():]
-    return statement
+class _Actions:
+    """flow.jison's actions, one method per action name in flowchart.lark;
+    parsing.parse calls them as the parser reduces, in jison's order."""
 
+    def __init__(self, db):
+        self.db = db
 
-_HEAD_GLYPHS = {">": "arrow", "o": "circle", "x": "cross"}
+    def graph_config(self, children):
+        direction = next((t.value for t in children if t.type == "DIR"), "TB")
+        self.db.direction = direction.strip()
 
+    def document(self, children):
+        out = []
+        for child in children:
+            if isinstance(child, list):
+                out += child
+            elif isinstance(child, str):
+                out.append(child)       # a subgraph's id
+        return out
 
-def _parse_link(statement, pos):
-    match = _LINK_RE.match(statement, pos)
-    if not match:
-        return None
-    # `~~~` is mermaid's invisible link: it ranks its ends like any other
-    # edge but draws nothing, which is how authors force a node into a
-    # particular layer. Parsing it as a style rather than skipping the
-    # statement keeps that layout effect.
-    style = ("invisible" if match.group("invisible")
-             else "dotted" if match.group("dotted")
-             else "thick" if match.group("thick") else "solid")
-    label = parse_label(match.group("label")) if match.group("label") else ""
-    head = _HEAD_GLYPHS.get(match.group("head") or "")
-    tail = "arrow" if match.group("tail") == "<" else _HEAD_GLYPHS.get(match.group("tail") or "")
-    return style, label, head, tail, match.end()
+    def stmt_vertex(self, children):
+        return children[0]["nodes"]
+
+    def stmt_ignored(self, children):
+        return []
+
+    def style_statement(self, children):
+        # mermaid declares a node a style names, if nothing else did.
+        self.db.add_vertex(children[2])
+
+    def link_style_statement(self, children):
+        # mermaid styles the edges by index there and then, and throws on
+        # one that doesn't exist (yet).
+        for child in children:
+            if isinstance(child, list) and any(int(n) >= len(self.db.edges) for n in child):
+                raise Unsupported("linkStyle for an edge that doesn't exist")
+
+    def num_list(self, children):
+        return [token.value for token in children if token.type == "NUM"]
+
+    def click_link(self, children):
+        # setLink: only a node that exists by now gets the link. Callback
+        # clicks name page JavaScript, and are ignored like styles.
+        key = children[0].value
+        url = next(c.value for c in children[1:] if c.type == "STR")
+        if key in self.db.vertices:
+            self.db.links[key] = url
+
+    def subgraph_titled(self, children):
+        _subgraph, _space, key, _sqs, title, _sqe, _sep, document, _end = children
+        return self.db.add_subgraph(key["text"].strip(), document, title)
+
+    def subgraph_bare(self, children):
+        _subgraph, _space, title, _sep, document, _end = children
+        # A bare title with whitespace in it is no id: mermaid makes one up.
+        key = None if re.search(r"\s", title["text"]) else title["text"].strip()
+        return self.db.add_subgraph(key, document, title)
+
+    def subgraph_anon(self, children):
+        _subgraph, _sep, document, _end = children
+        return self.db.add_subgraph(None, document, None)
+
+    def shape_data(self, children):
+        raise Unsupported("shape data (`@{ … }`)")
+
+    def vs_node(self, children):
+        return {"stmt": children[0], "nodes": children[0]}
+
+    def vs_link(self, children):
+        statement, link, node = children[:3]
+        self.db.add_link(statement["stmt"], node, link)
+        return {"stmt": node, "nodes": node + statement["nodes"]}
+
+    def node_one(self, children):
+        return [children[0]]
+
+    def node_more(self, children):
+        return children[0] + [children[-1]]
+
+    def styled_vertex(self, children):
+        return children[0]
+
+    def id_string(self, children):
+        return "".join(token.value for token in children)
+
+    def alpha_num(self, children):
+        return self.id_string(children)
+
+    def _vertex(shape):
+        def action(self, children):
+            key = children[0]
+            text = next((c for c in children[1:] if isinstance(c, dict)), None)
+            self.db.add_vertex(key, text, shape)
+            return key
+        return action
+
+    v_square = _vertex("square")
+    v_doublecircle = _vertex("doublecircle")
+    v_circle = _vertex("circle")
+    v_ellipse = _vertex("ellipse")
+    v_stadium = _vertex("stadium")
+    v_subroutine = _vertex("subroutine")
+    v_props = _vertex("square")
+    v_cylinder = _vertex("cylinder")
+    v_round = _vertex("round")
+    v_diamond = _vertex("diamond")
+    v_hexagon = _vertex("hexagon")
+    v_odd = _vertex("odd")
+    v_trapezoid = _vertex("trapezoid")
+    v_inv_trapezoid = _vertex("inv_trapezoid")
+    v_lean_right = _vertex("lean_right")
+    v_lean_left = _vertex("lean_left")
+    v_plain = _vertex(None)
+    del _vertex
+
+    def text(self, children):
+        """`t: token | t token | STR | MD_STR`: the first piece says what
+        kind of label it is, and the rest is appended to it."""
+        first = children[0].type
+        kind = "string" if first == "STR" else "markdown" if first == "MD_STR" else "text"
+        return {"text": "".join(token.value for token in children), "type": kind}
+
+    def link_statement(self, children):
+        return _link(children[-1].value)
+
+    def arrow_text(self, children):
+        return children[1]
+
+    def link_plain(self, children):
+        return children[0]
+
+    def link_piped(self, children):
+        return {**children[0], "text": children[1]}
+
+    def link_texted(self, children):
+        start, text, end = children[-3:]
+        return {**_link(end.value, start.value), "text": text}
 
 
 def parse(source):
     """Mermaid flowchart source -> Flowchart. Raises Unsupported."""
-    statements = _split_statements(source)
-    if not statements:
-        raise Unsupported("empty diagram")
-    header = _HEADER_RE.match(statements[0])
-    if not header:
-        raise Unsupported("not a flowchart header")
-    direction = _DIRECTIONS.get((header.group("dir") or "TD").upper())
-    if direction is None:
-        raise Unsupported(f"unknown direction {header.group('dir')!r}")
-
-    nodes = {}
-    edges = []
-    subgraphs = []      # top-level blocks
-    open_blocks = []    # the `subgraph`s currently being read, innermost last
-    hrefs = {}          # node key -> `click` target, applied once all are read
-    declared = set()    # keys given a label or shape somewhere
-
-    def touch(key, text, shape):
-        if text is not None:
-            declared.add(key)
-        node = nodes.get(key)
-        if node is None:
-            # A node first seen as a bare reference gets its id as its
-            # label, which is what mermaid shows until a shaped
-            # declaration turns up.
-            node = nodes[key] = FlowNode(key, text if text is not None else key, shape or "rect")
-            # Membership follows first mention, as mermaid's does: a node
-            # named inside a block belongs to it, and naming it again
-            # outside doesn't move it.
-            if open_blocks:
-                open_blocks[-1].members.append(key)
-        elif text is not None:
-            node.text = text
-            node.shape = shape or node.shape
-        return node
-
-    for statement in statements[1:]:
-        lowered = statement.lower()
-        if lowered.startswith("subgraph"):
-            match = _SUBGRAPH_RE.match(statement)
-            if not match:
-                raise Unsupported(f"unparsed subgraph header {statement!r}")
-            if match.group("key") is not None:
-                key, title = match.group("key"), parse_label(match.group("bracket"))
-            else:
-                key = title = parse_label(match.group("bare"))
-            parent = open_blocks[-1] if open_blocks else None
-            group = Subgraph(key, title, parent)
-            (parent.children if parent is not None else subgraphs).append(group)
-            open_blocks.append(group)
-            continue
-        if lowered == "end":
-            if not open_blocks:
-                raise Unsupported("`end` outside a subgraph")
-            open_blocks.pop()
-            continue
-        if lowered.startswith("click "):
-            # A `click` may come before the node it names is declared, so
-            # targets are collected and applied after the last statement.
-            # A callback click has no target and is ignored like a style.
-            link = parse_click(statement)
-            if link is not None:
-                hrefs[link[0]] = link[1]
-            continue
-        if any(lowered.startswith(prefix) for prefix in _IGNORED_STATEMENTS):
-            continue
-        statement = _normalize_mid_labels(statement)
-        group, pos = _parse_nodes(statement, 0)
-        for key, text, shape in group:
-            touch(key, text, shape)
-        while pos < len(statement):
-            link = _parse_link(statement, pos)
-            if link is None:
-                raise Unsupported(f"unparsed trailing {statement[pos:][:16]!r}")
-            style, label, head, tail, pos = link
-            next_group, pos = _parse_nodes(statement, pos)
-            for key, text, shape in next_group:
-                touch(key, text, shape)
-            # `A & B --> C & D` links every node on one side to every
-            # node on the other, in mermaid's order.
-            for src, _, _ in group:
-                for dst, _, _ in next_group:
-                    edges.append(FlowEdge(src, dst, label, style, head, tail))
-            group = next_group
-    if open_blocks:
-        raise Unsupported("unclosed subgraph")
-    _attach_cluster_edges(nodes, edges, subgraphs, declared)
-    if not nodes:
-        raise Unsupported("no nodes")
-    # mermaid ignores a click on an id no statement declares, rather than
-    # conjuring up a node for it.
-    for key, href in hrefs.items():
-        if key in nodes:
-            nodes[key].href = href
-    return Flowchart(direction, nodes, edges, subgraphs,
-                     curve_setting(source, "flowchart", DEFAULT_CURVE))
+    from . import _flowchart_lexer, _flowchart_tables, parsing
+    db = _FlowDb()
+    parsing.parse(_flowchart_tables, parsing.lex(_flowchart_lexer, _preprocess(source)),
+                  _Actions(db))
+    return db.chart(source)
 
 
 def _attach_cluster_edges(nodes, edges, subgraphs, declared):

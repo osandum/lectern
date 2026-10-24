@@ -1,0 +1,1112 @@
+[
+  {
+    "id": "flow-arrows.spec.js:16",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L16",
+    "source": "graph TD;\nA-->B;"
+  },
+  {
+    "id": "flow-arrows.spec.js:33",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L33",
+    "source": "graph >;A-->B;"
+  },
+  {
+    "id": "flow-arrows.spec.js:53",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L53",
+    "source": "graph <;A-->B;"
+  },
+  {
+    "id": "flow-arrows.spec.js:73",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L73",
+    "source": "graph ^;A-->B;"
+  },
+  {
+    "id": "flow-arrows.spec.js:94",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L94",
+    "source": "graph v;A-->B;"
+  },
+  {
+    "id": "flow-arrows.spec.js:114",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L114",
+    "source": "graph TD;A --> B;"
+  },
+  {
+    "id": "flow-arrows.spec.js:131",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L131",
+    "source": "graph TD\nA --> B\n style e red"
+  },
+  {
+    "id": "flow-arrows.spec.js:148",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L148",
+    "source": "graph TD\nA-->B\nB-->C"
+  },
+  {
+    "id": "flow-arrows.spec.js:167",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L167",
+    "source": "graph TD;\nA<-->B;"
+  },
+  {
+    "id": "flow-arrows.spec.js:184",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L184",
+    "source": "graph TD;\nA<-- text -->B;"
+  },
+  {
+    "id": "flow-arrows.spec.js:201",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L201",
+    "source": "graph TD;\nA<==>B;"
+  },
+  {
+    "id": "flow-arrows.spec.js:218",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L218",
+    "source": "graph TD;\nA<== text ==>B;"
+  },
+  {
+    "id": "flow-arrows.spec.js:235",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L235",
+    "source": "graph TD;\nA<-.->B;"
+  },
+  {
+    "id": "flow-arrows.spec.js:252",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-arrows.spec.js#L252",
+    "source": "graph TD;\nA<-. text .->B;"
+  },
+  {
+    "id": "flow-direction.spec.js:17",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-direction.spec.js#L17",
+    "source": "flowchart TB\n    subgraph A\n      a --> b\n    end"
+  },
+  {
+    "id": "flow-direction.spec.js:32",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-direction.spec.js#L32",
+    "source": "flowchart TB\n    subgraph A\n      direction BT\n      a --> b\n    end"
+  },
+  {
+    "id": "flow-direction.spec.js:48",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-direction.spec.js#L48",
+    "source": "flowchart TB\n    subgraph A\n      direction BT\n      a --> b\n      direction RL\n    end"
+  },
+  {
+    "id": "flow-direction.spec.js:66",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-direction.spec.js#L66",
+    "source": "flowchart TB\n    subgraph A\n      direction RL\n      b-->B\n      a\n    end\n    a-->c\n    subgraph B\n      direction LR\n      c\n    end"
+  },
+  {
+    "id": "flow-edges.spec.js:71",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-edges.spec.js#L71",
+    "source": "graph TD;A---B;"
+  },
+  {
+    "id": "flow-edges.spec.js:78",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-edges.spec.js#L78",
+    "source": "graph TD;A--xB;"
+  },
+  {
+    "id": "flow-edges.spec.js:85",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-edges.spec.js#L85",
+    "source": "graph TD;A--oB;"
+  },
+  {
+    "id": "flow-edges.spec.js:128",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-edges.spec.js#L128",
+    "source": "flowchart LR\nA id1@-->B\nA@{ shape: 'rect' }\n"
+  },
+  {
+    "id": "flow-edges.spec.js:219",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-edges.spec.js#L219",
+    "source": "graph TD;A---|This is the 123 s text|B;\nA---|This is the second edge|B;"
+  },
+  {
+    "id": "flow-interactions.spec.js:21",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L21",
+    "source": "graph TD\nA-->B\nclick A callback"
+  },
+  {
+    "id": "flow-interactions.spec.js:31",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L31",
+    "source": "graph TD\nA-->B\nclick A call callback()"
+  },
+  {
+    "id": "flow-interactions.spec.js:42",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L42",
+    "source": "graph TD\nA-->B\nclick A callback \"tooltip\""
+  },
+  {
+    "id": "flow-interactions.spec.js:54",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L54",
+    "source": "graph TD\nA-->B\nclick A call callback() \"tooltip\""
+  },
+  {
+    "id": "flow-interactions.spec.js:65",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L65",
+    "source": "graph TD\nA-->B\nclick A call callback(\"test0\", test1, test2)"
+  },
+  {
+    "id": "flow-interactions.spec.js:75",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L75",
+    "source": "graph TD\nA-->B\nclick A \"click.html\""
+  },
+  {
+    "id": "flow-interactions.spec.js:85",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L85",
+    "source": "graph TD\nA-->B\nclick A href \"click.html\""
+  },
+  {
+    "id": "flow-interactions.spec.js:96",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L96",
+    "source": "graph TD\nA-->B\nclick A \"click.html\" \"tooltip\""
+  },
+  {
+    "id": "flow-interactions.spec.js:108",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L108",
+    "source": "graph TD\nA-->B\nclick A href \"click.html\" \"tooltip\""
+  },
+  {
+    "id": "flow-interactions.spec.js:119",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L119",
+    "source": "graph TD\nA-->B\nclick A \"click.html\" _blank"
+  },
+  {
+    "id": "flow-interactions.spec.js:129",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L129",
+    "source": "graph TD\nA-->B\nclick A href \"click.html\" _blank"
+  },
+  {
+    "id": "flow-interactions.spec.js:140",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L140",
+    "source": "graph TD\nA-->B\nclick A \"click.html\" \"tooltip\" _blank"
+  },
+  {
+    "id": "flow-interactions.spec.js:152",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-interactions.spec.js#L152",
+    "source": "graph TD\nA-->B\nclick A href \"click.html\" \"tooltip\" _blank"
+  },
+  {
+    "id": "flow-lines.spec.js:16",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-lines.spec.js#L16",
+    "source": "graph TD\nA-->B\nlinkStyle default interpolate basis"
+  },
+  {
+    "id": "flow-lines.spec.js:25",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-lines.spec.js#L25",
+    "source": "graph TD\nA-->B\nA-->C\nlinkStyle 0 interpolate basis\nlinkStyle 1 interpolate cardinal"
+  },
+  {
+    "id": "flow-lines.spec.js:41",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-lines.spec.js#L41",
+    "source": "graph TD\nA e1@-->B\nA uniqueName@-->C\ne1@{curve: basis}\nuniqueName@{curve: cardinal}"
+  },
+  {
+    "id": "flow-lines.spec.js:57",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-lines.spec.js#L57",
+    "source": "graph TD\nA e1@-->B\nA-->C\nlinkStyle default interpolate linear\ne1@{curve: stepAfter}"
+  },
+  {
+    "id": "flow-lines.spec.js:73",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-lines.spec.js#L73",
+    "source": "graph TD\nA e1@-->B-->D\nA-->C e4@-->D-->E\nlinkStyle default interpolate linear\nlinkStyle 1 interpolate basis\ne1@{curve: monotoneX}\ne4@{curve: stepBefore}"
+  },
+  {
+    "id": "flow-lines.spec.js:94",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-lines.spec.js#L94",
+    "source": "graph TD\nA-->B\nA-->C\nlinkStyle 0,1 interpolate basis"
+  },
+  {
+    "id": "flow-lines.spec.js:106",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-lines.spec.js#L106",
+    "source": "graph TD\nA-->B\nlinkStyle default interpolate basis stroke-width:1px;"
+  },
+  {
+    "id": "flow-lines.spec.js:117",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-lines.spec.js#L117",
+    "source": "graph TD\nA-->B\nA-->C\nlinkStyle 0 interpolate basis stroke-width:1px;\nlinkStyle 1 interpolate cardinal stroke-width:1px;"
+  },
+  {
+    "id": "flow-lines.spec.js:133",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-lines.spec.js#L133",
+    "source": "graph TD\nA-->B\nA-->C\nlinkStyle 0,1 interpolate basis stroke-width:1px;"
+  },
+  {
+    "id": "flow-lines.spec.js:146",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-lines.spec.js#L146",
+    "source": "graph TD;A-->B;"
+  },
+  {
+    "id": "flow-lines.spec.js:155",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-lines.spec.js#L155",
+    "source": "graph TD;A-.->B;"
+  },
+  {
+    "id": "flow-lines.spec.js:164",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-lines.spec.js#L164",
+    "source": "graph TD;A==>B;"
+  },
+  {
+    "id": "flow-md-string.spec.js:16",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-md-string.spec.js#L16",
+    "source": "flowchart\nA[\"`The cat in **the** hat`\"]-- \"`The *bat* in the chat`\" -->B[\"The dog in the hog\"] -- \"The rat in the mat\" -->C;"
+  },
+  {
+    "id": "flow-md-string.spec.js:41",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-md-string.spec.js#L41",
+    "source": "flowchart LR\nsubgraph \"One\"\n  a(\"`The **cat**\n  in the hat`\") -- \"1o\" --> b{{\"`The **dog** in the hog`\"}}\nend\nsubgraph \"`**Two**`\"\n  c(\"`The **cat**\n  in the hat`\") -- \"`1o **ipa**`\" --> d(\"The dog in the hog\")\nend"
+  },
+  {
+    "id": "flow-node-data.spec.js:17",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L17",
+    "source": "flowchart TB\n      D@{ shape: rounded}"
+  },
+  {
+    "id": "flow-node-data.spec.js:26",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L26",
+    "source": "flowchart TB\n      D@{ shape: rounded }"
+  },
+  {
+    "id": "flow-node-data.spec.js:36",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L36",
+    "source": "flowchart TB\n      D@{ shape: rounded } & E"
+  },
+  {
+    "id": "flow-node-data.spec.js:46",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L46",
+    "source": "flowchart TB\n      D@{ shape: rounded } --> E"
+  },
+  {
+    "id": "flow-node-data.spec.js:56",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L56",
+    "source": "flowchart TB\n      D@{ shape: rounded } & E --> F"
+  },
+  {
+    "id": "flow-node-data.spec.js:66",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L66",
+    "source": "flowchart TB\n      D@{ shape: rounded } & E@{ shape: rounded } --> F"
+  },
+  {
+    "id": "flow-node-data.spec.js:76",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L76",
+    "source": "flowchart TB\n      D@{ shape: rounded } & E@{ shape: rounded } --> F & G@{ shape: rounded }"
+  },
+  {
+    "id": "flow-node-data.spec.js:86",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L86",
+    "source": "flowchart TB\n      D@{ shape: rounded } & E@{ shape: rounded } --> F@{ shape: rounded } & G@{ shape: rounded }"
+  },
+  {
+    "id": "flow-node-data.spec.js:96",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L96",
+    "source": "flowchart TB\n         D@{ shape: rounded } & E@{ shape: rounded } --> F{ shape: rounded } & G{ shape: rounded }    "
+  },
+  {
+    "id": "flow-node-data.spec.js:106",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L106",
+    "source": "flowchart TB\n      D@{shape: rounded}"
+  },
+  {
+    "id": "flow-node-data.spec.js:117",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L117",
+    "source": "flowchart TB\n      D@{       shape: rounded}"
+  },
+  {
+    "id": "flow-node-data.spec.js:128",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L128",
+    "source": "flowchart TB\n      D@{ shape: rounded         }"
+  },
+  {
+    "id": "flow-node-data.spec.js:138",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L138",
+    "source": "flowchart TB\n      D@{ shape: rounded , label: \"DD\"}"
+  },
+  {
+    "id": "flow-node-data.spec.js:148",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L148",
+    "source": "flowchart TB\n      A --> D@{\n        shape: circle\n        other: \"clock\"\n     }\n\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:166",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L166",
+    "source": "flowchart TB\n      A[hello]\n      B@{\n        shape: circle\n        other: \"clock\"\n     }\n      C[Hello]@{\n        shape: circle\n        other: \"clock\"\n     }\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:188",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L188",
+    "source": "flowchart TB\n      A@{\n        label: \"This is }\"\n        other: \"clock\"\n     }\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:202",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L202",
+    "source": "flowchart TB\n      A@{ shape: this-shape-does-not-exist }\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:210",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L210",
+    "source": "flowchart TB\n      A@{ shape: rect_left_inv_arrow }\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:216",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L216",
+    "source": "flowchart TB\n      A{This is a label}\n"
+  },
+  {
+    "id": "flow-node-data.spec.js:226",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L226",
+    "source": "flowchart TB\n      A@{\n        label: |\n          This is a\n          multiline string\n        other: \"clock\"\n     }\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:241",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L241",
+    "source": "flowchart TB\n      A@{\n        label: \"This is a\n          multiline string\"\n        other: \"clock\"\n     }\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:255",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L255",
+    "source": "flowchart TB\n      A@{\n        label: \"This is a string with }\"\n        other: \"clock\"\n     }\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:268",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L268",
+    "source": "flowchart TB\n      A@{\n        label: \"This is a string with @\"\n        other: \"clock\"\n     }\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:281",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L281",
+    "source": "flowchart TB\n      A@{\n        label: \"This is a string with}\"\n        other: \"clock\"\n     }\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:295",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L295",
+    "source": "flowchart TB\n       n2[\"label for n2\"] &   n4@{ label: \"label for n4\"}   & n5@{ label: \"label for n5\"}\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:307",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L307",
+    "source": "flowchart TD\n    A[\"A\"] --> B[\"for B\"] &    C@{ label: \"for c\"} & E@{label : \"for E\"}\n    D@{label: \"for D\"}\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:322",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L322",
+    "source": "flowchart TD\n    A[\"@A@\"] --> B[\"@for@ B@\"] & C@{ label: \"@for@ c@\"} & E{\"`@for@ E@`\"} & D((\"@for@ D@\"))\n      H1{{\"@for@ H@\"}}\n      H2{{\"`@for@ H@`\"}}\n      Q1{\"@for@ Q@\"}\n      Q2{\"`@for@ Q@`\"}\n      AS1>\"@for@ AS@\"]\n      AS2>\"`@for@ AS@`\"]\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:348",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L348",
+    "source": "flowchart TD\n     A & B e1@--> C & D\n        A1 e2@--> C1 & D1\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:365",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L365",
+    "source": "flowchart TD\n     A & B e1@--> C & D\n        A1 e1@--> C1 & D1\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:382",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L382",
+    "source": "flowchart TD\n     A e1@--> B\n     C e2@--> D\n     E e3@--> F\n    e1@{ animate: true }\n    e2@{ animate: false }\n    e3@{ animate: true }\n    e3@{ animate: false }\n      "
+  },
+  {
+    "id": "flow-node-data.spec.js:404",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-node-data.spec.js#L404",
+    "source": "flowchart TB\n       n2[\"label for n2\"] &   n4@{ label: \"label for n4\"}   & n5@{ label: \"label for n5\"} "
+  },
+  {
+    "id": "flow-singlenode.spec.js:40",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L40",
+    "source": "graph TD;A;"
+  },
+  {
+    "id": "flow-singlenode.spec.js:50",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L50",
+    "source": "graph TD;A ;"
+  },
+  {
+    "id": "flow-singlenode.spec.js:61",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L61",
+    "source": "graph TD;a[A];"
+  },
+  {
+    "id": "flow-singlenode.spec.js:85",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L85",
+    "source": "graph TD;a((A));"
+  },
+  {
+    "id": "flow-singlenode.spec.js:96",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L96",
+    "source": "graph TD;a(A);"
+  },
+  {
+    "id": "flow-singlenode.spec.js:107",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L107",
+    "source": "graph TD;a>A];"
+  },
+  {
+    "id": "flow-singlenode.spec.js:118",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L118",
+    "source": "graph TD;a{A};"
+  },
+  {
+    "id": "flow-singlenode.spec.js:129",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L129",
+    "source": "graph TD;a{A}   ;"
+  },
+  {
+    "id": "flow-singlenode.spec.js:140",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L140",
+    "source": "graph TD;a{A <br> end};"
+  },
+  {
+    "id": "flow-singlenode.spec.js:152",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L152",
+    "source": "graph TD;a{{A}};"
+  },
+  {
+    "id": "flow-singlenode.spec.js:163",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L163",
+    "source": "graph TD;a{{A <br> end}};"
+  },
+  {
+    "id": "flow-singlenode.spec.js:175",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L175",
+    "source": "graph TD;a(A <br> end);"
+  },
+  {
+    "id": "flow-singlenode.spec.js:187",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L187",
+    "source": "graph TD;a(((A)));"
+  },
+  {
+    "id": "flow-singlenode.spec.js:198",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L198",
+    "source": "graph TD;a(((A)))   ;"
+  },
+  {
+    "id": "flow-singlenode.spec.js:209",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L209",
+    "source": "graph TD;a(((A <br> end)));"
+  },
+  {
+    "id": "flow-singlenode.spec.js:221",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L221",
+    "source": "graph TD;id1;"
+  },
+  {
+    "id": "flow-singlenode.spec.js:232",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L232",
+    "source": "graph TD;1;"
+  },
+  {
+    "id": "flow-singlenode.spec.js:244",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L244",
+    "source": "graph TD;subgraph \"hello\";1;end;"
+  },
+  {
+    "id": "flow-singlenode.spec.js:255",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L255",
+    "source": "graph TD;1id;"
+  },
+  {
+    "id": "flow-singlenode.spec.js:266",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L266",
+    "source": "graph TD;i-d;"
+  },
+  {
+    "id": "flow-singlenode.spec.js:277",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js#L277",
+    "source": "graph TD;i_d;"
+  },
+  {
+    "id": "flow-style.spec.js:20",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L20",
+    "source": "graph TD;style Q background:#fff;"
+  },
+  {
+    "id": "flow-style.spec.js:30",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L30",
+    "source": "graph TD;style R background:#fff,border:1px solid red;"
+  },
+  {
+    "id": "flow-style.spec.js:41",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L41",
+    "source": "graph TD;style S background:#aaa;\nstyle T background:#bbb,border:1px solid red;"
+  },
+  {
+    "id": "flow-style.spec.js:56",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L56",
+    "source": "graph TD;S-->T;\nstyle S background:#aaa;\nstyle T background:#bbb,border:1px solid red;"
+  },
+  {
+    "id": "flow-style.spec.js:71",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L71",
+    "source": "graph TD;style T background:#bbb,border:1px solid red;"
+  },
+  {
+    "id": "flow-style.spec.js:82",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L82",
+    "source": "graph TD;A(( ));B((Test));C;style A background:#fff;style D border:1px solid red;"
+  },
+  {
+    "id": "flow-style.spec.js:95",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L95",
+    "source": "graph TD;classDef exClass background:#bbb,border:1px solid red;"
+  },
+  {
+    "id": "flow-style.spec.js:108",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L108",
+    "source": "graph TD;classDef firstClass,secondClass background:#bbb,border:1px solid red;"
+  },
+  {
+    "id": "flow-style.spec.js:124",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L124",
+    "source": "graph TD;classDef exClass background:#bbb,border:1.5px solid red;"
+  },
+  {
+    "id": "flow-style.spec.js:136",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L136",
+    "source": "graph TD;classDef exClass background:  #bbb,border:1.5px solid red;"
+  },
+  {
+    "id": "flow-style.spec.js:155",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L155",
+    "source": "graph TD;\nclassDef exClass background:#bbb,border:1px solid red;\na-->b;\nclass a exClass;"
+  },
+  {
+    "id": "flow-style.spec.js:171",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L171",
+    "source": "graph TD;\nclassDef exClass background:#bbb,border:1px solid red;\na_a-->b_b;\nclass a_a exClass;"
+  },
+  {
+    "id": "flow-style.spec.js:186",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L186",
+    "source": "graph TD;\nclassDef exClass background:#bbb,border:1px solid red;\na-->b[test]:::exClass;\n"
+  },
+  {
+    "id": "flow-style.spec.js:203",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L203",
+    "source": "graph TD;\nclassDef exClass background:#bbb,border:1px solid red;\nb[test]:::exClass;\n"
+  },
+  {
+    "id": "flow-style.spec.js:220",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L220",
+    "source": "graph TD;\nclassDef exClass background:#bbb,border:1px solid red;\nA[test]:::exClass-->B[test2];\n"
+  },
+  {
+    "id": "flow-style.spec.js:237",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L237",
+    "source": "graph TD;\nclassDef exClass background:#bbb,border:1px solid red;\na-->b[1 a a text!.]:::exClass;\n"
+  },
+  {
+    "id": "flow-style.spec.js:254",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L254",
+    "source": "graph TD;\nclassDef exClass background:#bbb,border:1px solid red;\na-->b;\nclass a,b exClass;"
+  },
+  {
+    "id": "flow-style.spec.js:267",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L267",
+    "source": "graph TD\nA-->B1\nA-->B2\nA-->B3\nA-->B4\nA-->B5\nA-->B6\nA-->B7\nA-->B8\nA-->B9\nA-->B10\nA-->B11\nlinkStyle 10 stroke-width:1px;"
+  },
+  {
+    "id": "flow-style.spec.js:291",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L291",
+    "source": "graph TD\n    A-->B\n    linkStyle 1 stroke-width:1px;"
+  },
+  {
+    "id": "flow-style.spec.js:304",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L304",
+    "source": "graph TD\n    A-->B\n    linkStyle 0 stroke-width:1px;"
+  },
+  {
+    "id": "flow-style.spec.js:314",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L314",
+    "source": "graph TD\nA-->B1\nA-->B2\nA-->B3\nA-->B4\nA-->B5\nA-->B6\nA-->B7\nA-->B8\nA-->B9\nA-->B10\nA-->B11\nA-->B12\nlinkStyle 10,11 stroke-width:1px;"
+  },
+  {
+    "id": "flow-style.spec.js:338",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L338",
+    "source": "graph TD\nA-->B\nclassDef exClass font-style:bold;"
+  },
+  {
+    "id": "flow-style.spec.js:347",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L347",
+    "source": "graph TD\nA-->B\nclassDef exClass fill:#f96,stroke:#333,stroke-width:4px,font-size:50%,font-style:bold;"
+  },
+  {
+    "id": "flow-style.spec.js:359",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L359",
+    "source": "graph TD;\nAA-->BB;\nstyle A fill:#f00;"
+  },
+  {
+    "id": "flow-style.spec.js:375",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-style.spec.js#L375",
+    "source": "\n    graph TD\n      classDef C1 stroke-dasharray:4\n      classDef C2 stroke-dasharray:6\n      A & B:::C1 & D:::C1 --> E:::C2\n    "
+  },
+  {
+    "id": "flow-text.spec.js:17",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L17",
+    "source": "graph TD;A--x|textNoSpace|B;"
+  },
+  {
+    "id": "flow-text.spec.js:26",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L26",
+    "source": "graph TD;A--x|text including space|B;"
+  },
+  {
+    "id": "flow-text.spec.js:35",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L35",
+    "source": "graph TD;A--x|text with / should work|B;"
+  },
+  {
+    "id": "flow-text.spec.js:44",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L44",
+    "source": "graph TD;A --x|textNoSpace| B;"
+  },
+  {
+    "id": "flow-text.spec.js:53",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L53",
+    "source": "graph TD;A--x|text including CAPS space|B;"
+  },
+  {
+    "id": "flow-text.spec.js:72",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L72",
+    "source": "graph TD;A--text including URL space and send-->B;"
+  },
+  {
+    "id": "flow-text.spec.js:81",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L81",
+    "source": "graph TD;A-- text including URL space and send -->B;"
+  },
+  {
+    "id": "flow-text.spec.js:91",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L91",
+    "source": "graph TD;A--x|text including R TD space|B;"
+  },
+  {
+    "id": "flow-text.spec.js:100",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L100",
+    "source": "graph TD;A--x|text including `|B;"
+  },
+  {
+    "id": "flow-text.spec.js:110",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L110",
+    "source": "graph TD;A--xv(my text);"
+  },
+  {
+    "id": "flow-text.spec.js:120",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L120",
+    "source": "graph TD;A--xcsv(my text);"
+  },
+  {
+    "id": "flow-text.spec.js:130",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L130",
+    "source": "graph TD;A--xava(my text);"
+  },
+  {
+    "id": "flow-text.spec.js:140",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L140",
+    "source": "graph TD;A--xva(my text);"
+  },
+  {
+    "id": "flow-text.spec.js:149",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L149",
+    "source": "graph TD;A--x|text including graph space|B;"
+  },
+  {
+    "id": "flow-text.spec.js:157",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L157",
+    "source": "graph TD;V-->a[v]"
+  },
+  {
+    "id": "flow-text.spec.js:163",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L163",
+    "source": "graph TD;V-- \"test string()\" -->a[v]"
+  },
+  {
+    "id": "flow-text.spec.js:172",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L172",
+    "source": "graph TD;A-- test text with == -->B;"
+  },
+  {
+    "id": "flow-text.spec.js:180",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L180",
+    "source": "graph TD;A-. test text with == .->B;"
+  },
+  {
+    "id": "flow-text.spec.js:188",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L188",
+    "source": "graph TD;A== test text with - ==>B;"
+  },
+  {
+    "id": "flow-text.spec.js:199",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L199",
+    "source": "graph TD;A-- textNoSpace --xB;"
+  },
+  {
+    "id": "flow-text.spec.js:208",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L208",
+    "source": "graph TD;A--    textNoSpace --xB;"
+  },
+  {
+    "id": "flow-text.spec.js:217",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L217",
+    "source": "graph TD;A-- text including space --xB;"
+  },
+  {
+    "id": "flow-text.spec.js:226",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L226",
+    "source": "graph TD;A -- text with / should work --x B;"
+  },
+  {
+    "id": "flow-text.spec.js:235",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L235",
+    "source": "graph TD;A -- textNoSpace --x B;"
+  },
+  {
+    "id": "flow-text.spec.js:244",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L244",
+    "source": "graph TD;A-- text including CAPS space --xB;"
+  },
+  {
+    "id": "flow-text.spec.js:253",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L253",
+    "source": "graph TD;A-- text including URL space --xB;"
+  },
+  {
+    "id": "flow-text.spec.js:263",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L263",
+    "source": "graph TD;A-- text including R TD space --xB;"
+  },
+  {
+    "id": "flow-text.spec.js:272",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L272",
+    "source": "graph TD;A-- text including graph space and v --xB;"
+  },
+  {
+    "id": "flow-text.spec.js:280",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L280",
+    "source": "graph TD;A-- text including graph space and v --xB[blav]"
+  },
+  {
+    "id": "flow-text.spec.js:300",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L300",
+    "source": "graph TD;A-->C(Chimpansen hoppar);"
+  },
+  {
+    "id": "flow-text.spec.js:373",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L373",
+    "source": "graph TD;A_node-->odd->Vertex Text];"
+  },
+  {
+    "id": "flow-text.spec.js:380",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L380",
+    "source": "graph TD;A_node-->B[/This node has a / as text/];"
+  },
+  {
+    "id": "flow-text.spec.js:389",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L389",
+    "source": "graph TD;A_node-->B[\\This node has a \\ as text\\];"
+  },
+  {
+    "id": "flow-text.spec.js:398",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L398",
+    "source": "graph TD;A-->C{Chimpansen hoppar åäö-ÅÄÖ};"
+  },
+  {
+    "id": "flow-text.spec.js:408",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L408",
+    "source": "graph TD;A-->C(Chimpansen hoppar åäö  <br> -  ÅÄÖ);"
+  },
+  {
+    "id": "flow-text.spec.js:426",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L426",
+    "source": "graph TD;A-->C(Начало);"
+  },
+  {
+    "id": "flow-text.spec.js:433",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L433",
+    "source": "graph TD;A-->C(c:\\windows);"
+  },
+  {
+    "id": "flow-text.spec.js:440",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L440",
+    "source": "graph TD;A-->C(some CAPS);"
+  },
+  {
+    "id": "flow-text.spec.js:449",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L449",
+    "source": "graph TD;A-->C(some URL);"
+  },
+  {
+    "id": "flow-text.spec.js:460",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L460",
+    "source": "graph TD;A--o|text space|B;\n B-->|more text with space|C;"
+  },
+  {
+    "id": "flow-text.spec.js:480",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L480",
+    "source": "graph TD;A[chimpansen hoppar]-->C;"
+  },
+  {
+    "id": "flow-text.spec.js:490",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L490",
+    "source": "graph TD;A[chimpansen hoppar] --> C;"
+  },
+  {
+    "id": "flow-text.spec.js:499",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L499",
+    "source": "graph TD;A[chimpansen_hoppar] --> C;"
+  },
+  {
+    "id": "flow-text.spec.js:509",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L509",
+    "source": "graph TD;A[\"chimpansen hoppar ()[]\"] --> C;"
+  },
+  {
+    "id": "flow-text.spec.js:519",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L519",
+    "source": "graph TD;A((chimpansen hoppar))-->C;"
+  },
+  {
+    "id": "flow-text.spec.js:529",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L529",
+    "source": "graph TD\nA(-this is an ellipse-)-->B"
+  },
+  {
+    "id": "flow-text.spec.js:539",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L539",
+    "source": "graph\nX(- My Text ("
+  },
+  {
+    "id": "flow-text.spec.js:543",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L543",
+    "source": "graph TD;A(chimpansen hoppar)-->C;"
+  },
+  {
+    "id": "flow-text.spec.js:553",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L553",
+    "source": "graph TD;A(?)-->|?|C;"
+  },
+  {
+    "id": "flow-text.spec.js:562",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L562",
+    "source": "graph TD;A(éèêàçô)-->|éèêàçô|C;"
+  },
+  {
+    "id": "flow-text.spec.js:572",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L572",
+    "source": "graph TD;A(,.?!+-*)-->|,.?!+-*|C;"
+  },
+  {
+    "id": "flow-text.spec.js:583",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L583",
+    "source": "graph TD; A[This is a () in text];"
+  },
+  {
+    "id": "flow-text.spec.js:589",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L589",
+    "source": "graph TD;A(this node has \"string\" and text)-->|this link has \"string\" and text|C;"
+  },
+  {
+    "id": "flow-text.spec.js:596",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L596",
+    "source": "graph TD; A[This is a \"()\" in text];"
+  },
+  {
+    "id": "flow-text.spec.js:602",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L602",
+    "source": "graph TD; A[\"This is a \"()\" in text\"];"
+  },
+  {
+    "id": "flow-text.spec.js:607",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-text.spec.js#L607",
+    "source": "graph TD; node[hello ) world] --> works"
+  },
+  {
+    "id": "flow-vertice-chaining.spec.js:17",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-vertice-chaining.spec.js#L17",
+    "source": "\n    graph TD\n      A-->B-->C;\n    "
+  },
+  {
+    "id": "flow-vertice-chaining.spec.js:39",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-vertice-chaining.spec.js#L39",
+    "source": "\n    graph TD\n      A & B --> C;\n    "
+  },
+  {
+    "id": "flow-vertice-chaining.spec.js:61",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-vertice-chaining.spec.js#L61",
+    "source": "\n    graph TD\n      A-->B & C;\n    "
+  },
+  {
+    "id": "flow-vertice-chaining.spec.js:83",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-vertice-chaining.spec.js#L83",
+    "source": "\n    graph TD\n      A & B--> C & D;\n    "
+  },
+  {
+    "id": "flow-vertice-chaining.spec.js:145",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-vertice-chaining.spec.js#L145",
+    "source": "\n    graph TD\n      A --> B & B2 & C --> D2;\n    "
+  },
+  {
+    "id": "flow-vertice-chaining.spec.js:185",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow-vertice-chaining.spec.js#L185",
+    "source": "\n    graph TD\n      A[ h ] -- hello --> B[\" test \"]:::exClass & C --> D;\n      classDef exClass background:#bbb,border:1px solid red;\n    "
+  },
+  {
+    "id": "flow.spec.js:32",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow.spec.js#L32",
+    "source": "swimlane-beta LR;A-->B;"
+  },
+  {
+    "id": "flow.spec.js:46",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow.spec.js#L46",
+    "source": "graph TD\nendpoint --> sender"
+  },
+  {
+    "id": "flow.spec.js:58",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow.spec.js#L58",
+    "source": "graph TD\nblend --> monograph"
+  },
+  {
+    "id": "flow.spec.js:70",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow.spec.js#L70",
+    "source": "graph TD\ndefault --> monograph"
+  },
+  {
+    "id": "flow.spec.js:149",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow.spec.js#L149",
+    "source": "graph TD;\n  node1TB\n"
+  },
+  {
+    "id": "flow.spec.js:159",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow.spec.js#L159",
+    "source": "graph TD;A--x|text including URL space|B;"
+  },
+  {
+    "id": "flow.spec.js:169",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow.spec.js#L169",
+    "source": "graph TB;subgraph \"number as labels\";1;end;"
+  },
+  {
+    "id": "flow.spec.js:185",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow.spec.js#L185",
+    "source": "graph LR\n      accTitle: Big decisions\n      accDescr: Flow chart of the decision making process\n      A[Hard] -->|Text| B(Round)\n      B --> C{Decision}\n      C -->|One| D[Result 1]\n      C -->|Two| E[Result 2]\n      "
+  },
+  {
+    "id": "flow.spec.js:204",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/flow.spec.js#L204",
+    "source": "graph LR\n      accTitle: Big decisions\n\n      accDescr {\n        Flow chart of the decision making process\n        with a second line\n      }\n\n      A[Hard] -->|Text| B(Round)\n      B --> C{Decision}\n      C -->|One| D[Result 1]\n      C -->|Two| E[Result 2]\n"
+  },
+  {
+    "id": "subgraph.spec.js:16",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L16",
+    "source": "graph TB\nsubgraph One\n\ta1-->a2\nend"
+  },
+  {
+    "id": "subgraph.spec.js:28",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L28",
+    "source": "graph TB\nsubgraph One\n\ta1-->a2-->a3\nend"
+  },
+  {
+    "id": "subgraph.spec.js:41",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L41",
+    "source": "graph TB\nsubgraph \"Some Title\"\n\ta1-->a2\nend"
+  },
+  {
+    "id": "subgraph.spec.js:53",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L53",
+    "source": "graph TB\nsubgraph some-id[Some Title]\n\ta1-->a2\nend"
+  },
+  {
+    "id": "subgraph.spec.js:65",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L65",
+    "source": "graph TB\nsubgraph Some Title\n\ta1-->a2\nend"
+  },
+  {
+    "id": "subgraph.spec.js:77",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L77",
+    "source": "graph TD\n    A[Christmas] -->|Get money| B(Go shopping)\n    subgraph 1test\n    A\n    end"
+  },
+  {
+    "id": "subgraph.spec.js:92",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L92",
+    "source": "graph TD;A-->B;subgraph myTitle;c-->d;end;"
+  },
+  {
+    "id": "subgraph.spec.js:100",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L100",
+    "source": "graph TD;A-->B;subgraph \"title in quotes\";c-->d;end;"
+  },
+  {
+    "id": "subgraph.spec.js:114",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L114",
+    "source": "graph TD;A-->B;subgraph old style that is broken;c-->d;end;"
+  },
+  {
+    "id": "subgraph.spec.js:128",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L128",
+    "source": "graph TD;A-->B;subgraph a-b-c;c-->d;end;"
+  },
+  {
+    "id": "subgraph.spec.js:142",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L142",
+    "source": "graph TD;A-->B;subgraph uid1[text of doom];c-->d;end;"
+  },
+  {
+    "id": "subgraph.spec.js:157",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L157",
+    "source": "graph TD;A-->B;subgraph uid2[\"text of doom\"];c-->d;end;"
+  },
+  {
+    "id": "subgraph.spec.js:172",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L172",
+    "source": "graph TD;A-->B;subgraph uid2[textofdoom];c-->d;end;"
+  },
+  {
+    "id": "subgraph.spec.js:188",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L188",
+    "source": "graph TD\nA-->B\nsubgraph myTitle\n\n c-->d \nend\n"
+  },
+  {
+    "id": "subgraph.spec.js:197",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L197",
+    "source": "graph TD\nA-->B\nsubgraph myTitle   \n\n    c-->d \nend\n"
+  },
+  {
+    "id": "subgraph.spec.js:214",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L214",
+    "source": "graph TD\nA-->B\nsubgraph myTitle\n\n c-->d \n\n subgraph inner\n\n   e-->f \n end \n\n subgraph inner\n\n   h-->i \n end \n\nend\n"
+  },
+  {
+    "id": "subgraph.spec.js:218",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L218",
+    "source": "graph TD\nA-->B\nsubgraph myTitle\nc-->d\nend;"
+  },
+  {
+    "id": "subgraph.spec.js:227",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L227",
+    "source": "graph TD\nA-->B\nsubgraph myTitle\nc-- text -->d\nd-->e\n end;"
+  },
+  {
+    "id": "subgraph.spec.js:235",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L235",
+    "source": "graph TD\nA-->B\nsubgraph myTitle\na & b --> c & e\n end;"
+  },
+  {
+    "id": "subgraph.spec.js:243",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L243",
+    "source": "flowchart TB\n    subgraph A\n    b-->B\n    a\n    end\n    a-->c\n    subgraph B\n      c\n    end"
+  },
+  {
+    "id": "subgraph.spec.js:266",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L266",
+    "source": "flowchart TB\n    b-->B\n    a-->c\n    subgraph B\n      c\n    end\n    subgraph A\n        a\n        b\n        B\n    end"
+  },
+  {
+    "id": "subgraph.spec.js:291",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L291",
+    "source": "flowchart TB\n    subgraph B\n      c\n    end\n    a-->c\n    subgraph A\n      b-->B\n      a\n    end"
+  },
+  {
+    "id": "subgraph.spec.js:313",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L313",
+    "source": "\n      graph LR\n        subgraph WithTD\n          direction TD\n          A1 --> A2\n        end\n    "
+  },
+  {
+    "id": "subgraph.spec.js:331",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/flowchart/parser/subgraph.spec.js#L331",
+    "source": "\n      graph TD\n        subgraph one [My Group]\n          A --> B\n        end\n        C --> A\n        one@{ view: collapsed }\n    "
+  }
+]

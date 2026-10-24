@@ -1,0 +1,632 @@
+[
+  {
+    "id": "classDiagram.spec.ts:34",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L34",
+    "source": "classDiagram\n        namespace Company.Project {\n          class User {\n            +login(username, password: String)\n            +logout()\n          }\n        }\n        namespace Company.Project.Module {\n          class Admin {\n            +addUser(user)\n            +removeUser(user)\n          }\n        }"
+  },
+  {
+    "id": "classDiagram.spec.ts:55",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L55",
+    "source": "classDiagram\n    namespace Company.Project.Module {\n        class GenericClass~T~ {\n            +addItem(item)\n            +getItem() T\n        }\n    }"
+  },
+  {
+    "id": "classDiagram.spec.ts:78",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L78",
+    "source": "      classDiagram\n        namespace Company.Project.Module.SubModule {\n          class Report {\n            +generatePDF(data)\n            +generateCSV(data)\n          }\n        }\n        namespace Company.Project.Module {\n          class Admin {\n            +generateReport()\n          }\n        }\n        Admin --> Report : generates"
+  },
+  {
+    "id": "classDiagram.spec.ts:132",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L132",
+    "source": "classDiagram\n        namespace Outer {\n          namespace Inner {\n            class Foo {\n              +bar()\n            }\n          }\n          class Baz {\n            +qux()\n          }\n        }"
+  },
+  {
+    "id": "classDiagram.spec.ts:173",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L173",
+    "source": "classDiagram\n          namespace Company.Engineering.Backend {\n            class Developer {\n              +writeCode()\n            }\n          }\n          namespace Company {\n            class CEO {\n              +makeDecisions()\n            }\n          }"
+  },
+  {
+    "id": "classDiagram.spec.ts:214",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L214",
+    "source": "classDiagram\n          namespace Company.Engineering.Backend {\n            class Developer\n          }\n          namespace Company {\n            class CEO\n          }"
+  },
+  {
+    "id": "classDiagram.spec.ts:236",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L236",
+    "source": "classDiagram\n        namespace A.B {\n          class Foo\n        }"
+  },
+  {
+    "id": "classDiagram.spec.ts:259",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L259",
+    "source": "classDiagram\n        namespace Auth[\"Authentication Service\"] {\n          class UserService {\n            +login()\n          }\n        }"
+  },
+  {
+    "id": "classDiagram.spec.ts:275",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L275",
+    "source": "classDiagram\n            accTitle: My Title\n            accDescr: My Description"
+  },
+  {
+    "id": "classDiagram.spec.ts:288",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L288",
+    "source": "classDiagram\n            accTitle: My Title\n            accDescr {\n              This is my multi\n              line description\n            }"
+  },
+  {
+    "id": "classDiagram.spec.ts:297",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L297",
+    "source": "\nclassDiagram\nclass Car"
+  },
+  {
+    "id": "classDiagram.spec.ts:312",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L312",
+    "source": "classDiagram\n        namespace Company.Project.Module {\n          class User\n          class Admin\n        }\n          Admin --> User : manages"
+  },
+  {
+    "id": "classDiagram.spec.ts:323",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L323",
+    "source": "classDiagram\nclass `Car`"
+  },
+  {
+    "id": "classDiagram.spec.ts:329",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L329",
+    "source": "classDiagram\nclass Ca-r"
+  },
+  {
+    "id": "classDiagram.spec.ts:337",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L337",
+    "source": "classDiagram\nclass `A_Car`"
+  },
+  {
+    "id": "classDiagram.spec.ts:370",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L370",
+    "source": "classDiagram\nclass Foo1 {\n  You can use\n  several lines\n..\nas you want\nand group\n==\nthings together.\n__\nYou can have groups\nas you want\n--\nEnd of class\n}\n\nclass User {\n.. Simple Getter ..\n+ getName()\n+ getAddress()\n.. Some setter ..\n+ setName()\n__ private data __\nint age\n-- encrypted --\nString password\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:376",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L376",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"]"
+  },
+  {
+    "id": "classDiagram.spec.ts:388",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L388",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"]\nclass C2[\"Class 2 with chars @?\"]\n"
+  },
+  {
+    "id": "classDiagram.spec.ts:399",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L399",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"]\nC1: member1"
+  },
+  {
+    "id": "classDiagram.spec.ts:413",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L413",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"]\n<<interface>> C1\nC1 : int member1"
+  },
+  {
+    "id": "classDiagram.spec.ts:426",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L426",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"]:::styleClass"
+  },
+  {
+    "id": "classDiagram.spec.ts:440",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L440",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"]\nC1 : int member1\ncssClass \"C1\" styleClass"
+  },
+  {
+    "id": "classDiagram.spec.ts:456",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L456",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"]\nC1 : int member1\nclass C2[\"Long long long long long long long long long long label\"]\ncssClass \"C1,C2\" styleClass"
+  },
+  {
+    "id": "classDiagram.spec.ts:473",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L473",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"]:::styleClass1\nclass C2[\"Class 2 !@#$%^&*() label\"]:::styleClass2"
+  },
+  {
+    "id": "classDiagram.spec.ts:487",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L487",
+    "source": "classDiagram\nclass C1~T~\ncssClass \"C1~T~\" styleClass"
+  },
+  {
+    "id": "classDiagram.spec.ts:496",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L496",
+    "source": "classDiagram\nclass C1~T~:::styleClass"
+  },
+  {
+    "id": "classDiagram.spec.ts:505",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L505",
+    "source": "classDiagram\nclass C1~T~\nclick C1~T~ call someFunction()"
+  },
+  {
+    "id": "classDiagram.spec.ts:513",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L513",
+    "source": "classDiagram\nclass C1~T~\nclick C1~T~ call cb() \"a tip\""
+  },
+  {
+    "id": "classDiagram.spec.ts:521",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L521",
+    "source": "classDiagram\nclass C1~T~\nlink C1~T~ \"https://example.com\""
+  },
+  {
+    "id": "classDiagram.spec.ts:528",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L528",
+    "source": "classDiagram\nclass C1[\"Class with text label\"]\nclass C2[\"Class with text label\"]\nclass C3[\"Class with text label\"]"
+  },
+  {
+    "id": "classDiagram.spec.ts:544",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L544",
+    "source": "classDiagram\nclass C1[\"OneWord\"]\nclass C2[\"With, Comma\"]\nclass C3[\"With (Brackets)\"]\nclass C4[\"With [Brackets]\"]\nclass C5[\"With {Brackets}\"]\nclass C6[\" \"]\nclass C7[\"With 1 number\"]\nclass C8[\"With . period...\"]\nclass C9[\"With - dash\"]\nclass C10[\"With _ underscore\"]\nclass C11[\"With ' single quote\"]\nclass C12[\"With ~!@#$%^&*()_+=-/?\"]\nclass C13[\"With Città foreign language\"]\n"
+  },
+  {
+    "id": "classDiagram.spec.ts:576",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L576",
+    "source": "classDiagram\nClass11 <|.. Class12\nnote for Class11 \"test\"\n"
+  },
+  {
+    "id": "classDiagram.spec.ts:581",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L581",
+    "source": "classDiagram\nnote \"test\"\n"
+  },
+  {
+    "id": "classDiagram.spec.ts:692",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L692",
+    "source": "classDiagram\n          direction TB\n          class Student {\n            -idCard : IdCard\n          }\n          class IdCard{\n            -id : int\n            -name : string\n          }\n          class Bike{\n            -id : int\n            -name : string\n          }\n          Student \"1\" --o \"1\" IdCard : carries\n          Student \"1\" --o \"1\" Bike : rides"
+  },
+  {
+    "id": "classDiagram.spec.ts:779",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L779",
+    "source": "classDiagram\n          direction RL\n          class A"
+  },
+  {
+    "id": "classDiagram.spec.ts:784",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L784",
+    "source": "classDiagram\n          class B"
+  },
+  {
+    "id": "classDiagram.spec.ts:800",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L800",
+    "source": "classDiagram\nclass Car{\n+int wheels\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:806",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L806",
+    "source": "classDiagram\nclass Car{\n+size()\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:813",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L813",
+    "source": "classDiagram\nclass Car{\n+int wheels\n}\nCar : +ArrayList size()\n"
+  },
+  {
+    "id": "classDiagram.spec.ts:820",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L820",
+    "source": "classDiagram\nclass Dummy_Class {\nString data\nvoid methods()\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:832",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L832",
+    "source": "classDiagram\nclass Flight {\nint flightNumber\ndatetime departureTime\ngetDepartureTime() datetime\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:844",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L844",
+    "source": "classDiagram\nclass Class1 {\nint testMember\ntest()\nstring fooMember\nfoo()\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:858",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L858",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"] {\n+member1\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:873",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L873",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"] {\n<<interface>>\n+member1\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:899",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L899",
+    "source": "%% Comment\n        classDiagram\n        class Class1 {\n          int : test\n          string : foo\n          test()\n          foo()\n        }"
+  },
+  {
+    "id": "classDiagram.spec.ts:914",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L914",
+    "source": "classDiagram\nclass Class1 {\nint : test\nstring : foo\ntest()\nfoo()\n\n}\n%% Comment\n"
+  },
+  {
+    "id": "classDiagram.spec.ts:927",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L927",
+    "source": "classDiagram\nclass Class1 {\nint : test\nstring : foo\ntest()\nfoo()\n}\n%% Comment"
+  },
+  {
+    "id": "classDiagram.spec.ts:943",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L943",
+    "source": "classDiagram\n\n\n%% Comment\n\nclass Class1 {\nint : test\nstring : foo\ntest()\nfoo()\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:956",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L956",
+    "source": "classDiagram\n%% Comment Class1 <|-- Class02\nclass Class1 {\nint : test\nstring : foo\ntest()\nfoo()\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:970",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L970",
+    "source": "classDiagram\nclass Class1 {\n%% Comment Class1 <|-- Class02\nint : test\nstring : foo\ntest()\nfoo()\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:984",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L984",
+    "source": "classDiagram\nclass Class1 \nclick Class1 href \"google.com\" "
+  },
+  {
+    "id": "classDiagram.spec.ts:999",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L999",
+    "source": "classDiagram\nclass Class1 \nclick Class1 href \"google.com\" \"A Tooltip\" "
+  },
+  {
+    "id": "classDiagram.spec.ts:1017",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1017",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\nclick Class1 href \"google.com\" \"A tooltip\" _self"
+  },
+  {
+    "id": "classDiagram.spec.ts:1033",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1033",
+    "source": "classDiagram\nclass Class1 \nclick Class1 call functionCall() "
+  },
+  {
+    "id": "classDiagram.spec.ts:1045",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1045",
+    "source": "classDiagram\nclass Class1 \nclick Class1 call functionCall() \"A Tooltip\" "
+  },
+  {
+    "id": "classDiagram.spec.ts:1058",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1058",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\nclick Class1 call functionCall(test, test1, test2)"
+  },
+  {
+    "id": "classDiagram.spec.ts:1075",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1075",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\nclick Class1 call functionCall(\"test0\", test1, test2) \"A Tooltip\""
+  },
+  {
+    "id": "classDiagram.spec.ts:1095",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1095",
+    "source": "classDiagram\nclass Class1\n<<interface>> Class1"
+  },
+  {
+    "id": "classDiagram.spec.ts:1111",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1111",
+    "source": "classDiagram\nclass Class1\nClass1 : int test\nClass1 : test()\n<<interface>> Class1"
+  },
+  {
+    "id": "classDiagram.spec.ts:1122",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1122",
+    "source": "classDiagram\nclass Class1 {\n<<interface>>\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:1139",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1139",
+    "source": "classDiagram\nclass Class1 {\n<<interface>>\nint : test\ntest()\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:1155",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1155",
+    "source": "classDiagram\nclass Shape\n<<interface>> Shape\nShape : noOfVertices\nShape : draw()"
+  },
+  {
+    "id": "classDiagram.spec.ts:1180",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1180",
+    "source": "classDiagram\nclass Shape{\n    <<interface>>\n    noOfVertices\n    draw()\n}\nclass Color{\n    <<enumeration>>\n    RED\n    BLUE\n    GREEN\n    WHITE\n    BLACK\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:1190",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1190",
+    "source": "classDiagram\nclass Shape <<interface>>"
+  },
+  {
+    "id": "classDiagram.spec.ts:1204",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1204",
+    "source": "classDiagram\nclass Shape <<interface>> {\n    noOfVertices\n    draw()\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:1215",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1215",
+    "source": "classDiagram\nclass Shape <<interface>> {\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:1235",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1235",
+    "source": "classDiagram\nclass Car\nCar : wheels"
+  },
+  {
+    "id": "classDiagram.spec.ts:1239",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1239",
+    "source": "classDiagram\nCar : wheels"
+  },
+  {
+    "id": "classDiagram.spec.ts:1246",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1246",
+    "source": "classDiagram\nCar : int wheels"
+  },
+  {
+    "id": "classDiagram.spec.ts:1255",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1255",
+    "source": "classDiagram\nclass Car\nCar : int wheels"
+  },
+  {
+    "id": "classDiagram.spec.ts:1267",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1267",
+    "source": "classDiagram\nclass actual\nactual : -int privateMember\nactual : +int publicMember\nactual : #int protectedMember\nactual : ~int privatePackage"
+  },
+  {
+    "id": "classDiagram.spec.ts:1281",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1281",
+    "source": "classDiagram\nclass Car\nCar : -List~Wheel~ wheels"
+  },
+  {
+    "id": "classDiagram.spec.ts:1295",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1295",
+    "source": "classDiagram\nclass Car\nCar : GetSize()"
+  },
+  {
+    "id": "classDiagram.spec.ts:1301",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1301",
+    "source": "classDiagram\nclass Object\nObject : getObject() Object"
+  },
+  {
+    "id": "classDiagram.spec.ts:1307",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1307",
+    "source": "classDiagram\nclass Object\nObject : getObjects() Object[]"
+  },
+  {
+    "id": "classDiagram.spec.ts:1318",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1318",
+    "source": "classDiagram\nclass actual\nactual : -privateMethod()\nactual : +publicMethod()\nactual : #protectedMethod()\n"
+  },
+  {
+    "id": "classDiagram.spec.ts:1323",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1323",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()*"
+  },
+  {
+    "id": "classDiagram.spec.ts:1336",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1336",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()$"
+  },
+  {
+    "id": "classDiagram.spec.ts:1349",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1349",
+    "source": "classDiagram\nclass Car\nCar : +setWheels(List~Wheel~ wheels)"
+  },
+  {
+    "id": "classDiagram.spec.ts:1355",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1355",
+    "source": "classDiagram\nclass Car\nCar : +getWheels() List~Wheel~"
+  },
+  {
+    "id": "classDiagram.spec.ts:1367",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1367",
+    "source": "classDiagram\nclass Car {\nList~Wheel~ wheels\nsetWheels(List~Wheel~ wheels)\n+getWheels() List~Wheel~\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:1371",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1371",
+    "source": "classDiagram\nclass EmptyClass {}"
+  },
+  {
+    "id": "classDiagram.spec.ts:1391",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1391",
+    "source": "classDiagram\nclass Car~T~"
+  },
+  {
+    "id": "classDiagram.spec.ts:1402",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1402",
+    "source": "classDiagram\nclass Car~T~\nDriver -- Car : drives >\nCar *-- Wheel : have 4 >\nCar -- Person : < owns"
+  },
+  {
+    "id": "classDiagram.spec.ts:1413",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1413",
+    "source": "classDiagram\nclass `Car`~T~\nDriver -- `Car` : drives >\n`Car` *-- Wheel : have 4 >\n`Car` -- Person : < owns"
+  },
+  {
+    "id": "classDiagram.spec.ts:1429",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1429",
+    "source": "classDiagram\nclass Dummy_Class~T~ {\nString data\nvoid methods()\n}\n\nclass Flight {\nInteger flightNumber\nDate departureTime\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:1445",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1445",
+    "source": "classDiagram\nclass `Dummy_Class`~T~ {\nString data\n  void methods()\n}\n\nclass Flight {\n   flightNumber : Integer\n   departureTime : Date\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:1476",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1476",
+    "source": "classDiagram\nnamespace Namespace1 { class Class1 }\nnamespace Namespace2 { class Class1\n}\nnamespace Namespace3 {\nclass Class1 {\nint : test\nstring : foo\ntest()\nfoo()\n}\n}\nnamespace Namespace4 {\nclass Class1 {\nint : test\nstring : foo\ntest()\nfoo()\n}\nclass Class2 {\nint : test\nstring : foo\ntest()\nfoo()\n}\n}\n"
+  },
+  {
+    "id": "classDiagram.spec.ts:1480",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1480",
+    "source": "classDiagram\n\nnamespace space {\n    class Square~Shape~{\n        int id\n        List~int~ position\n        setPoints(List~int~ points)\n        getPoints() List~int~\n    }\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:1511",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1511",
+    "source": "classDiagram\nClass1 <|-- Class02\nClass03 *-- Class04\nClass05 o-- Class06\nClass07 .. Class08\nClass09 -- Class1"
+  },
+  {
+    "id": "classDiagram.spec.ts:1523",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1523",
+    "source": "classDiagram\n`Class1` <|-- Class02\nClass03 *-- Class04\nClass05 o-- Class06\nClass07 .. Class08\nClass09 -- Class1"
+  },
+  {
+    "id": "classDiagram.spec.ts:1529",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1529",
+    "source": "classDiagram\nClass1~T~ <|-- Class02"
+  },
+  {
+    "id": "classDiagram.spec.ts:1549",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1549",
+    "source": "classDiagram\nclass Car\nDriver -- Car : drives >\nCar *-- Wheel : have 4 >\nCar -- Person : < owns"
+  },
+  {
+    "id": "classDiagram.spec.ts:1555",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1555",
+    "source": "classDiagram\nClass1 <|-- Class02"
+  },
+  {
+    "id": "classDiagram.spec.ts:1575",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1575",
+    "source": "classDiagram\nClass11 <|.. Class12\nClass13 --> Class14\nClass15 ..> Class16\nClass17 ..|> Class18\nClass19 <--* Class20"
+  },
+  {
+    "id": "classDiagram.spec.ts:1585",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1585",
+    "source": "classDiagram\nClass1 \"1\" *-- \"many\" Class02 : contains\nClass03 o-- Class04 : aggregation\nClass05 --> \"1\" Class06"
+  },
+  {
+    "id": "classDiagram.spec.ts:1596",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1596",
+    "source": "classDiagram\nClass11 <|.. Class12\nClass13 <.. Class14\nClass15 ..|> Class16\nClass17 ..> Class18\nClass19 .. Class20"
+  },
+  {
+    "id": "classDiagram.spec.ts:1602",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1602",
+    "source": "classDiagram\nClass1 o.. Class02"
+  },
+  {
+    "id": "classDiagram.spec.ts:1616",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1616",
+    "source": "classDiagram\nClass1 *--* Class02"
+  },
+  {
+    "id": "classDiagram.spec.ts:1630",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1630",
+    "source": "classDiagram\nClass1 -- Class02"
+  },
+  {
+    "id": "classDiagram.spec.ts:1644",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1644",
+    "source": "classDiagram\nClass1 --|> Class02"
+  },
+  {
+    "id": "classDiagram.spec.ts:1664",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1664",
+    "source": "classDiagram\nClass1 <|-- Class02\nClass03 *-- Class04\nClass05 o-- Class06\nClass07 .. Class08\nClass09 -- Class10"
+  },
+  {
+    "id": "classDiagram.spec.ts:1684",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1684",
+    "source": "classDiagram\nClass01~T~ <|-- Class02"
+  },
+  {
+    "id": "classDiagram.spec.ts:1760",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1760",
+    "source": "classDiagram\nclass Class1 {\nint : test\nstring : foo\ntest()\nfoo()\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:1803",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1803",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\nlink Class1 \"google.com\""
+  },
+  {
+    "id": "classDiagram.spec.ts:1816",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1816",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\nclick Class1 href \"google.com\""
+  },
+  {
+    "id": "classDiagram.spec.ts:1829",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1829",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\nlink Class1 \"google.com\" \"A tooltip\""
+  },
+  {
+    "id": "classDiagram.spec.ts:1843",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1843",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\nclick Class1 href \"google.com\" \"A tooltip\""
+  },
+  {
+    "id": "classDiagram.spec.ts:1884",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1884",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\nclick Class1 href \"google.com\" _self"
+  },
+  {
+    "id": "classDiagram.spec.ts:1897",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1897",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\nlink Class1 \"google.com\" \"A tooltip\" _self"
+  },
+  {
+    "id": "classDiagram.spec.ts:1910",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1910",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\ncallback Class1 \"functionCall\""
+  },
+  {
+    "id": "classDiagram.spec.ts:1922",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1922",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\nclick Class1 call functionCall()"
+  },
+  {
+    "id": "classDiagram.spec.ts:1934",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1934",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\nclick Class1 call functionCall(\"test0\", test1, test2)"
+  },
+  {
+    "id": "classDiagram.spec.ts:1951",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1951",
+    "source": "classDiagram\nclass Class1\nClass1 : someMethod()\nclick Class1 call functionCall() \"A tooltip\""
+  },
+  {
+    "id": "classDiagram.spec.ts:1968",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1968",
+    "source": "classDiagram\nnamespace Namespace1 {\nclass Class1 {\nint : test\nstring : foo\ntest()\nfoo()\n}\nclass Class2\n}"
+  },
+  {
+    "id": "classDiagram.spec.ts:1999",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L1999",
+    "source": "classDiagram\n      A1 --> B1\n      namespace A {\n        class A1 {\n          +foo : string\n        }\n        class A2 {\n          +bar : int\n        }\n      }\n      namespace B {\n        class B1 {\n          +foo : bool\n        }\n        class B2 {\n          +bar : float\n        }\n      }\n      A2 --> B2"
+  },
+  {
+    "id": "classDiagram.spec.ts:2039",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L2039",
+    "source": "classDiagram\n  class C1[\"Class 1 with text label\"]\n  C1 -->  C2\n      "
+  },
+  {
+    "id": "classDiagram.spec.ts:2050",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L2050",
+    "source": "classDiagram\n  class C1[\"Class 1 with text label\"]\n  class C2[\"Class 2 with chars @?\"]\n  C1 -->  C2\n      "
+  },
+  {
+    "id": "classDiagram.spec.ts:2062",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L2062",
+    "source": "classDiagram\n  class C1[\"Class 1 with text label\"] {\n    +member1\n  }\n  C1 -->  C2\n      "
+  },
+  {
+    "id": "classDiagram.spec.ts:2078",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L2078",
+    "source": "classDiagram\n  class C1[\"Class 1 with text label\"] {\n    <<interface>>\n    +member1\n  }\n  C1 -->  C2\n      "
+  },
+  {
+    "id": "classDiagram.spec.ts:2098",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L2098",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"]:::styleClass {\n  +member1\n}\nC1 -->  C2\n  "
+  },
+  {
+    "id": "classDiagram.spec.ts:2113",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L2113",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"] {\n  +member1\n}\nC1 --> C2\ncssClass \"C1\" styleClass\n  "
+  },
+  {
+    "id": "classDiagram.spec.ts:2129",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L2129",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"] {\n  +member1\n}\nclass C2[\"Long long long long long long long long long long label\"]\nC1 --> C2\ncssClass \"C1,C2\" styleClass\n  "
+  },
+  {
+    "id": "classDiagram.spec.ts:2148",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L2148",
+    "source": "classDiagram\nclass C1[\"Class 1 with text label\"]:::styleClass1 {\n  +member1\n}\nclass C2[\"Class 2 !@#$%^&*() label\"]:::styleClass2\nC1 --> C2\n  "
+  },
+  {
+    "id": "classDiagram.spec.ts:2166",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/classDiagram.spec.ts#L2166",
+    "source": "classDiagram\nclass C1[\"Class with text label\"]\nclass C2[\"Class with text label\"]\nclass C3[\"Class with text label\"]\nC1 --> C2\nC3 ..> C2\n  "
+  },
+  {
+    "id": "class.spec.js:22",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/class/parser/class.spec.js#L22",
+    "source": "classDiagram\nnamespace `A::B` {\n\tclass `IPC::Sender`\n}"
+  }
+]
