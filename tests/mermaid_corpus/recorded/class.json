@@ -1,0 +1,3895 @@
+{
+ "mermaid": "11.17.2",
+ "results": {
+  "classDiagram.spec.ts:34": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "User",
+     "label": "User",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+login(username, password: String)",
+      "\\+logout()"
+     ]
+    },
+    {
+     "id": "Admin",
+     "label": "Admin",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+addUser(user)",
+      "\\+removeUser(user)"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "Company",
+     "classes": []
+    },
+    {
+     "id": "Company.Project",
+     "classes": [
+      "User"
+     ]
+    },
+    {
+     "id": "Company.Project.Module",
+     "classes": [
+      "Admin"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:55": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "GenericClass",
+     "label": "GenericClass",
+     "type": "T",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+addItem(item)",
+      "\\+getItem() : T"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "Company",
+     "classes": []
+    },
+    {
+     "id": "Company.Project",
+     "classes": []
+    },
+    {
+     "id": "Company.Project.Module",
+     "classes": [
+      "GenericClass"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:78": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Report",
+     "label": "Report",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+generatePDF(data)",
+      "\\+generateCSV(data)"
+     ]
+    },
+    {
+     "id": "Admin",
+     "label": "Admin",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+generateReport()"
+     ]
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Admin",
+     "id2": "Report",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "title": "generates",
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "Company",
+     "classes": []
+    },
+    {
+     "id": "Company.Project",
+     "classes": []
+    },
+    {
+     "id": "Company.Project.Module",
+     "classes": [
+      "Admin"
+     ]
+    },
+    {
+     "id": "Company.Project.Module.SubModule",
+     "classes": [
+      "Report"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:132": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Foo",
+     "label": "Foo",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+bar()"
+     ]
+    },
+    {
+     "id": "Baz",
+     "label": "Baz",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+qux()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "Outer",
+     "classes": [
+      "Baz"
+     ]
+    },
+    {
+     "id": "Outer.Inner",
+     "classes": [
+      "Foo"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:173": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Developer",
+     "label": "Developer",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+writeCode()"
+     ]
+    },
+    {
+     "id": "CEO",
+     "label": "CEO",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+makeDecisions()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "Company",
+     "classes": [
+      "CEO"
+     ]
+    },
+    {
+     "id": "Company.Engineering",
+     "classes": []
+    },
+    {
+     "id": "Company.Engineering.Backend",
+     "classes": [
+      "Developer"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:214": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Developer",
+     "label": "Developer",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "CEO",
+     "label": "CEO",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "Company",
+     "classes": [
+      "CEO"
+     ]
+    },
+    {
+     "id": "Company.Engineering",
+     "classes": []
+    },
+    {
+     "id": "Company.Engineering.Backend",
+     "classes": [
+      "Developer"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:236": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Foo",
+     "label": "Foo",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "A",
+     "classes": []
+    },
+    {
+     "id": "A.B",
+     "classes": [
+      "Foo"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:259": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "UserService",
+     "label": "UserService",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+login()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "Auth",
+     "classes": [
+      "UserService"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:275": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:288": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:297": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:312": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "User",
+     "label": "User",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Admin",
+     "label": "Admin",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Admin",
+     "id2": "User",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "title": "manages",
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "Company",
+     "classes": []
+    },
+    {
+     "id": "Company.Project",
+     "classes": []
+    },
+    {
+     "id": "Company.Project.Module",
+     "classes": [
+      "User",
+      "Admin"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:323": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:329": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Ca-r",
+     "label": "Ca-r",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:337": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "A_Car",
+     "label": "A_Car",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:370": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Foo1",
+     "label": "Foo1",
+     "annotations": [],
+     "members": [
+      "You can use",
+      "several lines",
+      "..",
+      "as you want",
+      "and group",
+      "==",
+      "things together.",
+      "__",
+      "You can have groups",
+      "as you want",
+      "\\--",
+      "End of class"
+     ],
+     "methods": []
+    },
+    {
+     "id": "User",
+     "label": "User",
+     "annotations": [],
+     "members": [
+      ".. Simple Getter ..",
+      ".. Some setter ..",
+      "__ private data __",
+      "int age",
+      "\\-- encrypted --",
+      "String password"
+     ],
+     "methods": [
+      "\\+ getName()",
+      "\\+ getAddress()",
+      "\\+ setName()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:376": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:388": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "Class 2 with chars @?",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:399": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [
+      "member1"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:413": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [
+      "interface"
+     ],
+     "members": [
+      "int member1"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:426": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:440": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [
+      "int member1"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:456": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [
+      "int member1"
+     ],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "Long long long long long long long long long long label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:473": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "Class 2 !@#$%^&*() label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:487": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "C1",
+     "type": "T",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:496": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "C1",
+     "type": "T",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:505": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "C1",
+     "type": "T",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:513": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "C1",
+     "type": "T",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:521": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "C1",
+     "type": "T",
+     "annotations": [],
+     "members": [],
+     "methods": [],
+     "link": "https://example.com/"
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:528": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class with text label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "Class with text label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C3",
+     "label": "Class with text label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:544": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "OneWord",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "With, Comma",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C3",
+     "label": "With (Brackets)",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C4",
+     "label": "With [Brackets]",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C5",
+     "label": "With {Brackets}",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C6",
+     "label": " ",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C7",
+     "label": "With 1 number",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C8",
+     "label": "With . period...",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C9",
+     "label": "With - dash",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C10",
+     "label": "With _ underscore",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C11",
+     "label": "With ' single quote",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C12",
+     "label": "With ~!@#$%^&*()_+=-/?",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C13",
+     "label": "With Città foreign language",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:576": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class11",
+     "label": "Class11",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class12",
+     "label": "Class12",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class11",
+     "id2": "Class12",
+     "type1": 1,
+     "type2": "none",
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [
+    {
+     "class": "Class11",
+     "text": "test"
+    }
+   ],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:581": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [],
+   "relations": [],
+   "notes": [
+    {
+     "text": "test"
+    }
+   ],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:692": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Student",
+     "label": "Student",
+     "annotations": [],
+     "members": [
+      "\\-idCard : IdCard"
+     ],
+     "methods": []
+    },
+    {
+     "id": "IdCard",
+     "label": "IdCard",
+     "annotations": [],
+     "members": [
+      "\\-id : int",
+      "\\-name : string"
+     ],
+     "methods": []
+    },
+    {
+     "id": "Bike",
+     "label": "Bike",
+     "annotations": [],
+     "members": [
+      "\\-id : int",
+      "\\-name : string"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Student",
+     "id2": "IdCard",
+     "type1": "none",
+     "type2": 0,
+     "lineType": 0,
+     "title": "carries",
+     "relationTitle1": "1",
+     "relationTitle2": "1"
+    },
+    {
+     "id1": "Student",
+     "id2": "Bike",
+     "type1": "none",
+     "type2": 0,
+     "lineType": 0,
+     "title": "rides",
+     "relationTitle1": "1",
+     "relationTitle2": "1"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:779": {
+   "type": "classDiagram",
+   "direction": "RL",
+   "classes": [
+    {
+     "id": "A",
+     "label": "A",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:784": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "B",
+     "label": "B",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:800": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [
+      "\\+int wheels"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:806": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+size()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:813": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [
+      "\\+int wheels"
+     ],
+     "methods": [
+      "\\+ArrayList size()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:820": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Dummy_Class",
+     "label": "Dummy_Class",
+     "annotations": [],
+     "members": [
+      "String data"
+     ],
+     "methods": [
+      "void methods()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:832": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Flight",
+     "label": "Flight",
+     "annotations": [],
+     "members": [
+      "int flightNumber",
+      "datetime departureTime"
+     ],
+     "methods": [
+      "getDepartureTime() : datetime"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:844": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [
+      "int testMember",
+      "string fooMember"
+     ],
+     "methods": [
+      "test()",
+      "foo()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:858": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [
+      "\\+member1"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:873": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [
+      "interface"
+     ],
+     "members": [
+      "\\+member1"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:899": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [
+      "int : test",
+      "string : foo"
+     ],
+     "methods": [
+      "test()",
+      "foo()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:914": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [
+      "int : test",
+      "string : foo"
+     ],
+     "methods": [
+      "test()",
+      "foo()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:927": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [
+      "int : test",
+      "string : foo"
+     ],
+     "methods": [
+      "test()",
+      "foo()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:943": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [
+      "int : test",
+      "string : foo"
+     ],
+     "methods": [
+      "test()",
+      "foo()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:956": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [
+      "int : test",
+      "string : foo"
+     ],
+     "methods": [
+      "test()",
+      "foo()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:970": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [
+      "int : test",
+      "string : foo"
+     ],
+     "methods": [
+      "test()",
+      "foo()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:984": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [],
+     "link": "google.com"
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:999": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [],
+     "link": "google.com"
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1017": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ],
+     "link": "google.com"
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1033": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1045": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1058": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1075": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1095": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [
+      "interface"
+     ],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1111": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [
+      "interface"
+     ],
+     "members": [
+      "int test"
+     ],
+     "methods": [
+      "test()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1122": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [
+      "interface"
+     ],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1139": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [
+      "interface"
+     ],
+     "members": [
+      "int : test"
+     ],
+     "methods": [
+      "test()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1155": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Shape",
+     "label": "Shape",
+     "annotations": [
+      "interface"
+     ],
+     "members": [
+      "noOfVertices"
+     ],
+     "methods": [
+      "draw()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1180": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Shape",
+     "label": "Shape",
+     "annotations": [
+      "interface"
+     ],
+     "members": [
+      "noOfVertices"
+     ],
+     "methods": [
+      "draw()"
+     ]
+    },
+    {
+     "id": "Color",
+     "label": "Color",
+     "annotations": [
+      "enumeration"
+     ],
+     "members": [
+      "RED",
+      "BLUE",
+      "GREEN",
+      "WHITE",
+      "BLACK"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1190": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Shape",
+     "label": "Shape",
+     "annotations": [
+      "interface"
+     ],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1204": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Shape",
+     "label": "Shape",
+     "annotations": [
+      "interface"
+     ],
+     "members": [
+      "noOfVertices"
+     ],
+     "methods": [
+      "draw()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1215": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Shape",
+     "label": "Shape",
+     "annotations": [
+      "interface"
+     ],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1235": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [
+      "wheels"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1239": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [
+      "wheels"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1246": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [
+      "int wheels"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1255": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [
+      "int wheels"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1267": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "actual",
+     "label": "actual",
+     "annotations": [],
+     "members": [
+      "\\-int privateMember",
+      "\\+int publicMember",
+      "\\#int protectedMember",
+      "\\~int privatePackage"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1281": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [
+      "\\-List&lt;Wheel&gt; wheels"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1295": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "GetSize()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1301": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Object",
+     "label": "Object",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "getObject() : Object"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1307": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Object",
+     "label": "Object",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "getObjects() : Object[]"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1318": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "actual",
+     "label": "actual",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\-privateMethod()",
+      "\\+publicMethod()",
+      "\\#protectedMethod()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1323": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1336": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1349": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+setWheels(List&lt;Wheel&gt; wheels)"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1355": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "\\+getWheels() : List&lt;Wheel&gt;"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1367": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [
+      "List&lt;Wheel&gt; wheels"
+     ],
+     "methods": [
+      "setWheels(List&lt;Wheel&gt; wheels)",
+      "\\+getWheels() : List&lt;Wheel&gt;"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1371": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "EmptyClass",
+     "label": "EmptyClass",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1391": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "type": "T",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1402": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "type": "T",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Driver",
+     "label": "Driver",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Wheel",
+     "label": "Wheel",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Person",
+     "label": "Person",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Driver",
+     "id2": "Car",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 0,
+     "title": "drives >",
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Car",
+     "id2": "Wheel",
+     "type1": 2,
+     "type2": "none",
+     "lineType": 0,
+     "title": "have 4 >",
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Car",
+     "id2": "Person",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 0,
+     "title": "&lt; owns",
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1413": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "type": "T",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Driver",
+     "label": "Driver",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Wheel",
+     "label": "Wheel",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Person",
+     "label": "Person",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Driver",
+     "id2": "Car",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 0,
+     "title": "drives >",
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Car",
+     "id2": "Wheel",
+     "type1": 2,
+     "type2": "none",
+     "lineType": 0,
+     "title": "have 4 >",
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Car",
+     "id2": "Person",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 0,
+     "title": "&lt; owns",
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1429": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Dummy_Class",
+     "label": "Dummy_Class",
+     "type": "T",
+     "annotations": [],
+     "members": [
+      "String data"
+     ],
+     "methods": [
+      "void methods()"
+     ]
+    },
+    {
+     "id": "Flight",
+     "label": "Flight",
+     "annotations": [],
+     "members": [
+      "Integer flightNumber",
+      "Date departureTime"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1445": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Dummy_Class",
+     "label": "Dummy_Class",
+     "type": "T",
+     "annotations": [],
+     "members": [
+      "String data"
+     ],
+     "methods": [
+      "void methods()"
+     ]
+    },
+    {
+     "id": "Flight",
+     "label": "Flight",
+     "annotations": [],
+     "members": [
+      "flightNumber : Integer",
+      "departureTime : Date"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1476": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [
+      "int : test",
+      "string : foo",
+      "int : test",
+      "string : foo"
+     ],
+     "methods": [
+      "test()",
+      "foo()",
+      "test()",
+      "foo()"
+     ]
+    },
+    {
+     "id": "Class2",
+     "label": "Class2",
+     "annotations": [],
+     "members": [
+      "int : test",
+      "string : foo"
+     ],
+     "methods": [
+      "test()",
+      "foo()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "Namespace1",
+     "classes": [
+      "Class1"
+     ]
+    },
+    {
+     "id": "Namespace2",
+     "classes": [
+      "Class1"
+     ]
+    },
+    {
+     "id": "Namespace3",
+     "classes": [
+      "Class1"
+     ]
+    },
+    {
+     "id": "Namespace4",
+     "classes": [
+      "Class1",
+      "Class2"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:1480": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Square",
+     "label": "Square",
+     "type": "Shape",
+     "annotations": [],
+     "members": [
+      "int id",
+      "List&lt;int&gt; position"
+     ],
+     "methods": [
+      "setPoints(List&lt;int&gt; points)",
+      "getPoints() : List&lt;int&gt;"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "space",
+     "classes": [
+      "Square"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:1511": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class02",
+     "label": "Class02",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class03",
+     "label": "Class03",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class04",
+     "label": "Class04",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class05",
+     "label": "Class05",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class06",
+     "label": "Class06",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class07",
+     "label": "Class07",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class08",
+     "label": "Class08",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class09",
+     "label": "Class09",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class1",
+     "id2": "Class02",
+     "type1": 1,
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class03",
+     "id2": "Class04",
+     "type1": 2,
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class05",
+     "id2": "Class06",
+     "type1": 0,
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class07",
+     "id2": "Class08",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class09",
+     "id2": "Class1",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1523": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class02",
+     "label": "Class02",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class03",
+     "label": "Class03",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class04",
+     "label": "Class04",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class05",
+     "label": "Class05",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class06",
+     "label": "Class06",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class07",
+     "label": "Class07",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class08",
+     "label": "Class08",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class09",
+     "label": "Class09",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class1",
+     "id2": "Class02",
+     "type1": 1,
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class03",
+     "id2": "Class04",
+     "type1": 2,
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class05",
+     "id2": "Class06",
+     "type1": 0,
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class07",
+     "id2": "Class08",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class09",
+     "id2": "Class1",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1529": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "type": "T",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class02",
+     "label": "Class02",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class1",
+     "id2": "Class02",
+     "type1": 1,
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1549": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Car",
+     "label": "Car",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Driver",
+     "label": "Driver",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Wheel",
+     "label": "Wheel",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Person",
+     "label": "Person",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Driver",
+     "id2": "Car",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 0,
+     "title": "drives >",
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Car",
+     "id2": "Wheel",
+     "type1": 2,
+     "type2": "none",
+     "lineType": 0,
+     "title": "have 4 >",
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Car",
+     "id2": "Person",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 0,
+     "title": "&lt; owns",
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1555": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class02",
+     "label": "Class02",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class1",
+     "id2": "Class02",
+     "type1": 1,
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1575": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class11",
+     "label": "Class11",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class12",
+     "label": "Class12",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class13",
+     "label": "Class13",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class14",
+     "label": "Class14",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class15",
+     "label": "Class15",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class16",
+     "label": "Class16",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class17",
+     "label": "Class17",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class18",
+     "label": "Class18",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class19",
+     "label": "Class19",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class20",
+     "label": "Class20",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class11",
+     "id2": "Class12",
+     "type1": 1,
+     "type2": "none",
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class13",
+     "id2": "Class14",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class15",
+     "id2": "Class16",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class17",
+     "id2": "Class18",
+     "type1": "none",
+     "type2": 1,
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class19",
+     "id2": "Class20",
+     "type1": 3,
+     "type2": 2,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1585": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class02",
+     "label": "Class02",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class03",
+     "label": "Class03",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class04",
+     "label": "Class04",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class05",
+     "label": "Class05",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class06",
+     "label": "Class06",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class1",
+     "id2": "Class02",
+     "type1": 2,
+     "type2": "none",
+     "lineType": 0,
+     "title": "contains",
+     "relationTitle1": "1",
+     "relationTitle2": "many"
+    },
+    {
+     "id1": "Class03",
+     "id2": "Class04",
+     "type1": 0,
+     "type2": "none",
+     "lineType": 0,
+     "title": "aggregation",
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class05",
+     "id2": "Class06",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "1"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1596": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class11",
+     "label": "Class11",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class12",
+     "label": "Class12",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class13",
+     "label": "Class13",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class14",
+     "label": "Class14",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class15",
+     "label": "Class15",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class16",
+     "label": "Class16",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class17",
+     "label": "Class17",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class18",
+     "label": "Class18",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class19",
+     "label": "Class19",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class20",
+     "label": "Class20",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class11",
+     "id2": "Class12",
+     "type1": 1,
+     "type2": "none",
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class13",
+     "id2": "Class14",
+     "type1": 3,
+     "type2": "none",
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class15",
+     "id2": "Class16",
+     "type1": "none",
+     "type2": 1,
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class17",
+     "id2": "Class18",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class19",
+     "id2": "Class20",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1602": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class02",
+     "label": "Class02",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class1",
+     "id2": "Class02",
+     "type1": 0,
+     "type2": "none",
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1616": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class02",
+     "label": "Class02",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class1",
+     "id2": "Class02",
+     "type1": 2,
+     "type2": 2,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1630": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class02",
+     "label": "Class02",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class1",
+     "id2": "Class02",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1644": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class02",
+     "label": "Class02",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class1",
+     "id2": "Class02",
+     "type1": "none",
+     "type2": 1,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1664": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class02",
+     "label": "Class02",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class03",
+     "label": "Class03",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class04",
+     "label": "Class04",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class05",
+     "label": "Class05",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class06",
+     "label": "Class06",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class07",
+     "label": "Class07",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class08",
+     "label": "Class08",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class09",
+     "label": "Class09",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class10",
+     "label": "Class10",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class1",
+     "id2": "Class02",
+     "type1": 1,
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class03",
+     "id2": "Class04",
+     "type1": 2,
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class05",
+     "id2": "Class06",
+     "type1": 0,
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class07",
+     "id2": "Class08",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "Class09",
+     "id2": "Class10",
+     "type1": "none",
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1684": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class01",
+     "label": "Class01",
+     "type": "T",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "Class02",
+     "label": "Class02",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "Class01",
+     "id2": "Class02",
+     "type1": 1,
+     "type2": "none",
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1760": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [
+      "int : test",
+      "string : foo"
+     ],
+     "methods": [
+      "test()",
+      "foo()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1803": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ],
+     "link": "google.com"
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1816": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ],
+     "link": "google.com"
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1829": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ],
+     "link": "google.com"
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1843": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ],
+     "link": "google.com"
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1884": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ],
+     "link": "google.com"
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1897": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ],
+     "link": "google.com"
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1910": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1922": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1934": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1951": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [],
+     "methods": [
+      "someMethod()"
+     ]
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:1968": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "Class1",
+     "label": "Class1",
+     "annotations": [],
+     "members": [
+      "int : test",
+      "string : foo"
+     ],
+     "methods": [
+      "test()",
+      "foo()"
+     ]
+    },
+    {
+     "id": "Class2",
+     "label": "Class2",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "Namespace1",
+     "classes": [
+      "Class1",
+      "Class2"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:1999": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "A1",
+     "label": "A1",
+     "annotations": [],
+     "members": [
+      "\\+foo : string"
+     ],
+     "methods": []
+    },
+    {
+     "id": "B1",
+     "label": "B1",
+     "annotations": [],
+     "members": [
+      "\\+foo : bool"
+     ],
+     "methods": []
+    },
+    {
+     "id": "A2",
+     "label": "A2",
+     "annotations": [],
+     "members": [
+      "\\+bar : int"
+     ],
+     "methods": []
+    },
+    {
+     "id": "B2",
+     "label": "B2",
+     "annotations": [],
+     "members": [
+      "\\+bar : float"
+     ],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "A1",
+     "id2": "B1",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "A2",
+     "id2": "B2",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "A",
+     "classes": [
+      "A1",
+      "A2"
+     ]
+    },
+    {
+     "id": "B",
+     "classes": [
+      "B1",
+      "B2"
+     ]
+    }
+   ]
+  },
+  "classDiagram.spec.ts:2039": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "C2",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "C1",
+     "id2": "C2",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:2050": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "Class 2 with chars @?",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "C1",
+     "id2": "C2",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:2062": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [
+      "\\+member1"
+     ],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "C2",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "C1",
+     "id2": "C2",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:2078": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [
+      "interface"
+     ],
+     "members": [
+      "\\+member1"
+     ],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "C2",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "C1",
+     "id2": "C2",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:2098": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [
+      "\\+member1"
+     ],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "C2",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "C1",
+     "id2": "C2",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:2113": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [
+      "\\+member1"
+     ],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "C2",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "C1",
+     "id2": "C2",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:2129": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [
+      "\\+member1"
+     ],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "Long long long long long long long long long long label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "C1",
+     "id2": "C2",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:2148": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class 1 with text label",
+     "annotations": [],
+     "members": [
+      "\\+member1"
+     ],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "Class 2 !@#$%^&*() label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "C1",
+     "id2": "C2",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "classDiagram.spec.ts:2166": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "C1",
+     "label": "Class with text label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C2",
+     "label": "Class with text label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    },
+    {
+     "id": "C3",
+     "label": "Class with text label",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [
+    {
+     "id1": "C1",
+     "id2": "C2",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 0,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    },
+    {
+     "id1": "C3",
+     "id2": "C2",
+     "type1": "none",
+     "type2": 3,
+     "lineType": 1,
+     "relationTitle1": "none",
+     "relationTitle2": "none"
+    }
+   ],
+   "notes": [],
+   "namespaces": []
+  },
+  "class.spec.js:22": {
+   "type": "classDiagram",
+   "direction": "TB",
+   "classes": [
+    {
+     "id": "IPC::Sender",
+     "label": "IPC::Sender",
+     "annotations": [],
+     "members": [],
+     "methods": []
+    }
+   ],
+   "relations": [],
+   "notes": [],
+   "namespaces": [
+    {
+     "id": "A::B",
+     "classes": [
+      "IPC::Sender"
+     ]
+    }
+   ]
+  }
+ }
+}

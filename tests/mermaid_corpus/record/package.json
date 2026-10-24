@@ -1,0 +1,12 @@
+{
+  "name": "lectern-mermaid-corpus-recorder",
+  "private": true,
+  "description": "Dev-time only: records what mermaid's own parser makes of the conformance corpus. Never used at runtime or in CI, which compare against the committed recordings.",
+  "type": "module",
+  "dependencies": {
+    "acorn": "8.15.0",
+    "acorn-walk": "8.3.4",
+    "jsdom": "30.1.3",
+    "mermaid": "11.17.2"
+  }
+}

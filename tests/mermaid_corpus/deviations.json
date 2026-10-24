@@ -1,0 +1,23 @@
+{
+  "flow-arrows.spec.js:131": "differs: `style e …` names an undeclared id, which mermaid declares as a node; Lectern skips style statements unread",
+  "flow-style.spec.js:359": "differs: `style A …` names an undeclared id, which mermaid declares as a node; Lectern skips style statements unread",
+  "flow-style.spec.js:82": "rejected: mermaid refuses `style D border:1px solid red`; Lectern skips style statements unread",
+  "flow-style.spec.js:291": "rejected: mermaid refuses a linkStyle for an edge index that doesn't exist; Lectern skips linkStyle unread",
+  "flow-md-string.spec.js:16": "differs: markdown strings (\"`…`\") keep their backticks in Lectern",
+  "flow-text.spec.js:529": "differs: `(-text-)` is mermaid's ellipse; Lectern reads a round node with dashes in its text",
+  "flow-text.spec.js:583": "rejected: mermaid refuses parentheses inside unquoted [] text; Lectern draws them",
+  "flow-text.spec.js:589": "rejected: mermaid refuses quotes inside unquoted () text; Lectern draws them",
+  "flow-text.spec.js:596": "rejected: mermaid refuses quotes inside unquoted [] text; Lectern draws them",
+  "flow-text.spec.js:602": "rejected: mermaid refuses a quote ending a quoted label early; Lectern draws it",
+  "flow-text.spec.js:607": "rejected: mermaid refuses a `)` inside unquoted [] text; Lectern draws it",
+  "flow.spec.js:169": "differs: a quoted subgraph title gets a generated id (subGraphN) in mermaid; Lectern uses the title as the id",
+  "subgraph.spec.js:41": "differs: a quoted subgraph title gets a generated id (subGraphN) in mermaid; Lectern uses the title as the id",
+  "subgraph.spec.js:53": "differs: `subgraph some-id[Title]` -- Lectern's subgraph ids don't allow `-`, so the whole line becomes the title",
+  "subgraph.spec.js:65": "differs: a multi-word subgraph title gets a generated id (subGraphN) in mermaid; Lectern uses the title as the id",
+  "subgraph.spec.js:77": "differs: a node named inside a subgraph joins it in mermaid even if it was named earlier outside; Lectern keeps first mention",
+  "subgraph.spec.js:100": "differs: a quoted subgraph title gets a generated id (subGraphN) in mermaid; Lectern uses the title as the id",
+  "subgraph.spec.js:114": "differs: a multi-word subgraph title gets a generated id (subGraphN) in mermaid; Lectern uses the title as the id",
+  "subgraph.spec.js:197": "differs: a bare subgraph title with trailing spaces gets a generated id (subGraphN) in mermaid; Lectern uses the title as the id",
+  "subgraph.spec.js:214": "differs: a repeated subgraph id redefines the subgraph in mermaid; Lectern makes two",
+  "subgraph.spec.js:291": "differs: a node or subgraph named inside a subgraph joins it in mermaid even if named earlier outside; Lectern keeps first mention"
+}

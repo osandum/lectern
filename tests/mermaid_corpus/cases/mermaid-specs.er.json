@@ -1,0 +1,582 @@
+[
+  {
+    "id": "erDiagram.spec.js:19",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L19",
+    "source": "erDiagram\nISLAND\nMAINLAND"
+  },
+  {
+    "id": "erDiagram.spec.js:29",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L29",
+    "source": "erDiagram\n \"\"\n"
+  },
+  {
+    "id": "erDiagram.spec.js:98",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L98",
+    "source": "erDiagram\n \"Blo%rf\"\n"
+  },
+  {
+    "id": "erDiagram.spec.js:105",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L105",
+    "source": "erDiagram\n \"Blo\\rf\"\n"
+  },
+  {
+    "id": "erDiagram.spec.js:126",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L126",
+    "source": "erDiagram\nDUCK-àáâäæãåā\n"
+  },
+  {
+    "id": "erDiagram.spec.js:133",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L133",
+    "source": "erDiagram\nDUCK-BILLED_PLATYPUS\n"
+  },
+  {
+    "id": "erDiagram.spec.js:141",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L141",
+    "source": "erDiagram\nfoo[\"bar\"]\n"
+  },
+  {
+    "id": "erDiagram.spec.js:151",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L151",
+    "source": "erDiagram\nfoo ||--o| bar : rel\nbuzz foo[\"batman\"]\n"
+  },
+  {
+    "id": "erDiagram.spec.js:165",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L165",
+    "source": "erDiagram\nbuzz foo[\"batman\"]\nfoo ||--o| bar : rel\n"
+  },
+  {
+    "id": "erDiagram.spec.js:177",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L177",
+    "source": "erDiagram\n_foo\n"
+  },
+  {
+    "id": "erDiagram.spec.js:190",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L190",
+    "source": "erDiagram\nBOOK {\nstring myBookTitle\nstring MYBOOKSUBTITLE_1\nstring author-ref[name](1)\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:206",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L206",
+    "source": "erDiagram\nBOOK{\nstring *title}"
+  },
+  {
+    "id": "erDiagram.spec.js:216",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L216",
+    "source": "erDiagram\nBOOK {\nid *the_Primary_Key}"
+  },
+  {
+    "id": "erDiagram.spec.js:228",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L228",
+    "source": "erDiagram\nBUILDING {\npublic.geometry(point,4326) location}"
+  },
+  {
+    "id": "erDiagram.spec.js:251",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L251",
+    "source": "erDiagram\nHOTEL {\nstring `geo.accuracy`\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:263",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L263",
+    "source": "erDiagram\nHOTEL {\nstring `geo.accuracy` PK \"the comment\"\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:276",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L276",
+    "source": "erDiagram\nHOTEL {\n`my.type` address\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:288",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L288",
+    "source": "erDiagram\nPERSON {\nstring? alias\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:300",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L300",
+    "source": "erDiagram\nPERSON {\nstring? alias UK \"optional display name\"\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:314",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L314",
+    "source": "erDiagram\nBOOK {\nstring title\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:324",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L324",
+    "source": "erDiagram\nBOOK {\nstring title PK\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:334",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L334",
+    "source": "erDiagram\nBOOK {\nstring title \"comment\"\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:345",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L345",
+    "source": "erDiagram\nBOOK {\nstring title PK \"comment\"\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:358",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L358",
+    "source": "erDiagram\nBOOK {\nint fk_title FK \n\nstring pk_author PK\nstring uk_address UK\nfloat pk_price PK \"comment\"\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:373",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L373",
+    "source": "erDiagram\nCUSTOMER {\nint customer_number PK, FK \"comment1\"\ndatetime customer_status_start_datetime PK,UK, FK\ndatetime customer_status_end_datetime PK , UK \"comment3\"\nstring customer_firstname\nstring customer_lastname \"comment5\"\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:393",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L393",
+    "source": "erDiagram\nBOOK {\ntype~T~ type\noption~T~ readable \"comment\"\nstring id PK\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:406",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L406",
+    "source": "erDiagram\nBOOK {\nstring[] readers FK \"comment\"\nstring[] authors FK\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:417",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L417",
+    "source": "erDiagram\nBOOK {\ncharacter(10) isbn FK\nvarchar(5) postal_code \"Five digits\"\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:431",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L431",
+    "source": "erDiagram\nBOOK {\nstring title\nstring author\nfloat price\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:444",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L444",
+    "source": "erDiagram\nBOOK {\nstring title\n}\nBOOK {\nstring author\nfloat price\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:454",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L454",
+    "source": "erDiagram\nBOOK {}"
+  },
+  {
+    "id": "erDiagram.spec.js:463",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L463",
+    "source": "erDiagram\nBOOK{}"
+  },
+  {
+    "id": "erDiagram.spec.js:472",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L472",
+    "source": "erDiagram\nBOOK         {}"
+  },
+  {
+    "id": "erDiagram.spec.js:482",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L482",
+    "source": "erDiagram\nBOOK {\n  \n\n  string title\n\n  \n}"
+  },
+  {
+    "id": "erDiagram.spec.js:492",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L492",
+    "source": "erDiagram\nBOOK{string title}"
+  },
+  {
+    "id": "erDiagram.spec.js:499",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L499",
+    "source": "erDiagram\nCAR ||--o{ DRIVER : \"insured for\""
+  },
+  {
+    "id": "erDiagram.spec.js:514",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L514",
+    "source": "erDiagram\nCAR ||--o{ DRIVER : \"insured for\"\nDRIVER ||--|| LICENSE : has"
+  },
+  {
+    "id": "erDiagram.spec.js:523",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L523",
+    "source": "erDiagram\nTEACHER }o--o{ STUDENT : \"is teacher of\""
+  },
+  {
+    "id": "erDiagram.spec.js:530",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L530",
+    "source": "erDiagram\nNODE ||--o{ NODE : \"leads to\""
+  },
+  {
+    "id": "erDiagram.spec.js:539",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L539",
+    "source": "erDiagram\n      accTitle: graph title\n      accDescr: this graph is about stuff\n      TEACHER }o--o{ STUDENT : \"is teacher of\""
+  },
+  {
+    "id": "erDiagram.spec.js:550",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L550",
+    "source": "erDiagram\n      accTitle: graph title\n      accDescr { this graph is\n        about\n        stuff\n        }\n\n      TEACHER }o--o{ STUDENT : \"is teacher of\""
+  },
+  {
+    "id": "erDiagram.spec.js:567",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L567",
+    "source": "erDiagram\nCAR ||--o{ PERSON : \"insured for\"\nCAR }o--|| PERSON : \"owned by\""
+  },
+  {
+    "id": "erDiagram.spec.js:584",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L584",
+    "source": "erDiagram\nA ||--|{ B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:594",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L594",
+    "source": "erDiagram\nA ||..o{ B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:604",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L604",
+    "source": "erDiagram\nA |o..o{ B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:614",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L614",
+    "source": "erDiagram\nA |o--|{ B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:624",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L624",
+    "source": "erDiagram\nA }|--|| B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:634",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L634",
+    "source": "erDiagram\nA }o--|| B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:644",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L644",
+    "source": "erDiagram\nA }o..o| B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:654",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L654",
+    "source": "erDiagram\nA }|..o| B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:664",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L664",
+    "source": "erDiagram\nA |o..|| B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:674",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L674",
+    "source": "erDiagram\nA ||..|| B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:684",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L684",
+    "source": "erDiagram\nA ||--o| B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:694",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L694",
+    "source": "erDiagram\nA |o..o| B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:704",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L704",
+    "source": "erDiagram\nA }o--o{ B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:714",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L714",
+    "source": "erDiagram\nA }|..|{ B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:724",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L724",
+    "source": "erDiagram\nA }o--|{ B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:734",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L734",
+    "source": "erDiagram\nA }|..o{ B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:744",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L744",
+    "source": "erDiagram\nA one or zero to many B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:754",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L754",
+    "source": "erDiagram\nA one or many optionally to zero or one B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:764",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L764",
+    "source": "erDiagram\nA zero or more to zero or many B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:774",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L774",
+    "source": "erDiagram\nA many(0) to many(1) B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:784",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L784",
+    "source": "erDiagram\nA many optionally to one B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:794",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L794",
+    "source": "erDiagram\nA only one optionally to 1+ B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:804",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L804",
+    "source": "erDiagram\nA 0+ optionally to 1 B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:814",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L814",
+    "source": "erDiagram\nCUSTOMER 1--one or more DELIVERY-ADDRESS : has"
+  },
+  {
+    "id": "erDiagram.spec.js:825",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L825",
+    "source": "erDiagram\nCUSTOMER 1..one or more DELIVERY-ADDRESS : has"
+  },
+  {
+    "id": "erDiagram.spec.js:836",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L836",
+    "source": "erDiagram\nCUSTOMER 1.-one or more DELIVERY-ADDRESS : has"
+  },
+  {
+    "id": "erDiagram.spec.js:848",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L848",
+    "source": "erDiagram\nCUSTOMER 1-.one or more DELIVERY-ADDRESS : has"
+  },
+  {
+    "id": "erDiagram.spec.js:861",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L861",
+    "source": "erDiagram\na many to 1 1: label"
+  },
+  {
+    "id": "erDiagram.spec.js:886",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L886",
+    "source": "erDiagram\na many to 1 12: label"
+  },
+  {
+    "id": "erDiagram.spec.js:900",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L900",
+    "source": "erDiagram\nHOUSE ||--|{ ROOM : contains"
+  },
+  {
+    "id": "erDiagram.spec.js:906",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L906",
+    "source": "erDiagram\nHOUSE one to one ROOM : contains"
+  },
+  {
+    "id": "erDiagram.spec.js:912",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L912",
+    "source": "erDiagram\n PERSON ||..o{ POSSESSION : owns"
+  },
+  {
+    "id": "erDiagram.spec.js:918",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L918",
+    "source": "erDiagram\n PERSON many optionally to many POSSESSION : owns"
+  },
+  {
+    "id": "erDiagram.spec.js:926",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L926",
+    "source": "erDiagram\nA xxx B : has"
+  },
+  {
+    "id": "erDiagram.spec.js:932",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L932",
+    "source": "erDiagram\n        CUSTOMER\n        style CUSTOMER color:red\n      "
+  },
+  {
+    "id": "erDiagram.spec.js:942",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L942",
+    "source": "erDiagram\n        CUSTOMER\n        style CUSTOMER color:red,stroke:blue,fill:#f9f\n      "
+  },
+  {
+    "id": "erDiagram.spec.js:954",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L954",
+    "source": "erDiagram\n        CUSTOMER\n        style CUSTOMER color:red\n        style CUSTOMER fill:#f9f\n      "
+  },
+  {
+    "id": "erDiagram.spec.js:967",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L967",
+    "source": "erDiagram\nCUSTOMER\nclass CUSTOMER myClass"
+  },
+  {
+    "id": "erDiagram.spec.js:974",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L974",
+    "source": "erDiagram\nCUSTOMER\nclass CUSTOMER firstClass, secondClass, thirdClass"
+  },
+  {
+    "id": "erDiagram.spec.js:983",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L983",
+    "source": "erDiagram\nCUSTOMER\nclass CUSTOMER firstClass\nclass CUSTOMER secondClass"
+  },
+  {
+    "id": "erDiagram.spec.js:993",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L993",
+    "source": "erDiagram\n        ENTITY1\n        ENTITY2\n        classDef default fill:#f9f\n      "
+  },
+  {
+    "id": "erDiagram.spec.js:1020",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1020",
+    "source": "erDiagram\n        classDef myClass fill:#f9f, stroke: red, color: pink\n      "
+  },
+  {
+    "id": "erDiagram.spec.js:1044",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1044",
+    "source": "erDiagram\n        classDef firstClass,secondClass fill:#f9f, stroke: red, color: pink\n       "
+  },
+  {
+    "id": "erDiagram.spec.js:1075",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1075",
+    "source": "erDiagram\nCUSTOMER:::myClass"
+  },
+  {
+    "id": "erDiagram.spec.js:1083",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1083",
+    "source": "erDiagram\nCUSTOMER:::myClass {}"
+  },
+  {
+    "id": "erDiagram.spec.js:1091",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1091",
+    "source": "erDiagram\nCUSTOMER:::myClass {\nstring name\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:1100",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1100",
+    "source": "erDiagram\nCUSTOMER:::firstClass,secondClass"
+  },
+  {
+    "id": "erDiagram.spec.js:1109",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1109",
+    "source": "erDiagram\nc[CUSTOMER]:::myClass"
+  },
+  {
+    "id": "erDiagram.spec.js:1119",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1119",
+    "source": "erDiagram\nCUSTOMER:::myClass ||--o{ PERSON:::myClass : allows"
+  },
+  {
+    "id": "erDiagram.spec.js:1129",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1129",
+    "source": "erDiagram\nCUSTOMER ||--|{ ORDER : \"\""
+  },
+  {
+    "id": "erDiagram.spec.js:1135",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1135",
+    "source": "erDiagram\nCUSTOMER ||--|{ ORDER : \"places\""
+  },
+  {
+    "id": "erDiagram.spec.js:1141",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1141",
+    "source": "erDiagram\nCUSTOMER ||--|{ ORDER : places"
+  },
+  {
+    "id": "erDiagram.spec.js:1147",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1147",
+    "source": "erDiagram\nPROJECT u--o{ TEAM_MEMBER : \"parent\""
+  },
+  {
+    "id": "erDiagram.spec.js:1170",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1170",
+    "source": "erDiagram\nCUSTOMER }|..|{ DELIVERY-ADDRESS : has\n1"
+  },
+  {
+    "id": "erDiagram.spec.js:1174",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1174",
+    "source": "erDiagram\nCUSTOMER }|..|{ DELIVERY-ADDRESS : has\nu"
+  },
+  {
+    "id": "erDiagram.spec.js:1178",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1178",
+    "source": "erDiagram\nCUSTOMER }|..|{ DELIVERY-ADDRESS : has\n2.5"
+  },
+  {
+    "id": "erDiagram.spec.js:1179",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1179",
+    "source": "erDiagram\nCUSTOMER }|..|{ DELIVERY-ADDRESS : has\n1.5"
+  },
+  {
+    "id": "erDiagram.spec.js:1180",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1180",
+    "source": "erDiagram\nCUSTOMER }|..|{ DELIVERY-ADDRESS : has\n0.1"
+  },
+  {
+    "id": "erDiagram.spec.js:1181",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1181",
+    "source": "erDiagram\nCUSTOMER }|..|{ DELIVERY-ADDRESS : has\n99.99"
+  },
+  {
+    "id": "erDiagram.spec.js:1187",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1187",
+    "source": "erDiagram\nu {\nstring name\nint id\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:1191",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1191",
+    "source": "erDiagram\n1 {\nstring name\nint id\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:1195",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1195",
+    "source": "erDiagram\n2.5 {\nstring name\nint id\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:1196",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1196",
+    "source": "erDiagram\n1.5 {\nstring value\n}"
+  },
+  {
+    "id": "erDiagram.spec.js:1202",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1202",
+    "source": "erDiagram\nCUSTOMER ||--|| u : has"
+  },
+  {
+    "id": "erDiagram.spec.js:1203",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1203",
+    "source": "erDiagram\nu ||--|| ORDER : places"
+  },
+  {
+    "id": "erDiagram.spec.js:1204",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1204",
+    "source": "erDiagram\nu ||--|| v : connects"
+  },
+  {
+    "id": "erDiagram.spec.js:1208",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1208",
+    "source": "erDiagram\nCUSTOMER ||--|| 1 : has"
+  },
+  {
+    "id": "erDiagram.spec.js:1209",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1209",
+    "source": "erDiagram\n1 ||--|| ORDER : places"
+  },
+  {
+    "id": "erDiagram.spec.js:1210",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1210",
+    "source": "erDiagram\n1 ||--|| 2 : connects"
+  },
+  {
+    "id": "erDiagram.spec.js:1214",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1214",
+    "source": "erDiagram\nCUSTOMER ||--|| 2.5 : has"
+  },
+  {
+    "id": "erDiagram.spec.js:1215",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1215",
+    "source": "erDiagram\n1.5 ||--|| ORDER : places"
+  },
+  {
+    "id": "erDiagram.spec.js:1216",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1216",
+    "source": "erDiagram\n2.5 ||--|| 5.5 : connects"
+  },
+  {
+    "id": "erDiagram.spec.js:1222",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1222",
+    "source": "erDiagram\n              CUSTOMER ||--o{ 1 : places\n              1 ||--|{ u : contains\n              u {\n                string name\n                int quantity\n              }\n              \"2.5\" ||--|| ORDER : processes\n              ORDER {\n                int id\n                date created\n              }\n        "
+  },
+  {
+    "id": "erDiagram.spec.js:1240",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/er/parser/erDiagram.spec.js#L1240",
+    "source": "erDiagram\n              ENTITY {\n                string name1\n                int value2\n                float point3_5\n              }\n        "
+  }
+]

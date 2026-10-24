@@ -1,0 +1,67 @@
+[
+  {
+    "id": "lectern:3385f35-dash-chain",
+    "origin": "lectern 3385f35: an unlabelled chain is not a label",
+    "source": "flowchart LR\n  A --- B --- C\n"
+  },
+  {
+    "id": "lectern:3385f35-dotted-label",
+    "origin": "lectern 3385f35: a label may touch its dashes",
+    "source": "flowchart LR\n  A -.text.-> B\n  C ==text==> D\n"
+  },
+  {
+    "id": "lectern:3385f35-edge-to-subgraph",
+    "origin": "lectern 3385f35: an edge naming a subgraph",
+    "source": "flowchart LR\n  R --> S\n  subgraph S\n    A --> B\n  end\n"
+  },
+  {
+    "id": "lectern:5c77131-node-lists",
+    "origin": "lectern 5c77131: & node lists",
+    "source": "flowchart LR\n  A & B --> C & D\n"
+  },
+  {
+    "id": "lectern:5c77131-node-list-shapes",
+    "origin": "lectern 5c77131: & lists keep shapes and labels",
+    "source": "flowchart LR\n  A[(\"db\")] & B{{hex}} -. \"reads\" .-> C\n"
+  },
+  {
+    "id": "lectern:c2b866c-ampersand-label",
+    "origin": "lectern c2b866c: & inside a label",
+    "source": "flowchart LR\n  A[\"salt & pepper\"] --> B[R&D]\n"
+  },
+  {
+    "id": "lectern:4621696-semicolon-label",
+    "origin": "lectern 4621696: ; inside a quoted label",
+    "source": "flowchart LR\n  A[\"one; two\"] --> B\n"
+  },
+  {
+    "id": "lectern:47b1f8f-click",
+    "origin": "lectern 47b1f8f: click links",
+    "source": "flowchart LR\n  A --> B\n  click A \"https://example.com\" \"tip\"\n  click B href \"https://example.org\" _blank\n"
+  },
+  {
+    "id": "lectern:0f8ff97-character-reference",
+    "origin": "lectern 0f8ff97: character references",
+    "source": "flowchart LR\n  A[\"say #quot;hi#quot; #35;1\"] --> B\n"
+  },
+  {
+    "id": "lectern:br-and-backslash-n",
+    "origin": "lectern: both line-break spellings",
+    "source": "flowchart TD\n  A[\"one<br/>two\"] --> B[\"three\\nfour\"]\n"
+  },
+  {
+    "id": "lectern:kitchen-sink-1",
+    "origin": "lectern tests/fixtures/kitchen_sink.md",
+    "source": "flowchart LR\n    Open([Open file]) --> Parse[markdown-it-py]\n    Parse --> Walk{Node type?}\n    Walk -- block --> Buffer[(TextBuffer)]\n    Walk -- table --> Grid[[Gtk.Grid]]\n    Walk -. mermaid .-> Scene((Scene))\n    Buffer --> Show[Present window]\n    Grid --> Show\n    Scene --> Show\n"
+  },
+  {
+    "id": "lectern:kitchen-sink-2",
+    "origin": "lectern tests/fixtures/kitchen_sink.md",
+    "source": "flowchart TD\n    Watch[Watch the file] --> Changed{Changed?}\n    Changed -->|yes| Reload[Re-render]\n    Reload --> Watch\n    Changed -->|no| Watch\n"
+  },
+  {
+    "id": "lectern:kitchen-sink-3",
+    "origin": "lectern tests/fixtures/kitchen_sink.md",
+    "source": "flowchart TD\n    Source[\"Markdown\\nsource\"] --> Walk{Node type?}\n    subgraph Pass[\"One walk, two outputs\"]\n        subgraph Screen[\"Screen\"]\n            Buffer[(TextBuffer)]\n        end\n        subgraph Paper[\"Paper\"]\n            Model[\"print_model\\nPrintItem list\"]\n        end\n    end\n    Walk --> Buffer\n    Walk --> Model\n    Model ~~~ Note[\"Same walk, same order\"]\n"
+  }
+]

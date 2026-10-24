@@ -1,0 +1,657 @@
+[
+  {
+    "id": "sequenceDiagram.spec.js:10",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L10",
+    "source": "sequenceDiagram"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:99",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L99",
+    "source": "\n        sequenceDiagram\n        Alice->Bob:Hello Bob, how are you?\n        Bob-->Alice: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:158",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L158",
+    "source": "\n        sequenceDiagram\n        Alice->John:Hello John, how are you?\n        John-->Alice: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:193",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L193",
+    "source": "\n        sequenceDiagram\n        participant Alice\n        participant Bob\n        Alice ()->>() Bob: Hello Bob, how are you?\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:216",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L216",
+    "source": "\n        sequenceDiagram\n        participant Alice\n        participant Bob\n        Alice ()-->>() Bob: Hello Bob, how are you?\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:238",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L238",
+    "source": "\n        sequenceDiagram\n        participant Alice\n        participant Bob\n        Alice ->>() Bob: Hello Bob, how are you?\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:260",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L260",
+    "source": "\n        sequenceDiagram\n        participant Alice\n        participant Bob\n        Alice ()-->> Bob: Hello Bob, how are you?\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:282",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L282",
+    "source": "\n        sequenceDiagram\n        participant Alice\n        participant Bob\n        Alice ()->> Bob: Hello Bob, how are you?\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:304",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L304",
+    "source": "\n        sequenceDiagram\n        participant Alice\n        participant Bob\n        Alice ()<<-->>() Bob: Hello Bob, how are you?\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:326",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L326",
+    "source": "\n        sequenceDiagram\n        participant Alice\n        participant Bob\n        Alice ()<<->>() Bob: Hello Bob, how are you?\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:348",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L348",
+    "source": "\n        sequenceDiagram\n        participant Alice\n        participant Bob\n        participant Charlie\n        Alice ()->>() Bob: Message 1\n        Bob ()-->> Charlie: Message 2\n        Charlie ()<<-->>() Alice: Message 3\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:385",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L385",
+    "source": "\n        sequenceDiagram\n        participant Alice\n        participant Bob\n        Alice ()-x() Bob: Cross message\n        Alice ()--x() Bob: Dotted cross message\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:415",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L415",
+    "source": "\n        sequenceDiagram\n        participant Alice\n        participant Bob\n        Alice ->> Bob: Normal message\n        Bob -->> Alice: Normal dotted message\n        Alice -x Bob: Normal cross message\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:441",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L441",
+    "source": "\nsequenceDiagram\nAlice->Bob:Hello Bob, how are you?\nNote right of Bob: Bob thinks\nBob-->Alice: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:476",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L476",
+    "source": "\nsequenceDiagram\nautonumber\nAlice->Bob:Hello Bob, how are you?\nNote right of Bob: Bob thinks\nBob-->Alice: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:493",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L493",
+    "source": "\n        sequenceDiagram\n        autonumber 10.1 .01\n        Alice->Bob:Hello Bob, how are you?\n        Note right of Bob: Bob thinks\n        Bob-->Alice: I am good thanks!\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:512",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L512",
+    "source": "\n      sequenceDiagram\n      autonumber 10.001\n      Alice->Bob:Hello Bob, how are you?\n      Note right of Bob: Bob thinks\n      Bob-->Alice: I am good thanks!\n    "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:521",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L521",
+    "source": "\nsequenceDiagram\ntitle: Diagram Title\nAlice->Bob:Hello Bob, how are you?\nNote right of Bob: Bob thinks\nBob-->Alice: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:543",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L543",
+    "source": "\nsequenceDiagram\ntitle Diagram Title\nAlice->Bob:Hello Bob, how are you?\nNote right of Bob: Bob thinks\nBob-->Alice: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:565",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L565",
+    "source": "\nsequenceDiagram\ntitle: Diagram Title\naccTitle: This is the title\naccDescr: Accessibility Description\nAlice->Bob:Hello Bob, how are you?\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:578",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L578",
+    "source": "\nsequenceDiagram\naccTitle: This is the title\naccDescr {\nAccessibility\nDescription\n}\nAlice->Bob:Hello Bob, how are you?\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:593",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L593",
+    "source": "\nsequenceDiagram\nAlice->Bob:Hello Bob, how are - you?\nBob-->Alice: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:609",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L609",
+    "source": "\nsequenceDiagram\nAlice-in-Wonderland->Bob:Hello Bob, how are - you?\nBob-->Alice-in-Wonderland:I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:626",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L626",
+    "source": "\nsequenceDiagram\nparticipant Alice-in-Wonderland\nparticipant Bob\nAlice-in-Wonderland->Bob:Hello Bob, how are - you?\nBob-->Alice-in-Wonderland:I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:646",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L646",
+    "source": "\nsequenceDiagram\nparticipant Alice=Wonderland\nparticipant Bob\nAlice=Wonderland->Bob:Hello Bob, how are - you?\nBob-->Alice=Wonderland:I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:666",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L666",
+    "source": "\nsequenceDiagram\nparticipant A as Alice\nparticipant B as Bob\nA->B:Hello Bob, how are you?\nB-->A: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:685",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L685",
+    "source": "\nsequenceDiagram\n  actor Alice as Alice2\n  actor Bob\n  participant John as John2\n  participant Mandy\n  Alice->>Bob: Hi Bob\n  Bob->>Alice: Hi Alice\n  Alice->>John: Hi John\n  John->>Mandy: Hi Mandy\n  Mandy ->>Joan: Hi Joan"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:711",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L711",
+    "source": "\nsequenceDiagram\nactor A as Alice\nactor B as Bob\nA->B:Hello Bob, how are you?\nB-->A: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:729",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L729",
+    "source": "\nsequenceDiagram\nAlice-xBob:Hello Bob, how are you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:743",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L743",
+    "source": "\nsequenceDiagram\nAlice--xBob:Hello Bob, how are you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:757",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L757",
+    "source": "\nsequenceDiagram\nAlice-)Bob:Hello Bob, how are you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:771",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L771",
+    "source": "\nsequenceDiagram\nAlice--)Bob:Hello Bob, how are you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:785",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L785",
+    "source": "\nsequenceDiagram\nAlice->>Bob:Hello Bob, how are you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:799",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L799",
+    "source": "sequenceDiagram\nAlice-->>Bob:Hello Bob, how are you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:813",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L813",
+    "source": "\nsequenceDiagram\nAlice<<->>Bob:Hello Bob, how are you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:829",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L829",
+    "source": "\n    sequenceDiagram\n    Alice<<-->>Bob:Hello Bob, how are you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:845",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L845",
+    "source": "\nsequenceDiagram\nAlice-->>Bob:Hello Bob, how are you?\nactivate Bob\nBob-->>Alice:Hello Alice, I'm fine and  you?\ndeactivate Bob"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:867",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L867",
+    "source": "\n    sequenceDiagram\n    Alice-->>+Bob:Hello Bob, how are you?\n    Bob-->>- Alice:Hello Alice, I'm fine and  you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:888",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L888",
+    "source": "\n      sequenceDiagram\n      Alice-->>+Bob:Hello Bob, how are you?\n      Bob-->>+Carol:Carol, let me introduce Alice?\n      Bob-->>- Alice:Hello Alice, please meet Carol?\n      Carol->>- Bob:Oh Bob, I'm so happy to be here!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:932",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L932",
+    "source": "\n      sequenceDiagram\n      participant user as End User\n      participant Server as Server\n      participant System as System\n      participant System2 as System2\n\n      user->>+Server: Test\n      user->>+Server: Test2\n      user->>System: Test\n      Server->>-user: Test\n      Server->>-user: Test2\n\n      %% The following deactivation of Server will fail\n      Server->>-user: Test3"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:940",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L940",
+    "source": "\n      sequenceDiagram\n      Alice->Bob: Hello Bob, how are you?\n      %% Comment\n      Note right of Bob: Bob thinks\n      Bob-->Alice: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:958",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L958",
+    "source": "\n      sequenceDiagram\n      Alice->Bob: Hello Bob, how are you?\n\n      %% Comment\n      Note right of Bob: Bob thinks\n      Bob-->Alice: I am good thanks!\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:978",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L978",
+    "source": "\nsequenceDiagram;Alice->Bob: Hello Bob, how are you?;Note right of Bob: Bob thinks;Bob-->Alice: I am good thanks!;"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:992",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L992",
+    "source": "\nsequenceDiagram\n Alice->Bob: Hello Bob, how are you?\n\n%% Comment\nNote right of Bob: Bob thinks\nBob-->Alice: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1011",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1011",
+    "source": "\nsequenceDiagram\n   Alice->Bob: Hello Bob, how are you?\n\n%% Comment\nNote right of Bob: Bob thinks\nBob-->Alice: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1030",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1030",
+    "source": "\nsequenceDiagram\nparticipant Alice\nparticipant Bob\nAlice->John: Hello John, how are you?\n    loop Healthcheck\nJohn->John: Fight against hypochondria\n end\nNote right of John: Rational thoughts<br/>prevail...\n    John-->Alice: Great!\n    John->Bob: How about you?\nBob-->John: Jolly good!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1054",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1054",
+    "source": "\nsequenceDiagram\nparticipant 1 as multiline<br>text\nparticipant 2 as multiline<br/>text\nparticipant 3 as multiline<br />text\nparticipant 4 as multiline<br \t/>text\n1->>2: multiline<br>text\nnote right of 2: multiline<br>text\n2->>3: multiline<br/>text\nnote right of 3: multiline<br/>text\n3->>4: multiline<br />text\nnote right of 4: multiline<br />text\n4->>1: multiline<br \t/>text\nnote right of 1: multiline<br \t/>text\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1087",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1087",
+    "source": "\nsequenceDiagram\nparticipant 1\nparticipant 2\nparticipant 3\nparticipant 4\n1->>2: single-line text\nnote right of 2: single-line text\n2->>3:nowrap: single-line text\nnote right of 3:nowrap: single-line text\n3->>4: multiline<br/>text\nnote right of 4: multiline<br/>text\n4->>1:nowrap: multiline<br/>text\nnote right of 1:nowrap: multiline<br/>text\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1124",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1124",
+    "source": "\nsequenceDiagram\nparticipant 1\nparticipant 2\nparticipant 3\nparticipant 4\n1->>2:wrap: single-line text\nnote right of 2:wrap: single-line text\n2->>3:wrap: multiline<br/>text\nnote right of 3:wrap: multiline<br/>text\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1147",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1147",
+    "source": "\nsequenceDiagram\nparticipant 1\nparticipant 2\n1->>2: single-line text\nnote right of 2: single-line text\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1162",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1162",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nNote over Bob: Bob thinks\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1173",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1173",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nNote over Alice,Bob: confusion\nNote over Bob,Alice: resolution\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1187",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1187",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\n\n%% Comment\nNote right of Bob: Bob thinks\nloop Multiple happy responses\n\nBob-->Alice: I am good thanks!\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1209",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1209",
+    "source": "\n      sequenceDiagram\n        Alice->Bob: Hello Bob, how are you?\n        %% Comment\n        rect rgb(200, 255, 200)\n        Note right of Bob: Bob thinks\n        Bob-->Alice: I am good thanks\n        end\n    "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1232",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1232",
+    "source": "\n      sequenceDiagram\n        Alice->Bob: Hello Bob, how are you?\n        %% Comment\n        rect rgb(200, 255, 200)\n        rect rgb(0, 0, 0)\n        Note right of Bob: Bob thinks\n        end\n        Bob-->Alice: I am good thanks\n        end\n    "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1259",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1259",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\n\n%% Comment\nNote right of Bob: Bob thinks\nopt Perhaps a happy response\n\nBob-->Alice: I am good thanks!\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1281",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1281",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\n\n%% Comment\nNote right of Bob: Bob thinks\nalt isWell\n\nBob-->Alice: I am good thanks!\nelse isSick\nBob-->Alice: Feel sick...\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1306",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1306",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\n\n%% Comment\nNote right of Bob: Bob thinks\nalt isWell\n\nBob-->Alice: I am good thanks!\nelse isSick\nBob-->Alice: Feel sick...\nelse default\nBob-->Alice: :-)\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1333",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1333",
+    "source": "\nsequenceDiagram\n    critical Establish a connection to the DB\n        Service-->DB: connect\n    end"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1352",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1352",
+    "source": "\nsequenceDiagram\n    critical Establish a connection to the DB\n        Service-->DB: connect\n    option Network timeout\n        Service-->Service: Log error\n    option Credentials rejected\n        Service-->Service: Log different error\n    end"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1379",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1379",
+    "source": "\nsequenceDiagram\n    Consumer-->API: Book something\n    API-->BookingService: Start booking process\n    break when the booking process fails\n        API-->Consumer: show failure\n    end\n    API-->BillingService: Start billing process"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1404",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1404",
+    "source": "\nsequenceDiagram\npar Parallel one\nAlice->>Bob: Hello Bob, how are you?\nBob-->>Alice: I am good thanks!\nand Parallel two\nAlice->>Bob: Are you OK?\nBob-->>Alice: Fine!\nand Parallel three\nAlice->>Bob: What do you think about it?\nBob-->>Alice: It's good!\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1430",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1430",
+    "source": "\nsequenceDiagram\npar_over Parallel overlap\nAlice ->> Bob: Message\nNote left of Alice: Alice note\nNote right of Bob: Bob note\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1452",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1452",
+    "source": "sequenceDiagram\nAlice->Bob: -:<>,;# comment"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1458",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1458",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nNote right of Bob: -:<>,;# comment"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1467",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1467",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nloop -:<>,;# comment\nBob-->Alice: I am good thanks!\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1478",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1478",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nopt -:<>,;# comment\nBob-->Alice: I am good thanks!\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1489",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1489",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nalt -:<>,;# comment\nBob-->Alice: I am good thanks!\nelse ,<>:-#; comment\nBob-->Alice: I am good thanks!\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1503",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1503",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\npar -:<>,;# comment\nBob-->Alice: I am good thanks!\nand ,<>:-#; comment\nBob-->Alice: I am good thanks!\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1517",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1517",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nloop\nBob-->Alice: I am good thanks!\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1529",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1529",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nopt # comment\nBob-->Alice: I am good thanks!\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1541",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1541",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nalt;Bob-->Alice: I am good thanks!\nelse # comment\nBob-->Alice: I am good thanks!\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1556",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1556",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\npar;Bob-->Alice: I am good thanks!\nand # comment\nBob-->Alice: I am good thanks!\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1572",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1572",
+    "source": "\nsequenceDiagram\nparticipant a as Alice\nparticipant b as Bob\nparticipant c as Charlie\nlinks a: { \"Repo\": \"https://repo.contoso.com/\", \"Dashboard\": \"https://dashboard.contoso.com/\" }\nlinks b: { \"Dashboard\": \"https://dashboard.contoso.com/\" }\nlinks a: { \"On-Call\": \"https://oncall.contoso.com/?svc=alice\" }\nlink a: Endpoint @ https://alice.contoso.com\nlink a: Swagger @ https://swagger.contoso.com\nlink a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1599",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1599",
+    "source": "\nsequenceDiagram\nparticipant a as Alice\nparticipant b as Bob\nparticipant c as Charlie\nproperties a: {\"class\": \"internal-service-actor\", \"icon\": \"@clock\"}\nproperties b: {\"class\": \"external-service-actor\", \"icon\": \"@computer\"}\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1617",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1617",
+    "source": "\nsequenceDiagram\nbox green Group 1\nparticipant a as Alice\nparticipant b as Bob\nend\nparticipant c as Charlie\nlinks a: { \"Repo\": \"https://repo.contoso.com/\", \"Dashboard\": \"https://dashboard.contoso.com/\" }\nlinks b: { \"Dashboard\": \"https://dashboard.contoso.com/\" }\nlinks a: { \"On-Call\": \"https://oncall.contoso.com/?svc=alice\" }\nlink a: Endpoint @ https://alice.contoso.com\nlink a: Swagger @ https://swagger.contoso.com\nlink a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1639",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1639",
+    "source": "\n  sequenceDiagram\n  box Group 1\n  participant a as Alice\n  participant b as Bob\n  end\n  participant c as Charlie\n  links a: { \"Repo\": \"https://repo.contoso.com/\", \"Dashboard\": \"https://dashboard.contoso.com/\" }\n  links b: { \"Dashboard\": \"https://dashboard.contoso.com/\" }\n  links a: { \"On-Call\": \"https://oncall.contoso.com/?svc=alice\" }\n  link a: Endpoint @ https://alice.contoso.com\n  link a: Swagger @ https://swagger.contoso.com\n  link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com\n  "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1661",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1661",
+    "source": "\n  sequenceDiagram\n  box aqua\n  participant a as Alice\n  participant b as Bob\n  end\n  participant c as Charlie\n  links a: { \"Repo\": \"https://repo.contoso.com/\", \"Dashboard\": \"https://dashboard.contoso.com/\" }\n  links b: { \"Dashboard\": \"https://dashboard.contoso.com/\" }\n  links a: { \"On-Call\": \"https://oncall.contoso.com/?svc=alice\" }\n  link a: Endpoint @ https://alice.contoso.com\n  link a: Swagger @ https://swagger.contoso.com\n  link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com\n  "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1683",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1683",
+    "source": "\n  sequenceDiagram\n  participant a as Alice\n  a ->>b: Hello Bob?\n  create participant c\n  b-->>c: Hello c!\n  c ->> b: Hello b?\n  create actor d as Donald\n  a ->> d: Hello Donald?\n  "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1705",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1705",
+    "source": "\n  sequenceDiagram\n  participant a as Alice\n  a ->>b: Hello Bob?\n  destroy a\n  b-->>a: Hello Alice!\n  b ->> c: Where is Alice?\n  destroy c\n  b ->> c: Where are you?\n  "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1720",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1720",
+    "source": "\n  sequenceDiagram\n  a ->>b: Hello Bob?\n  create participant c\n  b ->>c: Hello c!\n  c ->> b: Hello b?\n  destroy c\n  b ->> c : Bye c !\n  "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1756",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1756",
+    "source": "\n      sequenceDiagram\n      Alice->Bob:Hello Bob, how are you?\n      Bob-->Alice: I am good thanks!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1915",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1915",
+    "source": "\nsequenceDiagram\nparticipant Alice"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1927",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1927",
+    "source": "\nsequenceDiagram\nparticipant Alice\nparticipant Alice\nparticipant Alice\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1943",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1943",
+    "source": "\nsequenceDiagram\nparticipant Alice\nNote over Alice: Alice thinks\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1961",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1961",
+    "source": "\nsequenceDiagram\nparticipant Alice\nNote left of Alice: Alice thinks"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1977",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1977",
+    "source": "\nsequenceDiagram\nparticipant Alice\nNote right of Alice: Alice thinks"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:1992",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L1992",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2009",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2009",
+    "source": "\nsequenceDiagram\nbox rgb(34, 56, 0) Group1\nparticipant Alice\nparticipant Bob\nend\nAlice->Bob: Hello Bob, how are you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2023",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2023",
+    "source": "\n%%{init: {'logLevel': 0}}%%\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2042",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2042",
+    "source": "\n%%{init: { 'logLevel': 0}}%%\nsequenceDiagram\n%%{wrap}%%\nAlice->Bob: Hello Bob, how are you?"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2063",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2063",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nNote over Alice,Bob: Looks\nNote over Bob,Alice: Looks back\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2079",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2079",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nBob->Alice: Fine!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2095",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2095",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nNote right of Bob: Bob thinks\nBob->Alice: Fine!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2114",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2114",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nNote left of Alice: Bob thinks\nBob->Alice: Fine!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2131",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2131",
+    "source": "\nsequenceDiagram\nAlice->>Bob:wrap: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!\nNote left of Alice: Bob thinks\nBob->>Alice: Fine!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2152",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2152",
+    "source": "\n%%{init: { 'theme': 'dark' } }%%\nsequenceDiagram\n%%{wrap}%%\nAlice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!\nNote left of Alice: Bob thinks\nBob->>Alice: Fine!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2176",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2176",
+    "source": "\n%%{init:{'theme':'dark'}}%%\nsequenceDiagram\n%%{wrap}%%\nAlice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!\nNote left of Alice: Bob thinks\nBob->>Alice: Fine!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2200",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2200",
+    "source": "\n    %%{init: { \"theme\": \"dark\", 'config': { \"fontFamily\": \"Menlo\", \"fontSize\": 18, \"messageFontWeight\": 400, \"wrap\": true }}}%%\nsequenceDiagram\nAlice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!\nNote left of Alice: Bob thinks\nBob->>Alice: Fine!"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2226",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2226",
+    "source": "\nsequenceDiagram\nAlice->Bob: Hello Bob, how are you?\nloop Cheers\nBob->Alice: Fine!\nend"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2243",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2243",
+    "source": "\n      sequenceDiagram\n        Alice->Bob: Hello Bob, are you alright?\n        rect rgb(0, 0, 0)\n          Bob->Alice: I feel surrounded by darkness\n        end\n    "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2262",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2262",
+    "source": "\n      sequenceDiagram\n      autonumber 10.01 .01\n      Alice->Bob:Hello Bob, how are you?\n      Bob-->Alice: I am good thanks!\n      Alice-->Bob: Have a good day!\n    "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2279",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2279",
+    "source": "\n      sequenceDiagram\n      autonumber 10.1 .1\n      Alice->Bob:Hello Bob, how are you?\n      Bob-->Alice: I am good thanks!\n      Alice-->Bob: Have a good day!\n    "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2375",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2375",
+    "source": "\nsequenceDiagram\nAlice->>Bob:\nBob->>Alice:Got it!\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2389",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2389",
+    "source": "\n    sequenceDiagram\n    actor Bob\n    actor Alice\n        Bob -|\\ Alice: Hello Alice, how are you?\n        Bob -|/ Alice: Hello Alice, how are you?\n        Bob -// Alice: Hello Alice, how are you?\n        Bob -\\\\ Alice: Hello Alice, how are you?\n        \n        Bob \\|- Alice: Hello Alice, how are you?\n        Bob /|- Alice: Hello Alice, how are you?\n        Bob //- Alice: Hello Alice, how are you?\n        Bob \\\\- Alice: Hello Alice, how are you?        \n    "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2408",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2408",
+    "source": "\n    sequenceDiagram\n    actor Bob\n    actor Alice\n      Alice ()<<->>() Bob: hey?\n    "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2419",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2419",
+    "source": "\n  sequenceDiagram\n      participant Alice@{ \"type\" : \"database\" }\n      participant Bob@{ \"type\" : \"database\" }\n      participant Carl@{ type: \"database\" }\n      participant David@{ \"type\" : 'database' }\n      participant Eve@{ type: 'database' }\n      participant Favela@{ \"type\" : \"database\"    }\n      Bob->>+Alice: Hi Alice\n      Alice->>+Bob: Hi Bob\n    "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2463",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2463",
+    "source": "\n    sequenceDiagram\n        participant lead\n        participant dsa@{ \"type\" : \"queue\" }\n        API->>+Database: getUserb\n        Database-->>-API: userb\n        dsa --> Database: hello\n"
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2520",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2520",
+    "source": "\n    sequenceDiagram\n      participant D@{ \"type: \"entity\" }\n      participant E@{ \"type\": \"dat\n      abase }\n  "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2536",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2536",
+    "source": "\n    sequenceDiagram\n      participant C@{ \"type\" \"control\" }\n      C ->> C: action\n  "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2552",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2552",
+    "source": "\n    sequenceDiagram\n      participant E@{ \"type\": \"entity\"\n      E ->> E: process\n  "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2561",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2561",
+    "source": "\n          sequenceDiagram\n          participant boundary@{ \"type\" : \"boundary\" }\n          boundary->boundary: test\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2572",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2572",
+    "source": "\n        sequenceDiagram\n         participant C@{ \"type\" : \"control\" }\n        C->C: test\n        "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2583",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2583",
+    "source": "\n      sequenceDiagram\n      participant E@{ \"type\" : \"entity\" }\n      E->E: test\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2594",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2594",
+    "source": "\n      sequenceDiagram\n      participant D@{ \"type\" : \"database\" }\n      D->D: test\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2605",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2605",
+    "source": "\n      sequenceDiagram\n      participant L@{ \"type\" : \"collections\" }\n      L->L: test\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2616",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2616",
+    "source": "\n      sequenceDiagram\n      participant Q@{ \"type\" : \"queue\" }\n      Q->Q: test \n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2629",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2629",
+    "source": "\n      sequenceDiagram\n      participant A@{ \"type\" : \"queue\" }\n      A->A: test\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2640",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2640",
+    "source": "\n      sequenceDiagram\n      participant P@{ \"type\" : \"database\" }\n      P->P: test\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2651",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2651",
+    "source": "\n      sequenceDiagram\n        participant Alice@{ \"type\" : \"collections\" }\n        participant Bob@{ \"type\" : \"control\" }\n        Alice->>Bob: Hello Bob, how are you?\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2664",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2664",
+    "source": "\n      sequenceDiagram\n      participant C@{ \"type\" : \"control\" }\n      C->C: test\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2687",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2687",
+    "source": "\n        sequenceDiagram\n        participant SAS MyServiceWithMoreThan20Chars <br> service decription\n       "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2700",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2700",
+    "source": "\n          sequenceDiagram\n          participant X_AutoPublishable asAAAAAAAAAAAAA:AAAAAAAAAAAAA\n        "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2712",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2712",
+    "source": "\n      sequenceDiagram\n      participant Alice@{ \"type\" : \"boundary\" } as Public API\n      participant Bob@{ \"type\" : \"control\" } as Controller\n      Alice->>Bob: Request\n      Bob-->>Alice: Response\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2727",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2727",
+    "source": "\n      sequenceDiagram\n      actor A@{ \"type\" : \"database\" } AS Database Server\n      actor B@{ \"type\" : \"queue\" } as Message Queue\n      A->>B: Send message\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2741",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2741",
+    "source": "\n      sequenceDiagram\n      participant API@{ \"type\" : \"boundary\" } AS Public API\n      API->>API: test\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2752",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2752",
+    "source": "\n      sequenceDiagram\n      participant API@{ \"type\" : \"boundary\", \"alias\": \"Public API\" }\n      participant Auth@{ \"type\" : \"control\", \"alias\": \"Auth Controller\" }\n      API->>Auth: Request\n      Auth-->>API: Response\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2767",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2767",
+    "source": "\n      sequenceDiagram\n      actor U@{ \"type\" : \"actor\", \"alias\": \"End User\" }\n      actor DB@{ \"type\" : \"database\", \"alias\": \"User Database\" }\n      U->>DB: Query\n      DB-->>U: Result\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2782",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2782",
+    "source": "\n      sequenceDiagram\n      participant API@{ \"type\" : \"boundary\", \"alias\": \"Internal Name\" } as External Name\n      API->>API: test\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2793",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2793",
+    "source": "\n      sequenceDiagram\n      participant API@{ \"alias\": \"Public API\" }\n      API->>API: test\n      "
+  },
+  {
+    "id": "sequenceDiagram.spec.js:2803",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/sequence/sequenceDiagram.spec.js#L2803",
+    "source": "\n      sequenceDiagram\n      participant A@{ \"type\" : \"boundary\", \"alias\": \"Service A\" }\n      participant B@{ \"type\" : \"control\" } as Service B\n      participant C@{ \"type\" : \"database\" }\n      A->>B: Request\n      B->>C: Query\n      "
+  }
+]
