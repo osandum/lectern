@@ -79,6 +79,23 @@
   </requires>
 
   <releases>
+    <release version="0.4.5" date="2026-10-25">
+      <description>
+        <p>
+          Mermaid diagrams look much more like they do on GitHub. Flowchart
+          edges are drawn at right angles, attach near the middle of a
+          node and hop over each other where they cross; long edges are
+          routed around boxes, there are fewer crossings, and cylinders and
+          edges to subgraphs are drawn. More of the syntax is understood
+          too, such as &amp; node lists and full class declarations.
+        </p>
+        <p>
+          The About dialog now shows build details for bug reports, notes
+          for earlier releases, and a Report an Issue link under
+          Troubleshooting.
+        </p>
+      </description>
+    </release>
     <release version="0.4.4" date="2026-10-17">
       <description>
         <p>
