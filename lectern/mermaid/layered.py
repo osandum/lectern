@@ -447,6 +447,7 @@ def place(layers, up, down, vertical, rank_gaps, paths=None, rank=None):
                         positions[cells_by_key[k].key][0] for k in keys) / len(keys)
             separate(layer)
 
+    straighten(layers, up, down, positions, vertical)
     fence_groups(layers, positions, paths, vertical, rank)
 
     # Nothing above pins the diagram to the origin; shift it there so the
@@ -461,6 +462,45 @@ def place(layers, up, down, vertical, rank_gaps, paths=None, rank=None):
                 cell.x, cell.y = cross, rank
             else:
                 cell.x, cell.y = rank, cross
+
+
+def straighten(layers, up, down, positions, vertical):
+    """Line up the two ends of each edge that is the only one either end
+    has on that side, by moving one of them within the room its layer
+    leaves it, pushing nothing.
+
+    The sweeps in `place` end pulling one way, so a layer packed tight
+    against its neighbours can't follow the last pull and leaves the
+    edges out of it bent, while the cells at their other ends had the
+    room to come to meet them. A cell is left alone where moving would
+    bend an edge on its other side that is straight now.
+    """
+    def straight(key, keys):
+        return any(abs(positions[key][0] - positions[k][0]) < 0.5 for k in keys)
+
+    for _pass in range(2):
+        for mine, theirs in ((up, down), (down, up)):
+            for layer in layers:
+                for index, cell in enumerate(layer):
+                    keys = mine[cell.key]
+                    if len(keys) != 1 or len(theirs[keys[0]]) != 1:
+                        continue
+                    target = positions[keys[0]][0]
+                    if abs(positions[cell.key][0] - target) < 0.5 \
+                            or straight(cell.key, theirs[cell.key]):
+                        continue
+                    half = _cross_size(cell, vertical) / 2
+                    low, high = float("-inf"), float("inf")
+                    if index > 0:
+                        prev = layer[index - 1]
+                        low = positions[prev.key][0] + _cross_size(prev, vertical) / 2 \
+                            + NODE_GAP + half
+                    if index < len(layer) - 1:
+                        following = layer[index + 1]
+                        high = positions[following.key][0] \
+                            - _cross_size(following, vertical) / 2 - NODE_GAP - half
+                    if low - 0.5 <= target <= high + 0.5:
+                        positions[cell.key][0] = target
 
 
 def fence_groups(layers, positions, paths, vertical, rank=None):

@@ -723,6 +723,25 @@ def test_a_crowded_side_squeezes_its_ports_to_keep_an_edge_straight(monkeypatch)
     assert sum(1 for points in routes if len(points) == 2) >= 3
 
 
+# The sources are packed tight across their layer, so the last sweep,
+# pulling them toward their targets, can't line them up; the targets have
+# the room to come to meet them.
+PACKED_SOURCES = """flowchart LR
+  FA["app"]
+  FA -- "SMTP :1025" --> SNLB["internal NLB"] --> MP["mailpit<br/>(catches all mail)"]
+  FA -- "HTTP :80" --> DALB["internal ALB"] --> DMS["proxy"] --> GW(("AS4<br/>gateway"))
+  BR(("on-prem")) -- "nightly dumps" --> S3[("dump")]
+  FIVE(("Fivetran → Snowflake")) -- "5432" --> PG[("Postgres")]
+  ECS["ECS tasks"] -- "logs, metrics, APM" --> DD(("Datadog"))
+"""
+
+
+def test_a_one_to_one_edge_runs_straight_where_its_target_has_room(monkeypatch):
+    routes = square_routes(PACKED_SOURCES, monkeypatch)
+    # All but the two out of "app", which fan out of one node.
+    assert sum(1 for points in routes if len(points) == 2) == len(routes) - 2
+
+
 def test_rounded_corners_keep_the_end_segments():
     route = [(0.0, 0.0), (0.0, 50.0), (80.0, 50.0), (80.0, 100.0)]
     path = layered.rounded(route)
