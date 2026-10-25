@@ -157,21 +157,35 @@ class Measurer:
         self.wrap_px = self.char_px * WRAP_CHARS
         self.line_px = (metrics.get_ascent() + metrics.get_descent()) / Pango.SCALE
 
-    def size(self, text, *, bold=False, italic=False, mono=False, wrap=True, scale=1.0):
+    def wraps_at_spaces(self, text, max_px):
+        """Whether `text` wrapped at `max_px` breaks only between words:
+        Pango also breaks after a hyphen, and inside a word too long for
+        the line."""
+        layout = make_layout(self._context, self.base_font, self.font_px, text,
+                             max_px=max_px)
+        shown = layout.get_text().encode()
+        return all(shown[line.start_index - 1:line.start_index].isspace()
+                   for line in layout.get_lines_readonly()[1:])
+
+    def size(self, text, *, bold=False, italic=False, mono=False, wrap=True, scale=1.0,
+             max_px=None):
         """(width, height) of `text` as it will be drawn. Empty text still
         gets one line's height, so an unlabelled node isn't a sliver.
 
         `scale` must match the scene.Text's own -- it is the size the
         string is measured *and* drawn at, not a post-hoc adjustment.
+        `max_px` wraps at a width other than the usual `wrap_px`.
         """
-        key = (text, bold, italic, mono, wrap, scale)
+        if wrap and max_px is None:
+            max_px = self.wrap_px
+        key = (text, bold, italic, mono, wrap, scale, max_px)
         cached = self._cache.get(key)
         if cached is not None:
             return cached
         layout = make_layout(
             self._context, self.base_font, self.font_px * scale, text,
             bold=bold, italic=italic, mono=mono,
-            max_px=self.wrap_px if wrap else None,
+            max_px=max_px if wrap else None,
         )
         width, height = layout.get_pixel_size()
         size = (float(width), float(max(height, self.line_px * scale)))

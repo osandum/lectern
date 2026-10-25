@@ -742,6 +742,30 @@ def test_a_one_to_one_edge_runs_straight_where_its_target_has_room(monkeypatch):
     assert sum(1 for points in routes if len(points) == 2) == len(routes) - 2
 
 
+def circle_lines(label):
+    """How many lines a circle node's label is drawn on."""
+    measurer = textlib.Measurer(mermaid.ui_font())
+    return round(flowchart._circle_text_size(label, measurer)[1] / measurer.line_px)
+
+
+def test_a_circle_wraps_its_label_to_a_square_block():
+    # On one line, the widest the usual wrap allows, the circle would be
+    # mostly empty above and below the text.
+    assert circle_lines("Fivetran → Snowflake") == 2
+    scene = build('flowchart LR\n  A(("Fivetran → Snowflake"))\n')
+    wide = build('flowchart LR\n  A["Fivetran → Snowflake"]\n')
+    assert scene.width < wide.width
+
+
+def test_a_circle_keeps_its_authors_line_breaks():
+    assert circle_lines("SKAT AS4<br/>gateway".replace("<br/>", "\n")) == 2
+
+
+def test_a_circle_wraps_its_label_only_between_words():
+    # Pango would break after the hyphen: "BR on-" / "prem".
+    assert circle_lines("BR on-prem") == 1
+
+
 def test_rounded_corners_keep_the_end_segments():
     route = [(0.0, 0.0), (0.0, 50.0), (80.0, 50.0), (80.0, 100.0)]
     path = layered.rounded(route)

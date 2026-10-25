@@ -485,8 +485,37 @@ def _cylinder_cap(width):
     return width / 2 / (2.5 + width / 50)
 
 
+def _circle_text_size(text, measurer):
+    """(width, height) of a circle's label, wrapped to the block that
+    needs the smallest circle.
+
+    The usual wrap width suits a box, which grows only as wide as its
+    text; a circle grows as tall as it is wide, so one long line leaves it
+    mostly empty above and below. Narrower is tried a character at a time,
+    breaking only between words. A label the author broke into lines is
+    left as written.
+    """
+    best = measurer.size(text)
+    if "\n" in text or len(text.split()) < 2:
+        return best
+    max_px = best[0] - measurer.char_px
+    while max_px > 0:
+        size = measurer.size(text, max_px=max_px)
+        if max(size) < max(best) and measurer.wraps_at_spaces(text, max_px):
+            best = size
+        max_px = min(max_px, size[0]) - measurer.char_px
+    return best
+
+
+def _text_size(node, measurer):
+    """(width, height) of `node`'s label as it is drawn in it."""
+    if node.shape == "circle":
+        return _circle_text_size(node.text, measurer)
+    return measurer.size(node.text)
+
+
 def _size_node(node, measurer):
-    text_w, text_h = measurer.size(node.text)
+    text_w, text_h = _text_size(node, measurer)
     width = max(MIN_NODE_W, text_w + 2 * NODE_PAD_X)
     height = text_h + 2 * NODE_PAD_Y
     shape = node.shape
@@ -826,7 +855,7 @@ def _build_scene(chart, measurer):
     for node in chart.nodes.values():
         for shape in _node_shapes(node):
             scene.add(shape)
-        text_w, text_h = measurer.size(node.text)
+        text_w, text_h = _text_size(node, measurer)
         # Centred in a cylinder's body: below the rim, not in the box.
         text_y = node.y + (_cylinder_cap(node.w) / 2 if node.shape == "cylinder" else 0.0)
         scene.add(sc.Text(
