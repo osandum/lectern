@@ -466,41 +466,86 @@ def place(layers, up, down, vertical, rank_gaps, paths=None, rank=None):
 
 def straighten(layers, up, down, positions, vertical):
     """Line up the two ends of each edge that is the only one either end
-    has on that side, by moving one of them within the room its layer
-    leaves it, pushing nothing.
+    has on that side.
 
     The sweeps in `place` end pulling one way, so a layer packed tight
     against its neighbours can't follow the last pull and leaves the
-    edges out of it bent, while the cells at their other ends had the
-    room to come to meet them. A cell is left alone where moving would
-    bend an edge on its other side that is straight now.
+    edges out of it bent, while the cells at their other ends may have
+    the room to come to meet them -- or could make it, by pushing their
+    neighbours where those have room in turn. Of the two ends, the one
+    moving the diagram least comes to the other. Cells joined by such
+    edges that are straight already move as one block, so straightening
+    one edge never bends another of them.
     """
-    def straight(key, keys):
-        return any(abs(positions[key][0] - positions[k][0]) < 0.5 for k in keys)
+    def one_to_one(key):
+        """The cells `key` has a one-to-one edge with."""
+        return [k for k in up[key] if len(up[key]) == 1 and len(down[k]) == 1] \
+            + [k for k in down[key] if len(down[key]) == 1 and len(up[k]) == 1]
+
+    def blocks():
+        block = {}
+        for layer in layers:
+            for cell in layer:
+                if cell.key in block:
+                    continue
+                block[cell.key] = cell.key
+                stack = [cell.key]
+                while stack:
+                    key = stack.pop()
+                    for k in one_to_one(key):
+                        if k not in block \
+                                and abs(positions[k][0] - positions[key][0]) < 0.5:
+                            block[k] = cell.key
+                            stack.append(k)
+        members = {}
+        for key, root in block.items():
+            members.setdefault(root, []).append(key)
+        return block, members
+
+    where = {cell.key: (layer, index)
+             for layer in layers for index, cell in enumerate(layer)}
+
+    def shifts(root, delta, block, members):
+        """Block -> how far it must move for `root`'s to move `delta`."""
+        sign = 1 if delta > 0 else -1
+        need = {root: delta}
+        queue = [root]
+        while queue:
+            current = queue.pop()
+            for key in members[current]:
+                layer, index = where[key]
+                if not 0 <= index + sign < len(layer):
+                    continue
+                cell, other = layer[index], layer[index + sign]
+                apart = _cross_size(cell, vertical) / 2 + NODE_GAP \
+                    + _cross_size(other, vertical) / 2
+                theirs = block[other.key]
+                gap = (positions[other.key][0] - positions[key][0]) * sign
+                push = need[current] * sign - (gap - apart)
+                if push > abs(need.get(theirs, 0.0)) + 1e-6:
+                    need[theirs] = push * sign
+                    queue.append(theirs)
+        return need
 
     for _pass in range(2):
-        for mine, theirs in ((up, down), (down, up)):
-            for layer in layers:
-                for index, cell in enumerate(layer):
-                    keys = mine[cell.key]
-                    if len(keys) != 1 or len(theirs[keys[0]]) != 1:
+        for layer in layers:
+            for cell in layer:
+                for key in one_to_one(cell.key):
+                    delta = positions[key][0] - positions[cell.key][0]
+                    if abs(delta) < 0.5:
                         continue
-                    target = positions[keys[0]][0]
-                    if abs(positions[cell.key][0] - target) < 0.5 \
-                            or straight(cell.key, theirs[cell.key]):
+                    block, members = blocks()
+                    if block[key] == block[cell.key]:
                         continue
-                    half = _cross_size(cell, vertical) / 2
-                    low, high = float("-inf"), float("inf")
-                    if index > 0:
-                        prev = layer[index - 1]
-                        low = positions[prev.key][0] + _cross_size(prev, vertical) / 2 \
-                            + NODE_GAP + half
-                    if index < len(layer) - 1:
-                        following = layer[index + 1]
-                        high = positions[following.key][0] \
-                            - _cross_size(following, vertical) / 2 - NODE_GAP - half
-                    if low - 0.5 <= target <= high + 0.5:
-                        positions[cell.key][0] = target
+                    # Whichever end moves the diagram least comes to the other.
+                    need = min(
+                        (shifts(block[cell.key], delta, block, members),
+                         shifts(block[key], -delta, block, members)),
+                        key=lambda need: sum(abs(moved) * len(members[root])
+                                             for root, moved in need.items()))
+                    for root, moved in need.items():
+                        for k in members[root]:
+                            positions[k][0] += moved
 
 
 def fence_groups(layers, positions, paths, vertical, rank=None):
