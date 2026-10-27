@@ -742,6 +742,27 @@ def test_a_one_to_one_edge_runs_straight_where_its_target_has_room(monkeypatch):
     assert sum(1 for points in routes if len(points) == 2) == len(routes) - 2
 
 
+def test_fencing_a_group_keeps_a_straight_edge_straight():
+    # A long edge passing a frame, one of its virtuals grown for a label:
+    # pushed clear of the frame cell by cell, the wide one went further
+    # than the rest and the edge came out kinked beside the frame.
+    from types import SimpleNamespace
+    def node(key, rank, w):
+        return SimpleNamespace(key=key, w=w, h=20.0, x=0.0, y=0.0, rank=rank, order=0)
+    # The frame is as wide as G0 in both layers, so V1, packed against
+    # the narrow G1, starts out inside it.
+    g0, g1 = node("G0", 0, 200.0), node("G1", 1, 20.0)
+    v0, v1 = layered.Virtual("v0", 0), layered.Virtual("v1", 1)
+    v1.w = 73.0
+    layers = [[v0, g0], [v1, g1]]
+    up = {"G0": [], "G1": [], "v0": [], "v1": ["v0"]}
+    down = {"G0": [], "G1": [], "v0": ["v1"], "v1": []}
+    paths = {"G0": ("g",), "G1": ("g",)}
+    layered.place(layers, up, down, True, [46.0, 46.0], paths, {"g": 0})
+    assert v0.x == pytest.approx(v1.x)
+    assert v1.x + v1.w / 2 + layered.NODE_GAP <= g0.x - g0.w / 2 + 1e-6
+
+
 def circle_lines(label):
     """How many lines a circle node's label is drawn on."""
     measurer = textlib.Measurer(mermaid.ui_font())

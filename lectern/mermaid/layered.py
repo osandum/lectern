@@ -448,7 +448,8 @@ def place(layers, up, down, vertical, rank_gaps, paths=None, rank=None):
             separate(layer)
 
     straighten(layers, up, down, positions, vertical)
-    fence_groups(layers, positions, paths, vertical, rank)
+    block, _members = straight_blocks(layers, up, down, positions, paths)
+    fence_groups(layers, positions, paths, vertical, rank, block)
 
     # Nothing above pins the diagram to the origin; shift it there so the
     # scene's own box starts at (0, 0).
@@ -464,6 +465,39 @@ def place(layers, up, down, vertical, rank_gaps, paths=None, rank=None):
                 cell.x, cell.y = rank, cross
 
 
+def _one_to_one(up, down, key):
+    """The cells `key` has a one-to-one edge with."""
+    return [k for k in up[key] if len(up[key]) == 1 and len(down[k]) == 1] \
+        + [k for k in down[key] if len(down[key]) == 1 and len(up[k]) == 1]
+
+
+def straight_blocks(layers, up, down, positions, paths=None):
+    """Cells joined by one-to-one edges that are already straight, as
+    (key -> its block's root, root -> the block's keys). A block is a
+    chain with one cell per layer. With `paths` (see group_paths), only
+    cells in the same groups join one."""
+    paths = paths or {}
+    block = {}
+    for layer in layers:
+        for cell in layer:
+            if cell.key in block:
+                continue
+            block[cell.key] = cell.key
+            stack = [cell.key]
+            while stack:
+                key = stack.pop()
+                for k in _one_to_one(up, down, key):
+                    if k not in block \
+                            and abs(positions[k][0] - positions[key][0]) < 0.5 \
+                            and paths.get(k, ()) == paths.get(key, ()):
+                        block[k] = cell.key
+                        stack.append(k)
+    members = {}
+    for key, root in block.items():
+        members.setdefault(root, []).append(key)
+    return block, members
+
+
 def straighten(layers, up, down, positions, vertical):
     """Line up the two ends of each edge that is the only one either end
     has on that side.
@@ -477,30 +511,8 @@ def straighten(layers, up, down, positions, vertical):
     edges that are straight already move as one block, so straightening
     one edge never bends another of them.
     """
-    def one_to_one(key):
-        """The cells `key` has a one-to-one edge with."""
-        return [k for k in up[key] if len(up[key]) == 1 and len(down[k]) == 1] \
-            + [k for k in down[key] if len(down[key]) == 1 and len(up[k]) == 1]
-
     def blocks():
-        block = {}
-        for layer in layers:
-            for cell in layer:
-                if cell.key in block:
-                    continue
-                block[cell.key] = cell.key
-                stack = [cell.key]
-                while stack:
-                    key = stack.pop()
-                    for k in one_to_one(key):
-                        if k not in block \
-                                and abs(positions[k][0] - positions[key][0]) < 0.5:
-                            block[k] = cell.key
-                            stack.append(k)
-        members = {}
-        for key, root in block.items():
-            members.setdefault(root, []).append(key)
-        return block, members
+        return straight_blocks(layers, up, down, positions)
 
     where = {cell.key: (layer, index)
              for layer in layers for index, cell in enumerate(layer)}
@@ -530,7 +542,7 @@ def straighten(layers, up, down, positions, vertical):
     for _pass in range(2):
         for layer in layers:
             for cell in layer:
-                for key in one_to_one(cell.key):
+                for key in _one_to_one(up, down, cell.key):
                     delta = positions[key][0] - positions[cell.key][0]
                     if abs(delta) < 0.5:
                         continue
@@ -548,7 +560,7 @@ def straighten(layers, up, down, positions, vertical):
                             positions[k][0] += moved
 
 
-def fence_groups(layers, positions, paths, vertical, rank=None):
+def fence_groups(layers, positions, paths, vertical, rank=None, blocks=None):
     """Move cells along the cross axis, as little as possible, until every
     group's cells sit in a band of their own: whatever isn't the group's
     stays clear of it in every layer the group spans.
@@ -573,6 +585,11 @@ def fence_groups(layers, positions, paths, vertical, rank=None):
     Pushing cells apart a group at a time instead, until nothing moved,
     could go round in circles: cells squeezed between two frames that
     each pushed them into the other.
+
+    `blocks` (key -> root, see straight_blocks) are moved as one. Solved
+    cell by cell, a chain straighten lined up is pushed as far as each
+    layer needs, which differs from layer to layer, and the edge through
+    it comes out kinked wherever the frame beside it is.
     """
     groups = list(dict.fromkeys(group for path in paths.values() for group in path))
     if not groups:
@@ -640,6 +657,9 @@ def fence_groups(layers, positions, paths, vertical, rank=None):
         return out
 
     sizes = {cell.key: half(cell) for layer in layers for cell in layer}
+    root = {key: (blocks or {}).get(key, key) for key in sizes}
+    # Where a cell sits relative to its block's root, which is what moves.
+    offset = {key: positions[key][0] - positions[root[key]][0] for key in sizes}
     after = {}
     for index, layer in enumerate(layers):
         line = sequence(None, layer, index)
@@ -649,13 +669,21 @@ def fence_groups(layers, positions, paths, vertical, rank=None):
             # size of its cells (see flowchart's _reserve_cluster_room).
             inside = (isinstance(a, tuple) and a[0] == "<"
                       or isinstance(b, tuple) and b[0] == ">")
-            distance = sizes.get(a, 0.0) + sizes.get(b, 0.0) + (0.0 if inside else NODE_GAP)
-            links = after.setdefault(a, {})
+            distance = sizes.get(a, 0.0) + sizes.get(b, 0.0) + (0.0 if inside else NODE_GAP) \
+                + offset.get(a, 0.0) - offset.get(b, 0.0)
+            links = after.setdefault(root.get(a, a), {})
+            b = root.get(b, b)
             links[b] = max(links.get(b, 0.0), distance)
 
-    order = _topological(list(sizes), after)
+    roots = list(dict.fromkeys(root.values()))
+    order = _topological(roots, after)
     if order is None:
-        return      # can't happen with a consistent `rank`; leave it be
+        # Without blocks, can't happen with a consistent `rank`. With them,
+        # a block was caught on both sides of a border: place its cells one
+        # by one instead.
+        if blocks:
+            fence_groups(layers, positions, paths, vertical, rank)
+        return
     before = {}
     for a, links in after.items():
         for b, distance in links.items():
@@ -672,7 +700,7 @@ def fence_groups(layers, positions, paths, vertical, rank=None):
             x = min(x, leftward[b] - distance)
         leftward[key] = x
     for key in sizes:
-        positions[key][0] = (rightward[key] + leftward[key]) / 2
+        positions[key][0] = (rightward[root[key]] + leftward[root[key]]) / 2 + offset[key]
 
 
 def _topological(cells, after):
