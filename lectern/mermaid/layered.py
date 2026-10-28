@@ -447,7 +447,9 @@ def place(layers, up, down, vertical, rank_gaps, paths=None, rank=None):
                         positions[cells_by_key[k].key][0] for k in keys) / len(keys)
             separate(layer)
 
-    fence_groups(layers, positions, paths, vertical, rank)
+    straighten(layers, up, down, positions, vertical)
+    block, _members = straight_blocks(layers, up, down, positions, paths)
+    fence_groups(layers, positions, paths, vertical, rank, block)
 
     # Nothing above pins the diagram to the origin; shift it there so the
     # scene's own box starts at (0, 0).
@@ -463,7 +465,102 @@ def place(layers, up, down, vertical, rank_gaps, paths=None, rank=None):
                 cell.x, cell.y = rank, cross
 
 
-def fence_groups(layers, positions, paths, vertical, rank=None):
+def _one_to_one(up, down, key):
+    """The cells `key` has a one-to-one edge with."""
+    return [k for k in up[key] if len(up[key]) == 1 and len(down[k]) == 1] \
+        + [k for k in down[key] if len(down[key]) == 1 and len(up[k]) == 1]
+
+
+def straight_blocks(layers, up, down, positions, paths=None):
+    """Cells joined by one-to-one edges that are already straight, as
+    (key -> its block's root, root -> the block's keys). A block is a
+    chain with one cell per layer. With `paths` (see group_paths), only
+    cells in the same groups join one."""
+    paths = paths or {}
+    block = {}
+    for layer in layers:
+        for cell in layer:
+            if cell.key in block:
+                continue
+            block[cell.key] = cell.key
+            stack = [cell.key]
+            while stack:
+                key = stack.pop()
+                for k in _one_to_one(up, down, key):
+                    if k not in block \
+                            and abs(positions[k][0] - positions[key][0]) < 0.5 \
+                            and paths.get(k, ()) == paths.get(key, ()):
+                        block[k] = cell.key
+                        stack.append(k)
+    members = {}
+    for key, root in block.items():
+        members.setdefault(root, []).append(key)
+    return block, members
+
+
+def straighten(layers, up, down, positions, vertical):
+    """Line up the two ends of each edge that is the only one either end
+    has on that side.
+
+    The sweeps in `place` end pulling one way, so a layer packed tight
+    against its neighbours can't follow the last pull and leaves the
+    edges out of it bent, while the cells at their other ends may have
+    the room to come to meet them -- or could make it, by pushing their
+    neighbours where those have room in turn. Of the two ends, the one
+    moving the diagram least comes to the other. Cells joined by such
+    edges that are straight already move as one block, so straightening
+    one edge never bends another of them.
+    """
+    def blocks():
+        return straight_blocks(layers, up, down, positions)
+
+    where = {cell.key: (layer, index)
+             for layer in layers for index, cell in enumerate(layer)}
+
+    def shifts(root, delta, block, members):
+        """Block -> how far it must move for `root`'s to move `delta`."""
+        sign = 1 if delta > 0 else -1
+        need = {root: delta}
+        queue = [root]
+        while queue:
+            current = queue.pop()
+            for key in members[current]:
+                layer, index = where[key]
+                if not 0 <= index + sign < len(layer):
+                    continue
+                cell, other = layer[index], layer[index + sign]
+                apart = _cross_size(cell, vertical) / 2 + NODE_GAP \
+                    + _cross_size(other, vertical) / 2
+                theirs = block[other.key]
+                gap = (positions[other.key][0] - positions[key][0]) * sign
+                push = need[current] * sign - (gap - apart)
+                if push > abs(need.get(theirs, 0.0)) + 1e-6:
+                    need[theirs] = push * sign
+                    queue.append(theirs)
+        return need
+
+    for _pass in range(2):
+        for layer in layers:
+            for cell in layer:
+                for key in _one_to_one(up, down, cell.key):
+                    delta = positions[key][0] - positions[cell.key][0]
+                    if abs(delta) < 0.5:
+                        continue
+                    block, members = blocks()
+                    if block[key] == block[cell.key]:
+                        continue
+                    # Whichever end moves the diagram least comes to the other.
+                    need = min(
+                        (shifts(block[cell.key], delta, block, members),
+                         shifts(block[key], -delta, block, members)),
+                        key=lambda need: sum(abs(moved) * len(members[root])
+                                             for root, moved in need.items()))
+                    for root, moved in need.items():
+                        for k in members[root]:
+                            positions[k][0] += moved
+
+
+def fence_groups(layers, positions, paths, vertical, rank=None, blocks=None):
     """Move cells along the cross axis, as little as possible, until every
     group's cells sit in a band of their own: whatever isn't the group's
     stays clear of it in every layer the group spans.
@@ -488,6 +585,11 @@ def fence_groups(layers, positions, paths, vertical, rank=None):
     Pushing cells apart a group at a time instead, until nothing moved,
     could go round in circles: cells squeezed between two frames that
     each pushed them into the other.
+
+    `blocks` (key -> root, see straight_blocks) are moved as one. Solved
+    cell by cell, a chain straighten lined up is pushed as far as each
+    layer needs, which differs from layer to layer, and the edge through
+    it comes out kinked wherever the frame beside it is.
     """
     groups = list(dict.fromkeys(group for path in paths.values() for group in path))
     if not groups:
@@ -555,6 +657,9 @@ def fence_groups(layers, positions, paths, vertical, rank=None):
         return out
 
     sizes = {cell.key: half(cell) for layer in layers for cell in layer}
+    root = {key: (blocks or {}).get(key, key) for key in sizes}
+    # Where a cell sits relative to its block's root, which is what moves.
+    offset = {key: positions[key][0] - positions[root[key]][0] for key in sizes}
     after = {}
     for index, layer in enumerate(layers):
         line = sequence(None, layer, index)
@@ -564,13 +669,21 @@ def fence_groups(layers, positions, paths, vertical, rank=None):
             # size of its cells (see flowchart's _reserve_cluster_room).
             inside = (isinstance(a, tuple) and a[0] == "<"
                       or isinstance(b, tuple) and b[0] == ">")
-            distance = sizes.get(a, 0.0) + sizes.get(b, 0.0) + (0.0 if inside else NODE_GAP)
-            links = after.setdefault(a, {})
+            distance = sizes.get(a, 0.0) + sizes.get(b, 0.0) + (0.0 if inside else NODE_GAP) \
+                + offset.get(a, 0.0) - offset.get(b, 0.0)
+            links = after.setdefault(root.get(a, a), {})
+            b = root.get(b, b)
             links[b] = max(links.get(b, 0.0), distance)
 
-    order = _topological(list(sizes), after)
+    roots = list(dict.fromkeys(root.values()))
+    order = _topological(roots, after)
     if order is None:
-        return      # can't happen with a consistent `rank`; leave it be
+        # Without blocks, can't happen with a consistent `rank`. With them,
+        # a block was caught on both sides of a border: place its cells one
+        # by one instead.
+        if blocks:
+            fence_groups(layers, positions, paths, vertical, rank)
+        return
     before = {}
     for a, links in after.items():
         for b, distance in links.items():
@@ -587,7 +700,7 @@ def fence_groups(layers, positions, paths, vertical, rank=None):
             x = min(x, leftward[b] - distance)
         leftward[key] = x
     for key in sizes:
-        positions[key][0] = (rightward[key] + leftward[key]) / 2
+        positions[key][0] = (rightward[root[key]] + leftward[root[key]]) / 2 + offset[key]
 
 
 def _topological(cells, after):
@@ -782,6 +895,9 @@ ORTHOGONAL = "orthogonal"
 PORT_SPACING = 18.0
 # ... and on a side too crowded for that (see _place_ports).
 MIN_PORT_SPACING = 12.0
+# How far off the middle of its side, as a fraction of half the side, a
+# node's ports may shift to line an edge up with its other end.
+NEAR_MIDDLE = 0.25
 # Ports closer than this across are lined up (see orthogonal_routes).
 SNAP = 4.0
 # Between two tracks across one gap, at least.
@@ -931,14 +1047,15 @@ def _place_ports(cells, hops, centre, halves, facing, clear, vertical):
     """(hop, end) -> where across its layer the hop meets its cell.
 
     A virtual is met where it is. A node's side gets one port per hop
-    attached to it, each as close to the hop's other end as the side and
-    its neighbours allow -- so a hop whose ends line up is drawn straight,
-    and the rest bend no more than they must -- kept in the order of those
-    other ends, so the hops leaving one side don't cross each other, and
-    at least PORT_SPACING apart, or as far apart as the side has room for.
-    A labelled hop's port keeps `clear` (edge index -> distance) from its
-    neighbours as well, so far as the side allows. Each side aims at where
-    the other ends are, which moves as they are placed in turn, so it
+    attached to it, gathered about the middle of the side the way GitHub
+    attaches its edges, kept in the order of the hops' other ends, so the
+    hops leaving one side don't cross each other, and PORT_SPACING apart,
+    or as far apart as the side has room for. A labelled hop's port keeps
+    `clear` (edge index -> distance) from its neighbours as well, so far as
+    the side allows. The group may shift off the middle, by no more than
+    NEAR_MIDDLE of the side, where that lines a port up with its other end
+    and so draws its hop straight. Each side's order and shift depend on
+    where the other ends are, which move as they are placed in turn, so it
     takes a few rounds to settle.
 
     The one exception is a lone hop on a side that is curved or pointed
@@ -968,45 +1085,43 @@ def _place_ports(cells, hops, centre, halves, facing, clear, vertical):
             half = halves(cell)[0] * (0.5 if getattr(cell, "shape", None)
                                       in ("diamond", "circle") else 0.75)
             low, high = middle - half, middle + half
-            wanted = []
-            for hop, end in attached:
-                other = port[(hop, 1 - end)]
-                wanted.append((min(max(other, low), high), other, hop, end))
-            wanted.sort()
-            room = [clear.get(hops[hop][0], 0.0) for _want, _other, hop, _end in wanted]
+            wanted = sorted((port[(hop, 1 - end)], hop, end) for hop, end in attached)
+            others = [w[0] for w in wanted]
+            room = [clear.get(hops[hop][0], 0.0) for _other, hop, _end in wanted]
+            near = NEAR_MIDDLE * halves(cell)[0]
             spots = None
-            # On a crowded side the usual spacing can push a port off the
-            # line its edge would otherwise run straight along; a tighter
-            # one is then worth it if that keeps more edges straight.
+            # A tighter spacing on a crowded side, or one that leaves the
+            # labels less room than they want, is worth it if it keeps more
+            # edges straight.
             for spacing in (PORT_SPACING, MIN_PORT_SPACING):
                 step = min(spacing, 2 * half / (len(wanted) - 1)) if len(wanted) > 1 else 0.0
                 apart = [max(step, room[i] + room[i + 1]) for i in range(len(wanted) - 1)]
-                if sum(apart) > high - low:
-                    # Labels wanting more room than the side has: they will
-                    # have to find it further along their edges anyway (see
-                    # place_labels), and squeezing the ports apart only bends
-                    # edges that could have run straight.
-                    apart = [step] * len(apart)
-                tried = _spread([w[0] for w in wanted], apart, high)
-                straight = sum(abs(spot - other) < 0.5
-                               for spot, (_want, other, _hop, _end) in zip(tried, wanted))
-                if spots is None or straight > best:
-                    spots, best = tried, straight
-            for spot, (_want, _other, hop, end) in zip(spots, wanted):
+                # Labels wanting more room than the side has will have to
+                # find it further along their edges anyway (see
+                # place_labels).
+                roomy = sum(apart) <= high - low
+                for labelled in {roomy, False}:
+                    gaps = apart if labelled else [step] * len(apart)
+                    slots = [0.0]
+                    for gap in gaps:
+                        slots.append(slots[-1] + gap)
+                    slots = [middle + slot - slots[-1] / 2 for slot in slots]
+                    # As long as the group still straddles the middle.
+                    reach = near + (slots[-1] - slots[0]) / 2
+                    shifts = {0.0} | {other - slot for other, slot in zip(others, slots)}
+                    for shift in shifts:
+                        if abs(shift) > reach or slots[0] + shift < low - 0.5 \
+                                or slots[-1] + shift > high + 0.5:
+                            continue
+                        tried = [slot + shift for slot in slots]
+                        straight = sum(abs(spot - other) < 0.5
+                                       for spot, other in zip(tried, others))
+                        score = (straight, labelled, -abs(shift), spacing)
+                        if spots is None or score > best:
+                            spots, best = tried, score
+            for spot, (_other, hop, end) in zip(spots, wanted):
                 port[(hop, end)] = spot
     return port, pinned
-
-
-def _spread(spots, apart, high):
-    """`spots` (ascending) moved as little as they must to be `apart[i]`
-    from their next, without going past `high`."""
-    spots = list(spots)
-    for i in range(1, len(spots)):
-        spots[i] = max(spots[i], spots[i - 1] + apart[i - 1])
-    spots[-1] = min(spots[-1], high)
-    for i in range(len(spots) - 2, -1, -1):
-        spots[i] = min(spots[i], spots[i + 1] - apart[i])
-    return spots
 
 
 def _dedupe(points):

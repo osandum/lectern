@@ -741,6 +741,70 @@ def test_a_crowded_side_squeezes_its_ports_to_keep_an_edge_straight(monkeypatch)
     assert sum(1 for points in routes if len(points) == 2) >= 3
 
 
+# The sources are packed tight across their layer, so the last sweep,
+# pulling them toward their targets, can't line them up; the targets have
+# the room to come to meet them.
+PACKED_SOURCES = """flowchart LR
+  FA["app"]
+  FA -- "SMTP :1025" --> SNLB["internal NLB"] --> MP["mailpit<br/>(catches all mail)"]
+  FA -- "HTTP :80" --> DALB["internal ALB"] --> DMS["proxy"] --> GW(("AS4<br/>gateway"))
+  BR(("on-prem")) -- "nightly dumps" --> S3[("dump")]
+  FIVE(("Fivetran → Snowflake")) -- "5432" --> PG[("Postgres")]
+  ECS["ECS tasks"] -- "logs, metrics, APM" --> DD(("Datadog"))
+"""
+
+
+def test_a_one_to_one_edge_runs_straight_where_its_target_has_room(monkeypatch):
+    routes = square_routes(PACKED_SOURCES, monkeypatch)
+    # All but the two out of "app", which fan out of one node.
+    assert sum(1 for points in routes if len(points) == 2) == len(routes) - 2
+
+
+def test_fencing_a_group_keeps_a_straight_edge_straight():
+    # A long edge passing a frame, one of its virtuals grown for a label:
+    # pushed clear of the frame cell by cell, the wide one went further
+    # than the rest and the edge came out kinked beside the frame.
+    from types import SimpleNamespace
+    def node(key, rank, w):
+        return SimpleNamespace(key=key, w=w, h=20.0, x=0.0, y=0.0, rank=rank, order=0)
+    # The frame is as wide as G0 in both layers, so V1, packed against
+    # the narrow G1, starts out inside it.
+    g0, g1 = node("G0", 0, 200.0), node("G1", 1, 20.0)
+    v0, v1 = layered.Virtual("v0", 0), layered.Virtual("v1", 1)
+    v1.w = 73.0
+    layers = [[v0, g0], [v1, g1]]
+    up = {"G0": [], "G1": [], "v0": [], "v1": ["v0"]}
+    down = {"G0": [], "G1": [], "v0": ["v1"], "v1": []}
+    paths = {"G0": ("g",), "G1": ("g",)}
+    layered.place(layers, up, down, True, [46.0, 46.0], paths, {"g": 0})
+    assert v0.x == pytest.approx(v1.x)
+    assert v1.x + v1.w / 2 + layered.NODE_GAP <= g0.x - g0.w / 2 + 1e-6
+
+
+def circle_lines(label):
+    """How many lines a circle node's label is drawn on."""
+    measurer = textlib.Measurer(mermaid.ui_font())
+    return round(flowchart._circle_text_size(label, measurer)[1] / measurer.line_px)
+
+
+def test_a_circle_wraps_its_label_to_a_square_block():
+    # On one line, the widest the usual wrap allows, the circle would be
+    # mostly empty above and below the text.
+    assert circle_lines("Fivetran → Snowflake") == 2
+    scene = build('flowchart LR\n  A(("Fivetran → Snowflake"))\n')
+    wide = build('flowchart LR\n  A["Fivetran → Snowflake"]\n')
+    assert scene.width < wide.width
+
+
+def test_a_circle_keeps_its_authors_line_breaks():
+    assert circle_lines("SKAT AS4<br/>gateway".replace("<br/>", "\n")) == 2
+
+
+def test_a_circle_wraps_its_label_only_between_words():
+    # Pango would break after the hyphen: "BR on-" / "prem".
+    assert circle_lines("BR on-prem") == 1
+
+
 def test_rounded_corners_keep_the_end_segments():
     route = [(0.0, 0.0), (0.0, 50.0), (80.0, 50.0), (80.0, 100.0)]
     path = layered.rounded(route)
