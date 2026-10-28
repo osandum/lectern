@@ -83,6 +83,26 @@
   </requires>
 
   <releases>
+    <release version="0.4.6" date="2026-10-28">
+      <description>
+        <p>
+          Mermaid diagrams are now read exactly as mermaid reads them.
+          Flowcharts are parsed with mermaid's own lexer and grammar, and
+          every sequence, class and ER statement is matched whole or the
+          diagram is shown as code, so a diagram that GitHub would show as
+          a syntax error no longer gets drawn as something else. All four
+          diagram types are checked against hundreds of examples recorded
+          from mermaid itself.
+        </p>
+        <p>
+          Sequence diagrams now number messages with autonumber, class
+          members are shown the way mermaid shows them, ER entities can
+          have aliases, and a subgraph holds every node mentioned inside
+          it. Straight flowchart edges stay straight next to subgraph
+          frames.
+        </p>
+      </description>
+    </release>
     <release version="0.4.5" date="2026-10-25">
       <description>
         <p>
