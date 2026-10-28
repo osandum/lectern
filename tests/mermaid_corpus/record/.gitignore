@@ -1,0 +1,3 @@
+node_modules/
+# mermaid's spec files, fetched by mine.mjs at the pinned tag
+specs/

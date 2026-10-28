@@ -22,8 +22,8 @@ from markdown_it.tree import SyntaxTreeNode
 
 from lectern import mermaid
 from lectern.document import make_parser
-from lectern.mermaid import flowchart, layered, scene as sc, text as textlib
-from lectern.mermaid.common import parse_init
+from lectern.mermaid import flowchart, layered, scene as sc, sequence, text as textlib
+from lectern.mermaid.common import Unsupported, parse_init
 from lectern.renderer import MarkdownRenderer
 from lectern.tags import create_tag_table
 
@@ -177,13 +177,20 @@ def test_comments_and_presentational_statements_are_ignored():
     chart = mermaid.parse(
         "flowchart TD\n"
         "%% a comment\n"
-        "  A --> B  %% trailing\n"
+        "  A --> B\n"
         "  style A fill:#f9f\n"
         "  classDef big font-size:20px\n"
         "  click A callback\n"
     )
     assert list(chart.nodes) == ["A", "B"]
     assert len(chart.edges) == 1
+
+
+def test_a_comment_after_code_falls_back_as_mermaid_refuses_it():
+    # Only a whole line is a `%%` comment to mermaid; after code it is a
+    # syntax error, and the diagram doesn't render on GitHub either.
+    with pytest.raises(Unsupported):
+        mermaid.parse("flowchart TD\n  A --> B  %% trailing\n")
 
 
 @pytest.mark.parametrize("source", [
@@ -203,16 +210,27 @@ def test_unsupported_sources_raise(source):
 
 # -- subgraphs -------------------------------------------------------------
 
-def test_subgraph_membership_follows_first_mention():
+def test_a_subgraph_holds_every_node_named_inside_it():
     chart = mermaid.parse(
         "flowchart TD\n"
+        "  A --> D\n"
         "  subgraph s[Inside]\n    A --> B\n  end\n"
         "  B --> C\n")
     group, = chart.subgraphs
     assert group.key == "s" and group.title == "Inside"
-    # C is named outside the block; B is named inside it first and again
-    # outside, which doesn't move it.
-    assert group.node_keys() == ["A", "B"]
+    # mermaid's rule: named inside the block, it's a member -- A too,
+    # though named outside before. Naming B outside afterwards doesn't
+    # move it, and C was never named inside.
+    assert set(group.node_keys()) == {"A", "B"}
+
+
+def test_a_node_stays_in_the_first_subgraph_to_close_around_it():
+    chart = mermaid.parse(
+        "flowchart TD\n"
+        "  subgraph outer\n    subgraph inner\n      A\n    end\n    A --> B\n  end\n")
+    outer, = chart.subgraphs
+    inner, = outer.children
+    assert inner.members == ["A"] and outer.members == ["B"]
 
 
 def test_a_bare_subgraph_title_is_its_own_id():
@@ -911,12 +929,28 @@ def test_sequence_participants_keep_declaration_order_and_labels():
     assert diagram.participants["W"].label == "Window"
 
 
+def test_autonumber_counts_every_message_even_while_hidden():
+    # As mermaid's renderer does: `off` hides the numbers, the count goes on.
+    diagram = mermaid.parse(
+        "sequenceDiagram\n  autonumber 10 5\n  A->>B: one\n  autonumber off\n"
+        "  B->>A: two\n  autonumber\n  A->>B: three\n")
+    messages = [e for e in diagram.events if isinstance(e, sequence.Message)]
+    assert [m.number for m in messages] == ["10", None, "20"]
+
+
+def test_autonumber_draws_each_number_in_a_disc():
+    scene = build("sequenceDiagram\n  autonumber\n  A->>B: one\n  B->>A: two\n")
+    assert {"1", "2"} <= set(texts(scene))
+    assert sum(isinstance(s, sc.Ellipse) for s in scene.shapes) == 2
+
+
 def test_sequence_alias_breaks_lines_like_any_other_label():
     diagram = mermaid.parse(
         'sequenceDiagram\n  actor D as Developer<br/>(Slack)\n  participant G as "GitHub"\n'
         "  D->>G: push\n")
     assert diagram.participants["D"].label == "Developer\n(Slack)"
-    assert diagram.participants["G"].label == "GitHub"
+    # mermaid keeps a sequence label's quotes; only flowcharts unquote.
+    assert diagram.participants["G"].label == '"GitHub"'
 
 
 def test_sequence_participant_is_declared_by_first_use():
@@ -1016,12 +1050,39 @@ CLASSES = """classDiagram
 """
 
 
+def shown(members):
+    return [member.text for member in members]
+
+
 def test_class_members_come_from_both_spellings():
     diagram = mermaid.parse(CLASSES)
-    assert diagram.entities["Renderer"].members == ["+render(tree, buffer)", "-_emit_table()"]
+    assert shown(diagram.entities["Renderer"].members) == ["+render(tree, buffer)", "-_emit_table()"]
     assert diagram.entities["Renderer"].stereotype == "walker"
     # `PrintItem : +str kind` declares one member at a time.
-    assert diagram.entities["PrintItem"].members == ["+str kind"]
+    assert shown(diagram.entities["PrintItem"].members) == ["+str kind"]
+
+
+@pytest.mark.parametrize("written, text, italic, underline", [
+    ("+run(int n) bool", "+run(int n) : bool", False, False),
+    ("-go()$", "-go()", False, True),
+    ("count()* int", "count() : int", True, False),
+    ("+int total$", "+int total", False, True),
+    # mermaid converts each comma-separated piece on its own, so this is
+    # what it shows (recorded: lectern:probe-nested-generics).
+    ("Map~String, List~Int~~ index", "Map~String, List<Int~> index", False, False),
+    ("+put(K~T~ k) V~T~", "+put(K<T> k) : V<T>", False, False),
+])
+def test_a_class_member_is_shown_as_mermaid_shows_it(written, text, italic, underline):
+    # Return types after ` : `, generics as <T>, and the abstract `*` and
+    # static `$` drawn as italics and underlining rather than as text.
+    [member] = mermaid.parse(f"classDiagram\n  class A {{\n    {written}\n  }}\n").entities["A"].members
+    assert (member.text, member.italic, member.underline) == (text, italic, underline)
+
+
+def test_a_static_member_is_drawn_underlined():
+    scene = build("classDiagram\n  class A {\n    +int total$\n  }\n")
+    member = next(s for s in scene.shapes if isinstance(s, sc.Text) and s.text == "+int total")
+    assert member.underline and not member.italic
 
 
 def test_class_declaration_forms():
@@ -1036,9 +1097,9 @@ def test_class_declaration_forms():
         "  Recipe --> Container\n")
     entities = diagram.entities
     assert set(entities) == {"Recipe", "Container", "Port", "Box", "Styled"}
-    assert (entities["Recipe"].title, entities["Recipe"].members) == (
+    assert (entities["Recipe"].title, shown(entities["Recipe"].members)) == (
         "Fineart / Tools::Deploy", ["call()"])
-    assert entities["Container"].members == ["definition_hash()"]
+    assert shown(entities["Container"].members) == ["definition_hash()"]
     assert (entities["Port"].stereotype, entities["Port"].members) == ("interface", [])
     assert entities["Box"].title == "Box<Shape>"
 
@@ -1103,8 +1164,22 @@ def test_er_attribute_block_becomes_members():
         "    string title\n"
         "  }\n"
     )
-    assert diagram.entities["DOCUMENT"].members == ["string path", "string title"]
+    assert shown(diagram.entities["DOCUMENT"].members) == ["string path", "string title"]
     assert diagram.entities["BLOCK"].members == []
+
+
+def test_an_er_entity_may_have_an_alias_and_a_style():
+    diagram = mermaid.parse("erDiagram\n  p[Person]:::warm {\n    `my.type` name\n  }\n")
+    assert diagram.entities["p"].title == "Person"
+    assert shown(diagram.entities["p"].members) == ["my.type name"]
+
+
+@pytest.mark.parametrize("opening", ["P extra {", "class P {"])
+def test_an_er_entity_opening_with_more_on_the_line_falls_back(opening):
+    # Taking the first word and dropping the rest would be a silent
+    # mis-parse; mermaid reads neither.
+    with pytest.raises(Unsupported):
+        mermaid.parse(f"erDiagram\n  {opening}\n    string name\n  }}\n")
 
 
 def test_er_unclosed_block_is_refused():
@@ -1200,9 +1275,10 @@ def test_flowchart_click_links_its_node():
     assert chart.nodes["B"].href == "b.md"
 
 
-def test_a_click_may_precede_the_node_it_names():
+def test_a_click_before_the_node_it_names_is_dropped():
+    # mermaid links only a node that exists by the time the click is read.
     chart = mermaid.parse('flowchart LR\n  click B "b.md"\n  A --> B\n')
-    assert chart.nodes["B"].href == "b.md"
+    assert chart.nodes["B"].href is None
 
 
 def test_a_click_on_an_undeclared_id_conjures_no_node():

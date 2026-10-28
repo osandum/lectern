@@ -70,6 +70,106 @@ _CLASS_DECL_RE = re.compile(r"""
 """, re.X | re.I)
 
 
+# `ENTITY {` opening an ER entity's attributes, with an optional
+# `[alias]`, and a `:::style` shorthand that is styling and ignored.
+_ER_BLOCK_RE = re.compile(
+    r"^(?P<key>[A-Za-z_][\w-]*)(?:\s*\[\s*(?P<alias>[^\]]*?)\s*\])?(?::::[\w,-]+)?\s*\{$")
+
+# `click A callback`, `click A call fn(args)`, with an optional tooltip:
+# the forms that name page JavaScript rather than a link.
+_CALLBACK_RE = re.compile(
+    r'^click\s+[\w-]+(?:~[^~\s]*~)?\s+(?:call\s+[\w$.]+\([^)]*\)|[\w$.]+)(?:\s+"[^"]*")?$', re.I)
+
+# Accessibility metadata: read by mermaid, drawn by no one.
+_ACC_LINE_RE = re.compile(r"^acc(?:Title|Descr)\s*:", re.I)
+_ACC_BLOCK_RE = re.compile(r"^accDescr\s*\{", re.I)
+
+
+class Member:
+    """A line in a box's member list, as mermaid shows it: a class member
+    abstract (`*`, italic) or static (`$`, underlined), or an ER
+    attribute, which is neither."""
+    __slots__ = ("text", "italic", "underline")
+
+    def __init__(self, text, italic=False, underline=False):
+        self.text = text
+        self.italic = italic
+        self.underline = underline
+
+    def __repr__(self):
+        return f"Member({self.text!r})"
+
+
+_VISIBILITY = ("+", "-", "#", "~")
+
+
+def _generics(text):
+    """`~T~` as `<T>`, the way mermaid's parseGenericTypes reads them:
+    within each comma-separated piece -- or across a comma, where it
+    splits a `~K, V~` -- the outermost pair of tildes at a time."""
+    pieces = re.split(r"(,)", text)
+    out = []
+    index = 0
+    while index < len(pieces):
+        piece = pieces[index]
+        if (piece == "," and 0 < index < len(pieces) - 1
+                and pieces[index - 1].count("~") == 1 and pieces[index + 1].count("~") == 1):
+            piece = out.pop() + "," + pieces[index + 1]
+            index += 1
+        if piece.count("~") > 1:
+            starts_with_tilde = piece.count("~") % 2 and piece.startswith("~")
+            chars = list(piece[1:] if starts_with_tilde else piece)
+            while "~" in chars:
+                first = chars.index("~")
+                last = len(chars) - 1 - chars[::-1].index("~")
+                if first == last:
+                    break
+                chars[first], chars[last] = "<", ">"
+            piece = ("~" if starts_with_tilde else "") + "".join(chars)
+        out.append(piece)
+        index += 1
+    return "".join(out)
+
+
+def _class_member(raw):
+    """A class member as mermaid shows it (classTypes.ClassMember):
+    visibility, name, a method's `(parameters) : return type`, generics
+    as `<T>`, and a trailing `*` or `$` turned into italics or underlining
+    rather than shown."""
+    text = raw.strip()
+    visibility = classifier = ""
+    if text.find(")") > 0:
+        match = re.search(r"([#+~-])?(.+)\((.*)\)([\s$*])?(.*)([$*])?", text)
+        if not match:
+            raise Unsupported(f"unparsed method {text!r}")
+        visibility = match.group(1) or ""
+        name = match.group(2)
+        parameters = (match.group(3) or "").strip()
+        classifier = (match.group(4) or "").strip()
+        returns = (match.group(5) or "").strip()
+        if not classifier and returns[-1:] in ("$", "*"):
+            classifier, returns = returns[-1], returns[:-1]
+    else:
+        if text[:1] in _VISIBILITY:
+            visibility = text[0]
+        if text[-1:] in ("$", "*"):
+            classifier = text[-1]
+        name = text[len(visibility):len(text) - len(classifier)]
+    name = " " + name.strip() if name.startswith(" ") else name.strip()
+    shown = visibility + _generics(name)
+    if text.find(")") > 0:
+        shown += f"({_generics(parameters)})"
+        if returns:
+            shown += " : " + _generics(returns)
+    return Member(shown.strip(), italic=classifier == "*", underline=classifier == "$")
+
+
+def _er_attribute(raw):
+    """An ER attribute as written, less the backquotes mermaid lets a
+    type or name be quoted in."""
+    return Member(re.sub(r"`([^`]*)`", r"\1", parse_label(raw)))
+
+
 class Entity:
     """One box: a title, an optional «stereotype», and a list of members."""
     __slots__ = ("key", "title", "stereotype", "members", "href", "w", "h", "x", "y",
@@ -77,7 +177,7 @@ class Entity:
 
     def __init__(self, key, title=None):
         self.key = key
-        self.title = title or key
+        self.title = title if title is not None else key
         self.stereotype = None
         self.members = []
         self.href = None        # classDiagram `click`/`link`
@@ -162,17 +262,22 @@ def _parse_common(source, header_re, kind):
     relations = []
     direction = "TD"
     open_entity = None
+    in_description = False      # inside an `accDescr { ... }`
     hrefs = {}          # entity key -> link target, applied once all are read
+    member = _class_member if kind == "classDiagram" else _er_attribute
 
     def touch(key, title=None):
         entity = entities.get(key)
         if entity is None:
             entity = entities[key] = Entity(key, title)
-        elif title:
+        elif title is not None:
             entity.title = title
         return entity
 
     for line in lines[1:]:
+        if in_description:
+            in_description = not line.endswith("}")
+            continue
         if open_entity is not None:
             if line == "}":
                 open_entity = None
@@ -181,7 +286,13 @@ def _parse_common(source, header_re, kind):
             if stereotype:
                 open_entity.stereotype = stereotype.group("name").strip()
             else:
-                open_entity.members.append(parse_label(line))
+                open_entity.members.append(member(line))
+            continue
+
+        if _ACC_LINE_RE.match(line):
+            continue
+        if _ACC_BLOCK_RE.match(line):
+            in_description = not line.endswith("}")
             continue
 
         directive = _DIRECTION_RE.match(line)
@@ -190,6 +301,11 @@ def _parse_common(source, header_re, kind):
             direction = "TD" if raw == "TB" else raw
             continue
 
+        if kind == "classDiagram" and line.lower().startswith("namespace"):
+            # A frame around the classes in it, which isn't drawn yet --
+            # and read as anything else, its `class` lines become members.
+            raise Unsupported("namespace")
+
         if kind == "classDiagram" and line.lower().startswith("class "):
             declaration = _CLASS_DECL_RE.match(line)
             if not declaration:
@@ -197,9 +313,11 @@ def _parse_common(source, header_re, kind):
             key = declaration.group("key")
             # Only a line that gives a label sets the title, so a later
             # bare `class Id {` doesn't undo an earlier `class Id["..."]`.
-            title = parse_label(declaration.group("label") or "") or None
+            # A label of only spaces is a blank title, as in mermaid.
+            label = declaration.group("label")
+            title = parse_label(label) if label is not None else None
             if declaration.group("generic"):
-                title = f"{title or key}<{declaration.group('generic').strip()}>"
+                title = f"{title if title is not None else key}<{declaration.group('generic').strip()}>"
             entity = touch(key, title)
             if declaration.group("close"):
                 body = parse_label(declaration.group("body"))
@@ -207,18 +325,19 @@ def _parse_common(source, header_re, kind):
                 if stereotype:
                     entity.stereotype = stereotype.group("name").strip()
                 elif body:
-                    entity.members.append(body)
+                    entity.members.append(member(body))
             elif declaration.group("open"):
                 open_entity = entity
             continue
 
-        if line.endswith("{"):
-            # `Foo {` -- the brace opens a member list.
-            title = line[:-1].strip()
-            if not title:
-                raise Unsupported("block with no entity name")
-            key = title.split()[0]
-            open_entity = touch(key, key)
+        if kind == "erDiagram" and line.endswith("{"):
+            # `ENTITY {` -- the brace opens its attributes. (A class's
+            # block needs `class` before it; mermaid refuses one without.)
+            block = _ER_BLOCK_RE.match(line)
+            if not block:
+                raise Unsupported(f"unparsed entity opening {line!r}")
+            alias = block.group("alias")
+            open_entity = touch(block.group("key"), parse_label(alias) if alias else block.group("key"))
             continue
 
         parsed = _parse_relation(line, kind)
@@ -233,20 +352,25 @@ def _parse_common(source, header_re, kind):
             # Only classDiagram has links: mermaid's erDiagram grammar has
             # no `click`, and reads one as entity names instead.
             if line.lower().startswith(("click ", "link ")):
-                link = parse_click(line)
+                # A generic class is linked by its id with the generic on.
+                link = parse_click(re.sub(r"^((?:click|link)\s+[\w-]+)~[^~\s]*~", r"\1", line,
+                                          flags=re.I))
                 if link is not None:
                     hrefs[link[0]] = link[1]
+                elif not _CALLBACK_RE.match(line):
+                    raise Unsupported(f"unparsed {line.split()[0]} {line!r}")
+                # A callback names page JavaScript, and is ignored like a style.
                 continue
-            member = _MEMBER_RE.match(line)
-            if member:
+            one = _MEMBER_RE.match(line)
+            if one:
                 # `Animal : +swim()` -- the one-member-at-a-time spelling.
-                entity = touch(member.group("key"))
-                text = parse_label(member.group("member"))
+                entity = touch(one.group("key"))
+                text = parse_label(one.group("member"))
                 stereotype = _STEREOTYPE_RE.match(text)
                 if stereotype:
                     entity.stereotype = stereotype.group("name").strip()
                 else:
-                    entity.members.append(text)
+                    entity.members.append(member(text))
                 continue
         raise Unsupported(f"unparsed statement {line!r}")
 
@@ -307,7 +431,8 @@ def _size_entity(entity, measurer):
         height += stereo_h + MEMBER_GAP
     entity.title_h = height
     for member in entity.members:
-        member_w, member_h = measurer.size(member, wrap=False, scale=LABEL_SCALE)
+        member_w, member_h = measurer.size(member.text, italic=member.italic, wrap=False,
+                                           scale=LABEL_SCALE)
         width = max(width, member_w)
         height += member_h + MEMBER_GAP
     if entity.members:
@@ -341,9 +466,11 @@ def _entity_shapes(entity, measurer, scene):
     scene.add(sc.Line([(x, divider_y), (x + entity.w, divider_y)], stroke=sc.EDGE))
     cursor = divider_y + BOX_PAD_Y
     for member in entity.members:
-        member_w, member_h = measurer.size(member, wrap=False, scale=LABEL_SCALE)
-        scene.add(sc.Text(x + BOX_PAD_X, cursor, member_w, member_h,
-                          member, align="left", scale=LABEL_SCALE))
+        member_w, member_h = measurer.size(member.text, italic=member.italic, wrap=False,
+                                           scale=LABEL_SCALE)
+        scene.add(sc.Text(x + BOX_PAD_X, cursor, member_w, member_h, member.text,
+                          italic=member.italic, underline=member.underline,
+                          align="left", scale=LABEL_SCALE))
         cursor += member_h + MEMBER_GAP
 
 

@@ -1,0 +1,4644 @@
+{
+ "mermaid": "11.17.2",
+ "results": {
+  "lectern:probe-quoted-alias": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "G",
+     "description": "\"GitHub\"",
+     "type": "participant"
+    },
+    {
+     "name": "A",
+     "description": "A",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "A",
+     "to": "G",
+     "message": "push"
+    }
+   ]
+  },
+  "lectern:probe-alias-with-break": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "D",
+     "description": "Developer<br/>(Slack)",
+     "type": "actor"
+    },
+    {
+     "name": "B",
+     "description": "B",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "D",
+     "to": "B",
+     "message": "hi"
+    }
+   ]
+  },
+  "lectern:probe-quoted-message": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "A",
+     "type": "participant"
+    },
+    {
+     "name": "B",
+     "description": "B",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "A",
+     "to": "B",
+     "message": "\"deploying …\""
+    }
+   ]
+  },
+  "lectern:probe-hash-comment": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "A",
+     "type": "participant"
+    },
+    {
+     "name": "B",
+     "description": "B",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "A",
+     "to": "B",
+     "message": "claim game"
+    },
+    {
+     "type": 0,
+     "from": "B",
+     "to": "A",
+     "message": "ok"
+    }
+   ]
+  },
+  "lectern:probe-semicolons": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "A",
+     "type": "participant"
+    },
+    {
+     "name": "B",
+     "description": "B",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "A",
+     "to": "B",
+     "message": "one"
+    },
+    {
+     "type": 0,
+     "from": "B",
+     "to": "A",
+     "message": "two"
+    }
+   ]
+  },
+  "lectern:probe-semicolon-in-note": {
+   "error": "Parse error on line 3:"
+  },
+  "lectern:probe-entity-survives": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "A",
+     "type": "participant"
+    },
+    {
+     "name": "B",
+     "description": "B",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "A",
+     "to": "B",
+     "message": "say ﬂ°quot¶ßhiﬂ°quot¶ß ﬂ°°35¶ß1"
+    }
+   ]
+  },
+  "lectern:probe-wrap-prefix": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "A",
+     "type": "participant"
+    },
+    {
+     "name": "B",
+     "description": "B",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "A",
+     "to": "B",
+     "message": "long text"
+    },
+    {
+     "type": 2,
+     "from": "B",
+     "to": "B",
+     "message": "note",
+     "placement": 1
+    }
+   ]
+  },
+  "lectern:probe-autonumber-start-step": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "A",
+     "type": "participant"
+    },
+    {
+     "name": "B",
+     "description": "B",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 26,
+     "message": {
+      "start": 5,
+      "step": 2,
+      "visible": true
+     }
+    },
+    {
+     "type": 0,
+     "from": "A",
+     "to": "B",
+     "message": "one"
+    },
+    {
+     "type": 0,
+     "from": "B",
+     "to": "A",
+     "message": "two"
+    }
+   ]
+  },
+  "lectern:probe-autonumber-off": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "A",
+     "type": "participant"
+    },
+    {
+     "name": "B",
+     "description": "B",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 26,
+     "message": {
+      "visible": true
+     }
+    },
+    {
+     "type": 0,
+     "from": "A",
+     "to": "B",
+     "message": "one"
+    },
+    {
+     "type": 26,
+     "message": {
+      "visible": false
+     }
+    },
+    {
+     "type": 0,
+     "from": "B",
+     "to": "A",
+     "message": "two"
+    }
+   ]
+  },
+  "lectern:probe-autonumber-decimals": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "A",
+     "type": "participant"
+    },
+    {
+     "name": "B",
+     "description": "B",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 26,
+     "message": {
+      "start": 1.5,
+      "step": 0.25,
+      "visible": true
+     }
+    },
+    {
+     "type": 0,
+     "from": "A",
+     "to": "B",
+     "message": "one"
+    },
+    {
+     "type": 0,
+     "from": "B",
+     "to": "A",
+     "message": "two"
+    }
+   ]
+  },
+  "lectern:probe-uppercase-keywords": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "A",
+     "type": "participant"
+    },
+    {
+     "name": "B",
+     "description": "B",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 10,
+     "message": "every day"
+    },
+    {
+     "type": 0,
+     "from": "A",
+     "to": "B",
+     "message": "hi"
+    },
+    {
+     "type": 11,
+     "message": ""
+    }
+   ]
+  },
+  "lectern:probe-percent-in-message": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "A",
+     "type": "participant"
+    },
+    {
+     "name": "B",
+     "description": "B",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "A",
+     "to": "B",
+     "message": "50%% done"
+    }
+   ]
+  },
+  "lectern:probe-deactivate-inactive": {
+   "error": "Trying to inactivate an inactive participant (B)"
+  },
+  "sequenceDiagram.spec.js:10": {
+   "type": "sequence",
+   "actors": [],
+   "messages": []
+  },
+  "sequenceDiagram.spec.js:99": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:158": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "John",
+     "description": "John",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "John",
+     "message": "Hello John, how are you?"
+    },
+    {
+     "type": 6,
+     "from": "John",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:193": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?",
+     "activate": true
+    },
+    {
+     "type": 59,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 60,
+     "from": "Alice",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:216": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 1,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?",
+     "activate": true
+    },
+    {
+     "type": 59,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 60,
+     "from": "Alice",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:238": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?",
+     "activate": true
+    },
+    {
+     "type": 59,
+     "from": "Bob",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:260": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 1,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 60,
+     "from": "Alice",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:282": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 60,
+     "from": "Alice",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:304": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 34,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?",
+     "activate": true
+    },
+    {
+     "type": 59,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 60,
+     "from": "Alice",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:326": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 33,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?",
+     "activate": true
+    },
+    {
+     "type": 59,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 60,
+     "from": "Alice",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:348": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    },
+    {
+     "name": "Charlie",
+     "description": "Charlie",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Message 1",
+     "activate": true
+    },
+    {
+     "type": 59,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 60,
+     "from": "Alice",
+     "message": ""
+    },
+    {
+     "type": 1,
+     "from": "Bob",
+     "to": "Charlie",
+     "message": "Message 2"
+    },
+    {
+     "type": 60,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 34,
+     "from": "Charlie",
+     "to": "Alice",
+     "message": "Message 3",
+     "activate": true
+    },
+    {
+     "type": 59,
+     "from": "Alice",
+     "message": ""
+    },
+    {
+     "type": 60,
+     "from": "Charlie",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:385": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 3,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Cross message",
+     "activate": true
+    },
+    {
+     "type": 59,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 60,
+     "from": "Alice",
+     "message": ""
+    },
+    {
+     "type": 4,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Dotted cross message",
+     "activate": true
+    },
+    {
+     "type": 59,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 60,
+     "from": "Alice",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:415": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Normal message"
+    },
+    {
+     "type": 1,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Normal dotted message"
+    },
+    {
+     "type": 3,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Normal cross message"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:441": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:476": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 26,
+     "message": {
+      "visible": true
+     }
+    },
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:493": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 26,
+     "message": {
+      "start": 10.1,
+      "step": 0.01,
+      "visible": true
+     }
+    },
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:512": {
+   "error": "Parse error on line 2:"
+  },
+  "sequenceDiagram.spec.js:521": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:543": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:565": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:578": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:593": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are - you?"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:609": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice-in-Wonderland",
+     "description": "Alice-in-Wonderland",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice-in-Wonderland",
+     "to": "Bob",
+     "message": "Hello Bob, how are - you?"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice-in-Wonderland",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:626": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice-in-Wonderland",
+     "description": "Alice-in-Wonderland",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice-in-Wonderland",
+     "to": "Bob",
+     "message": "Hello Bob, how are - you?"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice-in-Wonderland",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:646": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice=Wonderland",
+     "description": "Alice=Wonderland",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice=Wonderland",
+     "to": "Bob",
+     "message": "Hello Bob, how are - you?"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice=Wonderland",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:666": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "B",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "A",
+     "to": "B",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 6,
+     "from": "B",
+     "to": "A",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:685": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice2",
+     "type": "actor"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "actor"
+    },
+    {
+     "name": "John",
+     "description": "John2",
+     "type": "participant"
+    },
+    {
+     "name": "Mandy",
+     "description": "Mandy",
+     "type": "participant"
+    },
+    {
+     "name": "Joan",
+     "description": "Joan",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hi Bob"
+    },
+    {
+     "type": 0,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hi Alice"
+    },
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "John",
+     "message": "Hi John"
+    },
+    {
+     "type": 0,
+     "from": "John",
+     "to": "Mandy",
+     "message": "Hi Mandy"
+    },
+    {
+     "type": 0,
+     "from": "Mandy",
+     "to": "Joan",
+     "message": "Hi Joan"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:711": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "Alice",
+     "type": "actor"
+    },
+    {
+     "name": "B",
+     "description": "Bob",
+     "type": "actor"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "A",
+     "to": "B",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 6,
+     "from": "B",
+     "to": "A",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:729": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 3,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:743": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 4,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:757": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 24,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:771": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 25,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:785": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:799": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 1,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:813": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 33,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:829": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 34,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:845": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 1,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 17,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 1,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hello Alice, I'm fine and  you?"
+    },
+    {
+     "type": 18,
+     "from": "Bob",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:867": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 1,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?",
+     "activate": true
+    },
+    {
+     "type": 17,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 1,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hello Alice, I'm fine and  you?"
+    },
+    {
+     "type": 18,
+     "from": "Bob",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:888": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    },
+    {
+     "name": "Carol",
+     "description": "Carol",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 1,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?",
+     "activate": true
+    },
+    {
+     "type": 17,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 1,
+     "from": "Bob",
+     "to": "Carol",
+     "message": "Carol, let me introduce Alice?",
+     "activate": true
+    },
+    {
+     "type": 17,
+     "from": "Carol",
+     "message": ""
+    },
+    {
+     "type": 1,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hello Alice, please meet Carol?"
+    },
+    {
+     "type": 18,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 0,
+     "from": "Carol",
+     "to": "Bob",
+     "message": "Oh Bob, I'm so happy to be here!"
+    },
+    {
+     "type": 18,
+     "from": "Carol",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:932": {
+   "error": "Trying to inactivate an inactive participant (Server)"
+  },
+  "sequenceDiagram.spec.js:940": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:958": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:978": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:992": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1011": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1030": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    },
+    {
+     "name": "John",
+     "description": "John",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "John",
+     "message": "Hello John, how are you?"
+    },
+    {
+     "type": 10,
+     "message": "Healthcheck"
+    },
+    {
+     "type": 5,
+     "from": "John",
+     "to": "John",
+     "message": "Fight against hypochondria"
+    },
+    {
+     "type": 11,
+     "message": ""
+    },
+    {
+     "type": 2,
+     "from": "John",
+     "to": "John",
+     "message": "Rational thoughts<br/>prevail...",
+     "placement": 1
+    },
+    {
+     "type": 6,
+     "from": "John",
+     "to": "Alice",
+     "message": "Great!"
+    },
+    {
+     "type": 5,
+     "from": "John",
+     "to": "Bob",
+     "message": "How about you?"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "John",
+     "message": "Jolly good!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1054": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "1",
+     "description": "multiline<br>text",
+     "type": "participant"
+    },
+    {
+     "name": "2",
+     "description": "multiline<br/>text",
+     "type": "participant"
+    },
+    {
+     "name": "3",
+     "description": "multiline<br />text",
+     "type": "participant"
+    },
+    {
+     "name": "4",
+     "description": "multiline<br \t/>text",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "1",
+     "to": "2",
+     "message": "multiline<br>text"
+    },
+    {
+     "type": 2,
+     "from": "2",
+     "to": "2",
+     "message": "multiline<br>text",
+     "placement": 1
+    },
+    {
+     "type": 0,
+     "from": "2",
+     "to": "3",
+     "message": "multiline<br/>text"
+    },
+    {
+     "type": 2,
+     "from": "3",
+     "to": "3",
+     "message": "multiline<br/>text",
+     "placement": 1
+    },
+    {
+     "type": 0,
+     "from": "3",
+     "to": "4",
+     "message": "multiline<br />text"
+    },
+    {
+     "type": 2,
+     "from": "4",
+     "to": "4",
+     "message": "multiline<br />text",
+     "placement": 1
+    },
+    {
+     "type": 0,
+     "from": "4",
+     "to": "1",
+     "message": "multiline<br \t/>text"
+    },
+    {
+     "type": 2,
+     "from": "1",
+     "to": "1",
+     "message": "multiline<br \t/>text",
+     "placement": 1
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1087": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "1",
+     "description": "1",
+     "type": "participant"
+    },
+    {
+     "name": "2",
+     "description": "2",
+     "type": "participant"
+    },
+    {
+     "name": "3",
+     "description": "3",
+     "type": "participant"
+    },
+    {
+     "name": "4",
+     "description": "4",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "1",
+     "to": "2",
+     "message": "single-line text"
+    },
+    {
+     "type": 2,
+     "from": "2",
+     "to": "2",
+     "message": "single-line text",
+     "placement": 1
+    },
+    {
+     "type": 0,
+     "from": "2",
+     "to": "3",
+     "message": "single-line text"
+    },
+    {
+     "type": 2,
+     "from": "3",
+     "to": "3",
+     "message": "single-line text",
+     "placement": 1
+    },
+    {
+     "type": 0,
+     "from": "3",
+     "to": "4",
+     "message": "multiline<br/>text"
+    },
+    {
+     "type": 2,
+     "from": "4",
+     "to": "4",
+     "message": "multiline<br/>text",
+     "placement": 1
+    },
+    {
+     "type": 0,
+     "from": "4",
+     "to": "1",
+     "message": "multiline<br/>text"
+    },
+    {
+     "type": 2,
+     "from": "1",
+     "to": "1",
+     "message": "multiline<br/>text",
+     "placement": 1
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1124": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "1",
+     "description": "1",
+     "type": "participant"
+    },
+    {
+     "name": "2",
+     "description": "2",
+     "type": "participant"
+    },
+    {
+     "name": "3",
+     "description": "3",
+     "type": "participant"
+    },
+    {
+     "name": "4",
+     "description": "4",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "1",
+     "to": "2",
+     "message": "single-line text"
+    },
+    {
+     "type": 2,
+     "from": "2",
+     "to": "2",
+     "message": "single-line text",
+     "placement": 1
+    },
+    {
+     "type": 0,
+     "from": "2",
+     "to": "3",
+     "message": "multiline<br/>text"
+    },
+    {
+     "type": 2,
+     "from": "3",
+     "to": "3",
+     "message": "multiline<br/>text",
+     "placement": 1
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1147": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "1",
+     "description": "1",
+     "type": "participant"
+    },
+    {
+     "name": "2",
+     "description": "2",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "1",
+     "to": "2",
+     "message": "single-line text"
+    },
+    {
+     "type": 2,
+     "from": "2",
+     "to": "2",
+     "message": "single-line text",
+     "placement": 1
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1162": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 2
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1173": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "confusion",
+     "placement": 2
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "resolution",
+     "placement": 2
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1187": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 10,
+     "message": "Multiple happy responses"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 11,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1209": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 22,
+     "message": "rgb(200, 255, 200)"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks"
+    },
+    {
+     "type": 23,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1232": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 22,
+     "message": "rgb(200, 255, 200)"
+    },
+    {
+     "type": 22,
+     "message": "rgb(0, 0, 0)"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 23,
+     "message": ""
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks"
+    },
+    {
+     "type": 23,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1259": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 15,
+     "message": "Perhaps a happy response"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 16,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1281": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 12,
+     "message": "isWell"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 13,
+     "message": "isSick"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Feel sick..."
+    },
+    {
+     "type": 14,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1306": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 12,
+     "message": "isWell"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 13,
+     "message": "isSick"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Feel sick..."
+    },
+    {
+     "type": 13,
+     "message": "default"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": ":-)"
+    },
+    {
+     "type": 14,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1333": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Service",
+     "description": "Service",
+     "type": "participant"
+    },
+    {
+     "name": "DB",
+     "description": "DB",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 27,
+     "message": "Establish a connection to the DB"
+    },
+    {
+     "type": 6,
+     "from": "Service",
+     "to": "DB",
+     "message": "connect"
+    },
+    {
+     "type": 29,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1352": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Service",
+     "description": "Service",
+     "type": "participant"
+    },
+    {
+     "name": "DB",
+     "description": "DB",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 27,
+     "message": "Establish a connection to the DB"
+    },
+    {
+     "type": 6,
+     "from": "Service",
+     "to": "DB",
+     "message": "connect"
+    },
+    {
+     "type": 28,
+     "message": "Network timeout"
+    },
+    {
+     "type": 6,
+     "from": "Service",
+     "to": "Service",
+     "message": "Log error"
+    },
+    {
+     "type": 28,
+     "message": "Credentials rejected"
+    },
+    {
+     "type": 6,
+     "from": "Service",
+     "to": "Service",
+     "message": "Log different error"
+    },
+    {
+     "type": 29,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1379": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Consumer",
+     "description": "Consumer",
+     "type": "participant"
+    },
+    {
+     "name": "API",
+     "description": "API",
+     "type": "participant"
+    },
+    {
+     "name": "BookingService",
+     "description": "BookingService",
+     "type": "participant"
+    },
+    {
+     "name": "BillingService",
+     "description": "BillingService",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 6,
+     "from": "Consumer",
+     "to": "API",
+     "message": "Book something"
+    },
+    {
+     "type": 6,
+     "from": "API",
+     "to": "BookingService",
+     "message": "Start booking process"
+    },
+    {
+     "type": 30,
+     "message": "when the booking process fails"
+    },
+    {
+     "type": 6,
+     "from": "API",
+     "to": "Consumer",
+     "message": "show failure"
+    },
+    {
+     "type": 31,
+     "message": ""
+    },
+    {
+     "type": 6,
+     "from": "API",
+     "to": "BillingService",
+     "message": "Start billing process"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1404": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 19,
+     "message": "Parallel one"
+    },
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 1,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 20,
+     "message": "Parallel two"
+    },
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Are you OK?"
+    },
+    {
+     "type": 1,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Fine!"
+    },
+    {
+     "type": 20,
+     "message": "Parallel three"
+    },
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "What do you think about it?"
+    },
+    {
+     "type": 1,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "It's good!"
+    },
+    {
+     "type": 21,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1430": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 32,
+     "message": "Parallel overlap"
+    },
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Message"
+    },
+    {
+     "type": 2,
+     "from": "Alice",
+     "to": "Alice",
+     "message": "Alice note",
+     "placement": 0
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob note",
+     "placement": 1
+    },
+    {
+     "type": 21,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1452": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "-:<>,"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1458": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "-:<>,",
+     "placement": 1
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1467": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 10,
+     "message": "-:<>,"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 11,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1478": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 15,
+     "message": "-:<>,"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 16,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1489": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 12,
+     "message": "-:<>,"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 13,
+     "message": ",<>:-"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 14,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1503": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 19,
+     "message": "-:<>,"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 20,
+     "message": ",<>:-"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 21,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1517": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 10,
+     "message": ""
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 11,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1529": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 15,
+     "message": ""
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 16,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1541": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 12,
+     "message": ""
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 13,
+     "message": ""
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 14,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1556": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 19,
+     "message": ""
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 20,
+     "message": ""
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 21,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1572": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "a",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "b",
+     "description": "Bob",
+     "type": "participant"
+    },
+    {
+     "name": "c",
+     "description": "Charlie",
+     "type": "participant"
+    }
+   ],
+   "messages": []
+  },
+  "sequenceDiagram.spec.js:1599": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "a",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "b",
+     "description": "Bob",
+     "type": "participant"
+    },
+    {
+     "name": "c",
+     "description": "Charlie",
+     "type": "participant"
+    }
+   ],
+   "messages": []
+  },
+  "sequenceDiagram.spec.js:1617": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "a",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "b",
+     "description": "Bob",
+     "type": "participant"
+    },
+    {
+     "name": "c",
+     "description": "Charlie",
+     "type": "participant"
+    }
+   ],
+   "messages": []
+  },
+  "sequenceDiagram.spec.js:1639": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "a",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "b",
+     "description": "Bob",
+     "type": "participant"
+    },
+    {
+     "name": "c",
+     "description": "Charlie",
+     "type": "participant"
+    }
+   ],
+   "messages": []
+  },
+  "sequenceDiagram.spec.js:1661": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "a",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "b",
+     "description": "Bob",
+     "type": "participant"
+    },
+    {
+     "name": "c",
+     "description": "Charlie",
+     "type": "participant"
+    }
+   ],
+   "messages": []
+  },
+  "sequenceDiagram.spec.js:1683": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "a",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "b",
+     "description": "b",
+     "type": "participant"
+    },
+    {
+     "name": "c",
+     "description": "c",
+     "type": "participant"
+    },
+    {
+     "name": "d",
+     "description": "Donald",
+     "type": "actor"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "a",
+     "to": "b",
+     "message": "Hello Bob?"
+    },
+    {
+     "type": 1,
+     "from": "b",
+     "to": "c",
+     "message": "Hello c!"
+    },
+    {
+     "type": 0,
+     "from": "c",
+     "to": "b",
+     "message": "Hello b?"
+    },
+    {
+     "type": 0,
+     "from": "a",
+     "to": "d",
+     "message": "Hello Donald?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1705": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "a",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "b",
+     "description": "b",
+     "type": "participant"
+    },
+    {
+     "name": "c",
+     "description": "c",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "a",
+     "to": "b",
+     "message": "Hello Bob?"
+    },
+    {
+     "type": 1,
+     "from": "b",
+     "to": "a",
+     "message": "Hello Alice!"
+    },
+    {
+     "type": 0,
+     "from": "b",
+     "to": "c",
+     "message": "Where is Alice?"
+    },
+    {
+     "type": 0,
+     "from": "b",
+     "to": "c",
+     "message": "Where are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1720": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "a",
+     "description": "a",
+     "type": "participant"
+    },
+    {
+     "name": "b",
+     "description": "b",
+     "type": "participant"
+    },
+    {
+     "name": "c",
+     "description": "c",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "a",
+     "to": "b",
+     "message": "Hello Bob?"
+    },
+    {
+     "type": 0,
+     "from": "b",
+     "to": "c",
+     "message": "Hello c!"
+    },
+    {
+     "type": 0,
+     "from": "c",
+     "to": "b",
+     "message": "Hello b?"
+    },
+    {
+     "type": 0,
+     "from": "b",
+     "to": "c",
+     "message": "Bye c !"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1756": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1915": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    }
+   ],
+   "messages": []
+  },
+  "sequenceDiagram.spec.js:1927": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    }
+   ],
+   "messages": []
+  },
+  "sequenceDiagram.spec.js:1943": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 2,
+     "from": "Alice",
+     "to": "Alice",
+     "message": "Alice thinks",
+     "placement": 2
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1961": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 2,
+     "from": "Alice",
+     "to": "Alice",
+     "message": "Alice thinks",
+     "placement": 0
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1977": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 2,
+     "from": "Alice",
+     "to": "Alice",
+     "message": "Alice thinks",
+     "placement": 1
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:1992": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2009": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2023": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2042": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2063": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Looks",
+     "placement": 2
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Looks back",
+     "placement": 2
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2079": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 5,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Fine!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2095": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Bob",
+     "to": "Bob",
+     "message": "Bob thinks",
+     "placement": 1
+    },
+    {
+     "type": 5,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Fine!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2114": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 2,
+     "from": "Alice",
+     "to": "Alice",
+     "message": "Bob thinks",
+     "placement": 0
+    },
+    {
+     "type": 5,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Fine!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2131": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!"
+    },
+    {
+     "type": 2,
+     "from": "Alice",
+     "to": "Alice",
+     "message": "Bob thinks",
+     "placement": 0
+    },
+    {
+     "type": 0,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Fine!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2152": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!"
+    },
+    {
+     "type": 2,
+     "from": "Alice",
+     "to": "Alice",
+     "message": "Bob thinks",
+     "placement": 0
+    },
+    {
+     "type": 0,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Fine!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2176": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!"
+    },
+    {
+     "type": 2,
+     "from": "Alice",
+     "to": "Alice",
+     "message": "Bob thinks",
+     "placement": 0
+    },
+    {
+     "type": 0,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Fine!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2200": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!"
+    },
+    {
+     "type": 2,
+     "from": "Alice",
+     "to": "Alice",
+     "message": "Bob thinks",
+     "placement": 0
+    },
+    {
+     "type": 0,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Fine!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2226": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 10,
+     "message": "Cheers"
+    },
+    {
+     "type": 5,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Fine!"
+    },
+    {
+     "type": 11,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2243": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, are you alright?"
+    },
+    {
+     "type": 22,
+     "message": "rgb(0, 0, 0)"
+    },
+    {
+     "type": 5,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I feel surrounded by darkness"
+    },
+    {
+     "type": 23,
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2262": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 26,
+     "message": {
+      "start": 10.01,
+      "step": 0.01,
+      "visible": true
+     }
+    },
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 6,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Have a good day!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2279": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 26,
+     "message": {
+      "start": 10.1,
+      "step": 0.1,
+      "visible": true
+     }
+    },
+    {
+     "type": 5,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    },
+    {
+     "type": 6,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "I am good thanks!"
+    },
+    {
+     "type": 6,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Have a good day!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2375": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "participant"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": ""
+    },
+    {
+     "type": 0,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Got it!"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2389": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "actor"
+    },
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "actor"
+    }
+   ],
+   "messages": [
+    {
+     "type": 41,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hello Alice, how are you?"
+    },
+    {
+     "type": 42,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hello Alice, how are you?"
+    },
+    {
+     "type": 44,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hello Alice, how are you?"
+    },
+    {
+     "type": 43,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hello Alice, how are you?"
+    },
+    {
+     "type": 46,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hello Alice, how are you?"
+    },
+    {
+     "type": 45,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hello Alice, how are you?"
+    },
+    {
+     "type": 47,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hello Alice, how are you?"
+    },
+    {
+     "type": 48,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hello Alice, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2408": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "actor"
+    },
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "actor"
+    }
+   ],
+   "messages": [
+    {
+     "type": 33,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "hey?",
+     "activate": true
+    },
+    {
+     "type": 59,
+     "from": "Bob",
+     "message": ""
+    },
+    {
+     "type": 60,
+     "from": "Alice",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2419": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "database"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "database"
+    },
+    {
+     "name": "Carl",
+     "description": "Carl",
+     "type": "database"
+    },
+    {
+     "name": "David",
+     "description": "David",
+     "type": "database"
+    },
+    {
+     "name": "Eve",
+     "description": "Eve",
+     "type": "database"
+    },
+    {
+     "name": "Favela",
+     "description": "Favela",
+     "type": "database"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Hi Alice",
+     "activate": true
+    },
+    {
+     "type": 17,
+     "from": "Alice",
+     "message": ""
+    },
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hi Bob",
+     "activate": true
+    },
+    {
+     "type": 17,
+     "from": "Bob",
+     "message": ""
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2463": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "lead",
+     "description": "lead",
+     "type": "participant"
+    },
+    {
+     "name": "dsa",
+     "description": "dsa",
+     "type": "queue"
+    },
+    {
+     "name": "API",
+     "description": "API",
+     "type": "participant"
+    },
+    {
+     "name": "Database",
+     "description": "Database",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "API",
+     "to": "Database",
+     "message": "getUserb",
+     "activate": true
+    },
+    {
+     "type": 17,
+     "from": "Database",
+     "message": ""
+    },
+    {
+     "type": 1,
+     "from": "Database",
+     "to": "API",
+     "message": "userb"
+    },
+    {
+     "type": 18,
+     "from": "Database",
+     "message": ""
+    },
+    {
+     "type": 6,
+     "from": "dsa",
+     "to": "Database",
+     "message": "hello"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2520": {
+   "error": "missed comma between flow collection entries (2:9)"
+  },
+  "sequenceDiagram.spec.js:2536": {
+   "error": "missed comma between flow collection entries (2:8)"
+  },
+  "sequenceDiagram.spec.js:2552": {
+   "error": "Parse error on line 5:"
+  },
+  "sequenceDiagram.spec.js:2561": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "boundary",
+     "description": "boundary",
+     "type": "boundary"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "boundary",
+     "to": "boundary",
+     "message": "test"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2572": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "C",
+     "description": "C",
+     "type": "control"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "C",
+     "to": "C",
+     "message": "test"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2583": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "E",
+     "description": "E",
+     "type": "entity"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "E",
+     "to": "E",
+     "message": "test"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2594": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "D",
+     "description": "D",
+     "type": "database"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "D",
+     "to": "D",
+     "message": "test"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2605": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "L",
+     "description": "L",
+     "type": "collections"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "L",
+     "to": "L",
+     "message": "test"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2616": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Q",
+     "description": "Q",
+     "type": "queue"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "Q",
+     "to": "Q",
+     "message": "test"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2629": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "A",
+     "type": "queue"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "A",
+     "to": "A",
+     "message": "test"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2640": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "P",
+     "description": "P",
+     "type": "database"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "P",
+     "to": "P",
+     "message": "test"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2651": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Alice",
+     "type": "collections"
+    },
+    {
+     "name": "Bob",
+     "description": "Bob",
+     "type": "control"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Hello Bob, how are you?"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2664": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "C",
+     "description": "C",
+     "type": "control"
+    }
+   ],
+   "messages": [
+    {
+     "type": 5,
+     "from": "C",
+     "to": "C",
+     "message": "test"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2687": {
+   "error": "Parse error on line 2:"
+  },
+  "sequenceDiagram.spec.js:2700": {
+   "error": "Parse error on line 2:"
+  },
+  "sequenceDiagram.spec.js:2712": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "Alice",
+     "description": "Public API",
+     "type": "boundary"
+    },
+    {
+     "name": "Bob",
+     "description": "Controller",
+     "type": "control"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "Alice",
+     "to": "Bob",
+     "message": "Request"
+    },
+    {
+     "type": 1,
+     "from": "Bob",
+     "to": "Alice",
+     "message": "Response"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2727": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "Database Server",
+     "type": "database"
+    },
+    {
+     "name": "B",
+     "description": "Message Queue",
+     "type": "queue"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "A",
+     "to": "B",
+     "message": "Send message"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2741": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "API",
+     "description": "Public API",
+     "type": "boundary"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "API",
+     "to": "API",
+     "message": "test"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2752": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "API",
+     "description": "Public API",
+     "type": "boundary"
+    },
+    {
+     "name": "Auth",
+     "description": "Auth Controller",
+     "type": "control"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "API",
+     "to": "Auth",
+     "message": "Request"
+    },
+    {
+     "type": 1,
+     "from": "Auth",
+     "to": "API",
+     "message": "Response"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2767": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "U",
+     "description": "End User",
+     "type": "actor"
+    },
+    {
+     "name": "DB",
+     "description": "User Database",
+     "type": "database"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "U",
+     "to": "DB",
+     "message": "Query"
+    },
+    {
+     "type": 1,
+     "from": "DB",
+     "to": "U",
+     "message": "Result"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2782": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "API",
+     "description": "External Name",
+     "type": "boundary"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "API",
+     "to": "API",
+     "message": "test"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2793": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "API",
+     "description": "Public API",
+     "type": "participant"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "API",
+     "to": "API",
+     "message": "test"
+    }
+   ]
+  },
+  "sequenceDiagram.spec.js:2803": {
+   "type": "sequence",
+   "actors": [
+    {
+     "name": "A",
+     "description": "Service A",
+     "type": "boundary"
+    },
+    {
+     "name": "B",
+     "description": "Service B",
+     "type": "control"
+    },
+    {
+     "name": "C",
+     "description": "C",
+     "type": "database"
+    }
+   ],
+   "messages": [
+    {
+     "type": 0,
+     "from": "A",
+     "to": "B",
+     "message": "Request"
+    },
+    {
+     "type": 0,
+     "from": "B",
+     "to": "C",
+     "message": "Query"
+    }
+   ]
+  }
+ }
+}

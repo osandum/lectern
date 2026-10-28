@@ -78,15 +78,16 @@ class Text:
     whoever draws re-lays the string out with the same font, wrap width
     and alignment, and lands where the measurement said it would.
     """
-    __slots__ = ("x", "y", "w", "h", "text", "bold", "italic", "mono", "align",
+    __slots__ = ("x", "y", "w", "h", "text", "bold", "italic", "underline", "mono", "align",
                  "color", "scale")
 
-    def __init__(self, x, y, w, h, text, *, bold=False, italic=False, mono=False,
-                 align="center", color=FG, scale=1.0):
+    def __init__(self, x, y, w, h, text, *, bold=False, italic=False, underline=False,
+                 mono=False, align="center", color=FG, scale=1.0):
         self.x, self.y, self.w, self.h = x, y, w, h
         self.text = text
         self.bold = bold
         self.italic = italic
+        self.underline = underline      # takes no room, so isn't measured
         self.mono = mono
         self.align = align
         self.color = color

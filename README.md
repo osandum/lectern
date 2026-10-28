@@ -104,6 +104,11 @@ The tests never show a window, but they do need a display: constructing a
 widget with no display at all segfaults. On a desktop they just run;
 anywhere else, wrap them — `xvfb-run -a pytest`, which is what CI does.
 
+One test checks that the flowchart parser's committed parse table is up to
+date with its grammar, which needs [Lark](https://github.com/lark-parser/lark)
+(`pip install lark`). Without Lark that test is skipped. Lectern itself
+doesn't use Lark at run time.
+
 Beware of concluding otherwise from unsetting `DISPLAY` and
 `WAYLAND_DISPLAY`: GDK then falls back to the default `wayland-0` socket
 in `XDG_RUNTIME_DIR` and connects anyway.

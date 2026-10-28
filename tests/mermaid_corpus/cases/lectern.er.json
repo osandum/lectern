@@ -1,0 +1,27 @@
+[
+  {
+    "id": "lectern:probe-alias",
+    "origin": "lectern: probe for #41",
+    "source": "erDiagram\n  p[Person] {\n    string name\n  }\n"
+  },
+  {
+    "id": "lectern:probe-quoted-alias",
+    "origin": "lectern: probe for #41",
+    "source": "erDiagram\n  p[\"A Person\"] {\n    string name\n  }\n"
+  },
+  {
+    "id": "lectern:probe-style-shorthand",
+    "origin": "lectern: probe for #41",
+    "source": "erDiagram\n  P:::warm {\n    string name\n  }\n"
+  },
+  {
+    "id": "lectern:probe-backquoted",
+    "origin": "lectern: probe for #41",
+    "source": "erDiagram\n  P {\n    `my.type` `my.name` PK\n  }\n"
+  },
+  {
+    "id": "lectern:probe-block-trailing-text",
+    "origin": "lectern: probe for #41",
+    "source": "erDiagram\n  P extra {\n    string name\n  }\n"
+  }
+]

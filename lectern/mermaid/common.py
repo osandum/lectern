@@ -49,7 +49,47 @@ def parse_label(text):
     text = text.strip()
     if len(text) >= 2 and text[0] == '"' and text[-1] == '"':
         text = text[1:-1]
-    return _BR_RE.sub("\n", text).replace("\\n", "\n").strip()
+    return label_lines(text)
+
+
+def label_lines(text):
+    """`text` with mermaid's two line-break spellings turned into real
+    newlines (see parse_label), and nothing else done to it -- quotes
+    included, which only a flowchart label loses."""
+    return _BR_RE.sub("\n", text.strip()).replace("\\n", "\n").strip()
+
+
+# What mermaid does to every diagram's source before its parser sees it
+# (preprocessDiagram, then Diagram.fromText).
+_FRONT_MATTER_RE = re.compile(r"^-{3}\s*[\n\r](.*?[\n\r])-{3}\s*[\n\r]+", re.S)
+_ANY_DIRECTIVE_RE = re.compile(
+    r"%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?", re.I)
+_COMMENT_LINE_RE = re.compile(r"^\s*%%(?!{)[^\n]+\n?", re.M)
+_TAG_RE = re.compile(r"<(\w+)([^>]*)>")
+
+
+def preprocess(source):
+    """A source as mermaid's parser gets it: line endings normalized,
+    front matter, directives and whole-line `%%` comments removed, and
+    `#name;` entities encoded so their `#` and `;` aren't read as syntax
+    (decode_entities undoes that), with a newline appended."""
+    text = source.replace("\r\n", "\n").replace("\r", "\n")
+    text = _TAG_RE.sub(lambda m: "<" + m.group(1) + re.sub(r'="([^"]*)"', r"='\1'", m.group(2)) + ">",
+                       text)
+    text = _FRONT_MATTER_RE.sub("", text, count=1)
+    text = _ANY_DIRECTIVE_RE.sub("", text)
+    text = _COMMENT_LINE_RE.sub("", text).lstrip()
+    text = re.sub(r"style.*:\S*#.*;", lambda m: m.group()[:-1], text)
+    text = re.sub(r"classDef.*:\S*#.*;", lambda m: m.group()[:-1], text)
+    text = re.sub(r"#\w+;", lambda m: ("ﬂ°°" if re.fullmatch(r"\+?\d+", m.group()[1:-1])
+                                       else "ﬂ°") + m.group()[1:-1] + "¶ß", text)
+    return text + "\n"
+
+
+def decode_entities(text):
+    """Undo preprocess's entity encoding, back to mermaid's own `#name;`
+    spelling -- which label drawing decodes (text.label_markup)."""
+    return text.replace("ﬂ°°", "#").replace("ﬂ°", "#").replace("¶ß", ";")
 
 
 def parse_click(statement):
