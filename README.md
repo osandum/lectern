@@ -9,9 +9,9 @@ A read-only, [Papers](https://apps.gnome.org/da/Papers/)-style Markdown
 viewer for GNOME: open a `.md` file, read it, search/zoom/print it. No
 editing UI.
 
-![Lectern showing a Markdown document: a table of ferry crossings, a task
-list, a blockquote and a syntax-highlighted Python
-function](data/screenshots/01-reading.png)
+![Lectern showing a Markdown document: a table of ferry crossings, a
+mermaid flowchart with a subgraph, a task list, a blockquote and a
+syntax-highlighted Python function](data/screenshots/01-reading.png)
 
 - Full CommonMark + GFM: tables, fenced code with syntax highlighting,
   task lists, footnotes, images.

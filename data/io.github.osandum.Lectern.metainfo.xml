@@ -45,15 +45,19 @@
   <screenshots>
     <screenshot type="default">
       <image>https://raw.githubusercontent.com/osandum/lectern/main/data/screenshots/01-reading.png</image>
-      <caption>A document with a table, task list and highlighted code</caption>
+      <caption>A document with a table, a mermaid diagram, a task list and highlighted code</caption>
     </screenshot>
     <screenshot>
       <image>https://raw.githubusercontent.com/osandum/lectern/main/data/screenshots/02-code-and-tables.png</image>
-      <caption>Fenced code blocks are syntax highlighted</caption>
+      <caption>Mermaid diagrams are drawn natively, and fenced code is syntax highlighted</caption>
     </screenshot>
     <screenshot>
       <image>https://raw.githubusercontent.com/osandum/lectern/main/data/screenshots/03-find.png</image>
       <caption>Find matches text inside table cells as well as body text</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/osandum/lectern/main/data/screenshots/04-dark.png</image>
+      <caption>Follows the system's dark style</caption>
     </screenshot>
   </screenshots>
 

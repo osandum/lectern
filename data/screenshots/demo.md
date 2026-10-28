@@ -1,18 +1,32 @@
 # Ferry Timetable Notes
 
-Working notes for the summer schedule. Everything here is read-only —
-edit the file in whatever editor you like and Lectern reloads it.
+Working notes for the summer schedule. Lectern only *reads* this file —
+edit it in any editor and the window reloads on save.
 
 ## Crossings
 
-| Route             | Duration | Vehicles | Notes                     |
-| ----------------- | -------- | -------- | ------------------------- |
-| Rønne – Ystad     | 1h 20m   | Yes      | Fastest, books up early   |
-| Rønne – Køge      | 5h 30m   | Yes      | Overnight sailing         |
-| Rønne – Sassnitz  | 3h 20m   | Yes      | Seasonal, May to September|
-| Hammerhavn – Christiansø | 1h 00m | No   | Passengers only           |
+| Route                    | Duration | Vehicles | Notes                      |
+| ------------------------ | -------- | -------- | -------------------------- |
+| Rønne – Ystad            | 1h 20m   | Yes      | Fastest, books up early    |
+| Rønne – Køge             | 5h 30m   | Yes      | Overnight sailing          |
+| Rønne – Sassnitz         | 3h 20m   | Yes      | Seasonal, May to September |
+| Hammerhavn – Christiansø | 1h 00m   | No       | Passengers only            |
 
-## Booking window
+## Booking flow
+
+```mermaid
+flowchart LR
+    Q[Enquiry] --> S{Seats left?}
+    S -->|yes| H[Hold seat]
+    S -->|no| W[Waitlist]
+    subgraph Payment
+        H --> P[Card payment]
+        P --> T[Ticket issued]
+    end
+    W -.->|cancellation| H
+```
+
+## Before the season opens
 
 - [x] Confirm the vehicle deck allocation
 - [x] Publish the May schedule
@@ -24,7 +38,7 @@ edit the file in whatever editor you like and Lectern reloads it.
 
 ## Fare lookup
 
-The published fares come out of a small table keyed by route and season:
+Fares come out of `ROUTES`, keyed by route and season:
 
 ```python
 def fare(route: str, season: str, vehicle: bool = False) -> int:
