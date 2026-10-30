@@ -294,3 +294,58 @@ def test_footer_gap_above_is_shifted_by_the_full_margin_amount():
     band."""
     assert printing.FOOTER_TEXT_TOP_PT == pytest.approx(4.0 + printing.FOOTER_MARGIN_SHIFT_PT)
     assert printing.FOOTER_BAND_PT == pytest.approx(20.0 + printing.FOOTER_MARGIN_SHIFT_PT)
+
+
+# -- list markers line up with their wrapped lines --------------------------
+
+class _PdfContext:
+    """Stands in for a Gtk.PrintContext: layouts on a PDF surface at 72dpi,
+    so a layout unit is a point, as on paper."""
+
+    def __init__(self):
+        import cairo
+        self._cr = cairo.Context(cairo.PDFSurface(None, 600, 800))
+
+    def create_pango_layout(self):
+        gi.require_version("PangoCairo", "1.0")
+        from gi.repository import PangoCairo
+        layout = PangoCairo.create_layout(self._cr)
+        PangoCairo.context_set_resolution(layout.get_context(), 72)
+        return layout
+
+
+@pytest.mark.parametrize("source", [
+    "- **Sync:** ",
+    "1. ",
+    "- [ ] task ",
+], ids=["bullet", "number", "task"])
+def test_list_item_text_starts_where_its_wrapped_lines_do(source):
+    """The marker is text in the print font, the hang a fixed length, and
+    they used to disagree: in a 10.8pt Cantarell "•  " is 8pt wide against
+    a 12pt hang, so every wrapped line sat 4pt right of the first one."""
+    from gi.repository import Pango
+    item = print_model_for(source + "word " * 60 + "\n")[0]
+    hang = printing._marker_hang_pt(item)
+    layout = printing._build_text_layout(
+        _PdfContext(), printing.tagdefs.tag_style_props(False), item, 400, hang,
+    )
+    text_start = layout.index_to_pos(len(item.runs[0][0].encode("utf-8"))).x
+    lines = printing._line_geometry(layout)
+    assert len(lines) > 1
+    assert Pango.units_to_double(text_start) == pytest.approx(lines[1][4], abs=0.1)
+
+
+def test_a_marker_wider_than_the_hang_keeps_a_space_before_its_text():
+    """"10." is wider than the hang, and closing the gap to it ran the
+    number into its text. It may only lose spaces down to one."""
+    from gi.repository import Pango
+    item = print_model_for("10. " + "word " * 60 + "\n")[0]
+    layout = printing._build_text_layout(
+        _PdfContext(), printing.tagdefs.tag_style_props(False), item, 400,
+        printing._marker_hang_pt(item),
+    )
+    natural = printing._build_text_layout(
+        _PdfContext(), printing.tagdefs.tag_style_props(False), item, 400,
+    )
+    end = len(item.runs[0][0].encode("utf-8"))
+    assert layout.index_to_pos(end).x == pytest.approx(natural.index_to_pos(end).x, abs=0.1 * Pango.SCALE)

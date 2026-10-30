@@ -383,7 +383,57 @@ def _build_text_layout(context, style_table, item, width_pt, hanging_pt=0.0,
         attr_list.insert(attr)
         byte_offset += nbytes
     layout.set_attributes(attr_list)
+    if hanging_pt:
+        _align_marker_to_hang(layout, item, hanging_pt)
     return layout
+
+
+def _align_marker_to_hang(layout, item, hanging_pt):
+    """Widen or narrow the marker so the item's text starts exactly where
+    its wrapped lines do. The hang is a fixed length and the marker is
+    plain text, so the two only agree when "•  " happens to be as wide as
+    LIST_HANGING_INDENT -- which on paper, in a smaller and often
+    substituted font, it isn't (8pt against a 12pt hang in Cantarell).
+
+    The difference goes on the marker's last character as letter spacing,
+    measured from the layout itself, so it holds for any font and marker.
+    A marker wider than the hang ("10." is) keeps one space before its
+    text and pushes it right, as on screen, rather than running into it.
+
+    How much of that spacing actually lands before the text is Pango's
+    call -- a one-character marker such as a task box only gets half --
+    so the first try is measured and the second scaled by what it moved.
+    """
+    marker = item.runs[0][0]
+    if len(item.runs) == 1:
+        return  # a bare marker -- no text to line up
+    end = len(marker.encode("utf-8"))
+    last = end - len(marker[-1].encode("utf-8"))
+
+    def text_x():
+        return Pango.units_to_double(layout.index_to_pos(end).x)
+
+    start_x = text_x()
+    one_space = marker.rstrip() + marker[len(marker.rstrip()):][:1]
+    target = max(hanging_pt, Pango.units_to_double(
+        layout.index_to_pos(len(one_space.encode("utf-8"))).x))
+    spacing, gain = 0.0, 1.0
+    for _attempt in range(2):
+        missing = target - text_x()
+        if abs(missing) < 0.01:
+            break
+        if spacing:
+            gain = (text_x() - start_x) / spacing or 1.0
+        spacing += missing / gain
+        attr = Pango.attr_letter_spacing_new(Pango.units_from_double(spacing))
+        attr.start_index = last
+        attr.end_index = end
+        # On a copy: the layout holds the list it was given by reference,
+        # and handed that same list back changed, it sees nothing new and
+        # keeps its old layout.
+        attrs = layout.get_attributes().copy()
+        attrs.change(attr)
+        layout.set_attributes(attrs)
 
 
 def _build_table_rows(context, style_table, rows, width_pt, font=None):
