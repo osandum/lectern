@@ -322,17 +322,29 @@ class _PdfContext:
 def test_list_item_text_starts_where_its_wrapped_lines_do(source):
     """The marker is text in the print font, the hang a fixed length, and
     they used to disagree: in a 10.8pt Cantarell "•  " is 8pt wide against
-    a 12pt hang, so every wrapped line sat 4pt right of the first one."""
+    a 12pt hang, so every wrapped line sat 4pt right of the first one.
+
+    Unless the marker is wider than the hang, which depends on the font:
+    "1. " is 13pt in DejaVu Sans, the only font on the CI images. Then it
+    keeps its natural width and pushes the text right (see the next test)."""
     from gi.repository import Pango
     item = print_model_for(source + "word " * 60 + "\n")[0]
     hang = printing._marker_hang_pt(item)
-    layout = printing._build_text_layout(
-        _PdfContext(), printing.tagdefs.tag_style_props(False), item, 400, hang,
-    )
-    text_start = layout.index_to_pos(len(item.runs[0][0].encode("utf-8"))).x
+    style_table = printing.tagdefs.tag_style_props(False)
+    marker = item.runs[0][0]
+
+    def x_at(hanging_pt, chars):
+        layout = printing._build_text_layout(
+            _PdfContext(), style_table, item, 400, hanging_pt,
+        )
+        index = len(marker[:chars].encode("utf-8"))
+        return layout, Pango.units_to_double(layout.index_to_pos(index).x)
+
+    layout, start = x_at(hang, len(marker))
+    _, natural = x_at(0.0, len(marker.rstrip()) + 1)  # down to one space
     lines = printing._line_geometry(layout)
     assert len(lines) > 1
-    assert Pango.units_to_double(text_start) == pytest.approx(lines[1][4], abs=0.1)
+    assert start == pytest.approx(max(lines[1][4], natural), abs=0.1)
 
 
 def test_a_marker_wider_than_the_hang_keeps_a_space_before_its_text():

@@ -61,6 +61,14 @@ lectern path/to/file.md
 `--system-site-packages` is required so the venv can see the system
 PyGObject/GTK4/Libadwaita bindings, which are not installed via pip.
 
+On Arch (and Arch-based setups such as Omarchy), install them with:
+
+```sh
+sudo pacman -S python-gobject python-cairo gtk4 libadwaita librsvg
+```
+
+`python-cairo` has to be named: `python-gobject` doesn't pull it in there.
+
 To get a desktop entry with its icon:
 
 ```sh
