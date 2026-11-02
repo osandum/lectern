@@ -447,6 +447,18 @@ def _align_marker_to_hang(layout, item, hanging_pt):
         layout.set_attributes(attrs)
 
 
+def _cell_extents(layout):
+    """(narrowest, widest) a cell's text can be laid out, in points: its
+    longest word, and the whole of it on one line -- what Gtk.Label
+    reports as its minimum and natural width on screen."""
+    layout.set_width(-1)
+    widest = layout.get_extents()[1].width
+    layout.set_wrap(Pango.WrapMode.WORD)
+    layout.set_width(1)
+    narrowest = layout.get_extents()[1].width
+    return Pango.units_to_double(narrowest), Pango.units_to_double(widest)
+
+
 def _build_table_rows(context, style_table, rows, width_pt, font=None):
     if not rows:
         return [], [], []
@@ -454,23 +466,14 @@ def _build_table_rows(context, style_table, rows, width_pt, font=None):
     # tags.py's "table-header" entry, so "headers are bold" is one fact.
     header_weight = style_table.get("table-header", {}).get("weight", Pango.Weight.BOLD)
     ncols = max(len(r) for r in rows)
-    # Same median-character-count weighting tables.py uses for the
-    # on-screen Gtk.Grid (via max-width-chars), so a column doesn't come
-    # out "wide" on screen and "narrow" on paper -- one shared notion of
-    # column proportions, applied via the two renderers' own units.
-    weights = tabledefs.column_char_weights(rows)
-    total_weight = sum(weights)
-    col_widths = [width_pt * w / total_weight for w in weights]
-    row_layouts, row_heights = [], []
+    row_layouts = []
+    mins, maxes = [0.0] * ncols, [0.0] * ncols
     for row_index, row in enumerate(rows):
-        cells, max_h = [], 0.0
+        cells = []
         for col_index in range(ncols):
             text = row[col_index] if col_index < len(row) else ""
-            col_width = col_widths[col_index]
             layout = context.create_pango_layout()
             layout.set_font_description(font or _base_font())
-            layout.set_width(Pango.units_from_double(max(col_width - 2 * TABLE_CELL_PAD_X_PT, 1.0)))
-            layout.set_wrap(Pango.WrapMode.WORD_CHAR)
             layout.set_text(text, -1)
             if row_index == 0:
                 al = Pango.AttrList()
@@ -479,10 +482,26 @@ def _build_table_rows(context, style_table, rows, width_pt, font=None):
                 attr.end_index = len(text.encode("utf-8"))
                 al.insert(attr)
                 layout.set_attributes(al)
-            _w, h = layout.get_pixel_size()
-            max_h = max(max_h, h + 2 * TABLE_CELL_PAD_Y_PT)
+            lo, hi = _cell_extents(layout)
+            mins[col_index] = max(mins[col_index], lo + 2 * TABLE_CELL_PAD_X_PT)
+            maxes[col_index] = max(maxes[col_index], hi + 2 * TABLE_CELL_PAD_X_PT)
             cells.append(layout)
         row_layouts.append(cells)
+    # The same allocation the screen's table makes (tables._TableLayout),
+    # from the same two measurements, so a column that keeps its cells on
+    # one line on screen keeps them on one line on paper. Paper's one
+    # difference is that it can't scroll: a table whose longest words
+    # don't fit side by side is shrunk, and WORD_CHAR breaks them.
+    col_widths = tabledefs.allocate_columns(mins, maxes, width_pt)
+    row_heights = []
+    for cells in row_layouts:
+        max_h = 0.0
+        for col_index, layout in enumerate(cells):
+            layout.set_wrap(Pango.WrapMode.WORD_CHAR)
+            layout.set_width(Pango.units_from_double(
+                max(col_widths[col_index] - 2 * TABLE_CELL_PAD_X_PT, 1.0)))
+            _w, h = layout.get_pixel_size()
+            max_h = max(max_h, h + 2 * TABLE_CELL_PAD_Y_PT)
         row_heights.append(max_h)
     return row_layouts, row_heights, col_widths
 

@@ -1,13 +1,11 @@
-"""Markdown `table` subtree -> on-screen Gtk.Grid, plus the plain row-text
+"""Markdown `table` subtree -> on-screen TableGrid, plus the plain row-text
 extraction shared with the print model.
 """
-import statistics
-
 import gi
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gtk, GLib
+gi.require_version("Gdk", "4.0")
+from gi.repository import Gdk, Gtk, GLib
 
-MIN_COLUMN_CHARS = 3  # floor so an all-empty or all-tiny column doesn't collapse to nothing
 # Each cell's padding, as label margins, and the rule between rows, a
 # Gtk.Separator one pixel tall. Shared with printing.py, which draws the
 # same rows on paper and used to pad them by its own, twice-as-big numbers.
@@ -16,47 +14,66 @@ CELL_PAD_Y = 6
 ROW_RULE_PX = 1
 
 
-def _longest_word_length(text):
-    words = text.split()
-    return max((len(w) for w in words), default=0)
+COLUMN_SPACING = 16
 
 
-def column_char_weights(rows):
-    """Per-column weight = median character length of that column's cells
-    (header row included), used as a simple, sensible proxy for how much
-    horizontal space each column deserves. Shared by both the on-screen
-    Gtk.Grid (as a max-width-chars hint) and printing.py (as a
-    proportional share of the page width), so the two can't disagree
-    about which columns are "wide" and which are "narrow".
+def allocate_columns(mins, maxes, available):
+    """Column widths for a table `available` wide, from each column's
+    narrowest possible width (its longest word) and its widest useful one
+    (its longest cell, unwrapped) -- the auto table layout browsers use,
+    so a column of short timestamps keeps them on one line and a column
+    with one long note in it gets the room that note needs.
 
-    Median rather than mean: one abnormally long cell in an otherwise
-    narrow column (a stray long sentence in a "Notes" column, say)
-    shouldn't blow that column's width out the way an outlier drags a
-    mean up.
+    Everything fits: each column gets its widest, and what's left over is
+    shared in proportion to it. Not everything fits: each gets its
+    narrowest, and the room above that is shared out evenly, except that
+    a column needing less than its share to reach its widest gets just
+    that, and the rest is shared again among the others -- GTK's own
+    gtk_distribute_natural_allocation. Browsers share it in proportion to
+    how much each column would still use instead, which wraps a column of
+    timestamps for want of a few pixels beside a column of sentences that
+    wraps anyway. Not even the narrowest fits: they shrink in proportion, which
+    the screen never asks for (a table's minimum width is the sum of its
+    columns', so it widens the view instead) but paper, which can't
+    scroll, does.
 
-    Floored, per column, at that column's own longest single word (e.g.
-    the header "Supported" against otherwise-short "Yes"/"No" data) --
-    without this, a narrow-but-wordy column can end up assigned less
-    width than its own unbreakable header word needs. On screen this is
-    harmless (Gtk.Label never breaks a word mid-way regardless of what
-    width it's asked for), but printing.py's Pango layouts use
-    WORD_CHAR wrapping and *will* hyphenlessly break a word that doesn't
-    fit -- confirmed by "Supported" printing as "Suppor-/ted" before this
-    floor was added.
+    This replaced a weighting by each column's median length in
+    characters, which shared the width out the same way whether or not a
+    column needed it: two columns of similar typical length got half each,
+    so the one with a few long cells wrapped them beside a column of
+    timestamps with room to spare.
     """
-    if not rows:
+    maxes = [max(lo, hi) for lo, hi in zip(mins, maxes)]
+    total_min, total_max = sum(mins), sum(maxes)
+    if not mins:
         return []
-    ncols = max(len(r) for r in rows)
-    weights = []
-    for col in range(ncols):
-        cells = [row[col] for row in rows if col < len(row)]
-        if not cells:
-            weights.append(MIN_COLUMN_CHARS)
-            continue
-        median_len = round(statistics.median(len(c) for c in cells))
-        longest_word = max(_longest_word_length(c) for c in cells)
-        weights.append(max(MIN_COLUMN_CHARS, median_len, longest_word))
-    return weights
+    if available >= total_max:
+        if total_max <= 0:
+            return [available / len(mins)] * len(mins)
+        return [hi + (available - total_max) * hi / total_max for hi in maxes]
+    if available <= total_min:
+        if total_min <= 0:
+            return [0.0] * len(mins)
+        return [lo * available / total_min for lo in mins]
+    widths = list(mins)
+    room = available - total_min
+    hungry = sorted(range(len(mins)), key=lambda i: maxes[i] - mins[i])
+    for count, index in zip(range(len(hungry), 0, -1), hungry):
+        share = min(maxes[index] - mins[index], room / count)
+        widths[index] += share
+        room -= share
+    return widths
+
+
+def round_widths(widths):
+    """Whole pixels summing to the rounded total, so the last column doesn't
+    end a pixel short of the frame or past it."""
+    result, carried, placed = [], 0.0, 0
+    for width in widths:
+        carried += width
+        result.append(round(carried) - placed)
+        placed = round(carried)
+    return result
 
 
 def inline_plain_text(node):
@@ -241,22 +258,20 @@ def build_table_widget(table_node, link_color):
     """
     cell_rows = list(_iter_rows(table_node))
     rows = [[inline_plain_text(cell) for cell in cells] for cells in cell_rows]
-    col_weights = column_char_weights(rows)
     # Thin horizontal rules between rows (header included) rather than a
     # full per-cell grid -- a per-cell Gtk.Frame was tried and rejected:
     # Libadwaita renders each Frame as its own rounded card, which reads
     # as a row of disconnected pills rather than a table. Rules-only
     # matches how GitHub/pandoc render GFM tables in practice.
-    grid = Gtk.Grid(column_spacing=16, row_spacing=0)
     link_labels = []
     cell_grid = []
-    grid_row = 0
+    rules = []
     for row_index, cells in enumerate(cell_rows):
         is_head = row_index == 0
         cell_row = []
         for col_index, cell_node in enumerate(cells):
             label = Gtk.Label(
-                xalign=0.0, wrap=True, hexpand=True, selectable=True,
+                xalign=0.0, wrap=True, selectable=True,
                 margin_top=CELL_PAD_Y, margin_bottom=CELL_PAD_Y,
                 margin_start=CELL_PAD_X, margin_end=CELL_PAD_X,
             )
@@ -273,28 +288,118 @@ def build_table_widget(table_node, link_color):
             # grab_focus() outright (measured, GTK 4.18), so the click that
             # starts a selection can't move the keyboard focus onto it and
             # Ctrl+C keeps going to whatever still holds focus.
-            # Caps this label's *natural* width to roughly its column's
-            # typical content length, instead of the unwrapped full-text
-            # width every column got before -- GtkGrid then sizes each
-            # column to the max natural width among its cells, so a
-            # short numeric column no longer claims as much room as a
-            # column of long sentences.
-            label.set_max_width_chars(col_weights[col_index])
             markup = _cell_markup(cell_node, link_color)
             label.set_markup(f"<b>{markup}</b>" if is_head else markup)
             if "<a href" in markup:
                 link_labels.append(label)
             cell_row.append(TableCell(label, cell_node, link_color, is_head))
-            grid.attach(label, col_index, grid_row, 1, 1)
         cell_grid.append(cell_row)
-        grid_row += 1
         if row_index < len(cell_rows) - 1:
-            rule = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
-            grid.attach(rule, 0, grid_row, len(cells), 1)
-            grid_row += 1
+            rules.append(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
 
     frame = Gtk.Frame()
-    frame.set_child(grid)
+    frame.set_child(TableGrid([[c.label for c in row] for row in cell_grid], rules))
     frame.set_margin_top(6)
     frame.set_margin_bottom(6)
     return frame, rows, link_labels, cell_grid
+
+
+class _TableLayout(Gtk.LayoutManager):
+    """Lays the cells out with allocate_columns, at allocation time.
+
+    Gtk.Grid can't be told how to share width between columns: it hands
+    each its widest cell's minimum, then splits what's left evenly among
+    the expanding ones, which is the even split allocate_columns exists to
+    avoid. Doing it here rather than by pushing size requests onto the
+    labels means every measurement is taken with the font the cells are
+    drawn in -- a zoom step restyles them a frame after the width sync
+    that would otherwise have read the old one.
+    """
+
+    def __init__(self, cells, rules):
+        super().__init__()
+        self._cells = cells
+        self._rules = rules
+        self._ncols = max((len(row) for row in cells), default=0)
+
+    def do_get_request_mode(self, _widget):
+        return Gtk.SizeRequestMode.HEIGHT_FOR_WIDTH
+
+    def _extents(self):
+        mins, maxes = [0] * self._ncols, [0] * self._ncols
+        for row in self._cells:
+            for col, label in enumerate(row):
+                lo, hi, _b1, _b2 = label.measure(Gtk.Orientation.HORIZONTAL, -1)
+                mins[col], maxes[col] = max(mins[col], lo), max(maxes[col], hi)
+        return mins, maxes
+
+    def _spacing(self):
+        return COLUMN_SPACING * max(self._ncols - 1, 0)
+
+    def column_widths(self, width):
+        mins, maxes = self._extents()
+        available = max(width - self._spacing(), sum(mins))
+        return round_widths(allocate_columns(mins, maxes, available))
+
+    def _row_heights(self, widths):
+        return [
+            max((label.measure(Gtk.Orientation.VERTICAL, widths[col])[0]
+                 for col, label in enumerate(row)), default=0)
+            for row in self._cells
+        ]
+
+    def _rule_height(self, rule, width):
+        return rule.measure(Gtk.Orientation.VERTICAL, width)[0]
+
+    def do_measure(self, _widget, orientation, for_size):
+        if orientation == Gtk.Orientation.HORIZONTAL:
+            mins, maxes = self._extents()
+            return sum(mins) + self._spacing(), sum(maxes) + self._spacing(), -1, -1
+        if for_size < 0:
+            for_size = sum(self._extents()[1]) + self._spacing()
+        height = sum(self._row_heights(self.column_widths(for_size)))
+        height += sum(self._rule_height(rule, for_size) for rule in self._rules)
+        return height, height, -1, -1
+
+    def do_allocate(self, _widget, width, _height, _baseline):
+        widths = self.column_widths(width)
+        y = 0
+        for index, (row, row_height) in enumerate(zip(self._cells, self._row_heights(widths))):
+            x = 0
+            for col, label in enumerate(row):
+                label.size_allocate(_rect(x, y, widths[col], row_height), -1)
+                x += widths[col] + COLUMN_SPACING
+            y += row_height
+            if index < len(self._rules):
+                rule = self._rules[index]
+                rule_height = self._rule_height(rule, width)
+                rule.size_allocate(_rect(0, y, width, rule_height), -1)
+                y += rule_height
+
+
+def _rect(x, y, width, height):
+    rect = Gdk.Rectangle()
+    rect.x, rect.y, rect.width, rect.height = x, y, width, height
+    return rect
+
+
+class TableGrid(Gtk.Widget):
+    """The table's cells and the rules between its rows, laid out by
+    _TableLayout. `cells` is [row][col] of labels."""
+
+    def __init__(self, cells, rules):
+        super().__init__()
+        for index, row in enumerate(cells):
+            for label in row:
+                label.set_parent(self)
+            if index < len(rules):
+                rules[index].set_parent(self)
+        self.set_layout_manager(_TableLayout(cells, rules))
+
+    def do_dispose(self):
+        child = self.get_first_child()
+        while child is not None:
+            following = child.get_next_sibling()
+            child.unparent()
+            child = following
+        Gtk.Widget.do_dispose(self)

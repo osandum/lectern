@@ -270,8 +270,8 @@ def _html_escape(text):
 
 def _padded_rows(rows):
     """`rows`, every row padded out to the widest one with empty cells
-    -- ragged input is possible (column_char_weights in tables.py
-    tolerates it too), and a pipe table/<table> both need a rectangular
+    -- ragged input is possible (tables.py's layout and printing.py's
+    tolerate it too), and a pipe table/<table> both need a rectangular
     grid."""
     width = max((len(row) for row in rows), default=0)
     return [row + [""] * (width - len(row)) for row in rows]
