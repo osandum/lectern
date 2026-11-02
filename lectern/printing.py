@@ -36,15 +36,33 @@ def pt(px):
     return px * PX_TO_PT
 
 
+# Paper is the screen one notch down the zoom ladder (zoom.py's STEPS has
+# 0.9 right below 1.0): 12pt reads comfortably on a backlit screen but
+# heavy on paper. Its own constant rather than zoomdefs' current factor,
+# so a screen-zoom change can never silently resize the printout.
+PRINT_SCALE = 0.9
+PRINT_BASE_PT = zoomdefs.BASE_PT * PRINT_SCALE
+
+
+def layout_pt(px):
+    """A layout length -- a gap, indent or pad -- on paper. Scaled with the
+    font, as zoom.py scales the screen's: shrinking only the font left
+    every gap ~11% too big for the text beside it, which cost list- and
+    table-heavy documents whole pages. pt() alone is for things with a
+    size of their own, such as an image's pixels."""
+    return pt(px) * PRINT_SCALE
+
+
 HR_HEIGHT_PT = 1.0
 HR_BLOCK_HEIGHT_PT = 16.0
-TABLE_CELL_PAD_PT = 6.0
-TABLE_ROW_GAP_PT = 6.0
+TABLE_CELL_PAD_X_PT = layout_pt(tabledefs.CELL_PAD_X)
+TABLE_CELL_PAD_Y_PT = layout_pt(tabledefs.CELL_PAD_Y)
+TABLE_ROW_GAP_PT = layout_pt(tabledefs.ROW_RULE_PX)
 TABLE_RULE_RGB = (0.7, 0.7, 0.7)
-CODE_BLOCK_PAD_PT = pt(tagdefs.CODE_BLOCK_PADDING)
-CODE_BLOCK_RADIUS_PT = pt(tagdefs.CODE_BLOCK_RADIUS)
+CODE_BLOCK_PAD_PT = layout_pt(tagdefs.CODE_BLOCK_PADDING)
+CODE_BLOCK_RADIUS_PT = layout_pt(tagdefs.CODE_BLOCK_RADIUS)
 HEADING_RULE_WIDTH_PT = pt(tagdefs.HEADING_RULE_WIDTH)
-HEADING_RULE_PAD_PT = pt(tagdefs.HEADING_RULE_PAD)
+HEADING_RULE_PAD_PT = layout_pt(tagdefs.HEADING_RULE_PAD)
 # Cap on how much of one page a single image may claim, so a very tall
 # image leaves room for something else rather than owning a page outright.
 IMAGE_MAX_PAGE_FRACTION = 0.9
@@ -71,13 +89,6 @@ RIGHT_EXTRA_MARGIN_PT = 14.0
 # top, so the footer doesn't just end up with more empty paper below it
 # too. Only applies when there's a footer to make room for.
 FOOTER_MARGIN_SHIFT_PT = 14.0
-
-# One notch down the screen zoom ladder (zoom.py's STEPS has 0.9 right
-# below 1.0): 12pt reads comfortably on a backlit screen but heavy on
-# paper. Print gets its own constant rather than reusing zoomdefs.BASE_PT
-# so a screen-zoom change can never silently resize the printout.
-PRINT_BASE_PT = zoomdefs.BASE_PT * 0.9
-
 
 def _print_page_setup(header_footer=False):
     """A Gtk.PageSetup with 56pt left, 42pt right, 28pt top, and GTK's own
@@ -239,7 +250,7 @@ def _left_margin_pt(block_tags):
         margin = tagdefs.BLOCKQUOTE_INDENT
     else:
         return 0.0
-    return pt(max(0, margin - tagdefs.CONTENT_MARGIN))
+    return layout_pt(max(0, margin - tagdefs.CONTENT_MARGIN))
 
 
 def _inline_code_spans(item):
@@ -305,7 +316,7 @@ def _marker_hang_pt(item):
         return 0.0
     if not item.runs or not _MARKER_TAGS.intersection(item.runs[0][1]):
         return 0.0
-    return pt(-tagdefs.LIST_HANGING_INDENT)
+    return layout_pt(-tagdefs.LIST_HANGING_INDENT)
 
 
 def _line_geometry(layout):
@@ -458,7 +469,7 @@ def _build_table_rows(context, style_table, rows, width_pt, font=None):
             col_width = col_widths[col_index]
             layout = context.create_pango_layout()
             layout.set_font_description(font or _base_font())
-            layout.set_width(Pango.units_from_double(max(col_width - 2 * TABLE_CELL_PAD_PT, 1.0)))
+            layout.set_width(Pango.units_from_double(max(col_width - 2 * TABLE_CELL_PAD_X_PT, 1.0)))
             layout.set_wrap(Pango.WrapMode.WORD_CHAR)
             layout.set_text(text, -1)
             if row_index == 0:
@@ -469,7 +480,7 @@ def _build_table_rows(context, style_table, rows, width_pt, font=None):
                 al.insert(attr)
                 layout.set_attributes(al)
             _w, h = layout.get_pixel_size()
-            max_h = max(max_h, h + 2 * TABLE_CELL_PAD_PT)
+            max_h = max(max_h, h + 2 * TABLE_CELL_PAD_Y_PT)
             cells.append(layout)
         row_layouts.append(cells)
         row_heights.append(max_h)
@@ -715,7 +726,7 @@ def _build_blocks(context, style_table, print_model, page_width, page_height, da
         if len(blocks) > before:
             # One leading on top of the collapsed margin -- on screen
             # every line carries it, including a block's last.
-            blocks[before].gap = pt(item.gap) + leading
+            blocks[before].gap = layout_pt(item.gap) + leading
     return blocks
 
 
@@ -957,7 +968,7 @@ def _draw_inline_code_chips(cr, entry):
     spans, rgb = entry["chips"], entry["chip_rgb"]
     if not spans or rgb is None:
         return
-    pad_x, pad_y = pt(tagdefs.INLINE_CODE_PAD_X), pt(tagdefs.INLINE_CODE_PAD_Y)
+    pad_x, pad_y = layout_pt(tagdefs.INLINE_CODE_PAD_X), layout_pt(tagdefs.INLINE_CODE_PAD_Y)
     cr.save()
     cr.set_source_rgb(*rgb)
     for line, _y_top, _height, baseline, x_off in entry["lines"]:
@@ -977,7 +988,7 @@ def _draw_inline_code_chips(cr, entry):
             _rounded_rect(
                 cr, entry["x"] + x_off + x0 - pad_x, top - pad_y,
                 (x1 - x0) + pad_x * 2, height + pad_y * 2,
-                pt(tagdefs.INLINE_CODE_RADIUS),
+                layout_pt(tagdefs.INLINE_CODE_RADIUS),
             )
             cr.fill()
     cr.restore()
@@ -1040,7 +1051,7 @@ def _draw_entry(cr, entry, page_width):
         for cell_layouts, row_y, row_h, row_index in entry["rows"]:
             cx = x0
             for col_index, layout in enumerate(cell_layouts):
-                cr.move_to(cx + TABLE_CELL_PAD_PT, row_y + TABLE_CELL_PAD_PT)
+                cr.move_to(cx + TABLE_CELL_PAD_X_PT, row_y + TABLE_CELL_PAD_Y_PT)
                 PangoCairo.show_layout(cr, layout)
                 cx += col_widths[col_index]
             if row_index < entry["total_rows"] - 1:

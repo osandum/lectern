@@ -361,3 +361,73 @@ def test_a_marker_wider_than_the_hang_keeps_a_space_before_its_text():
     )
     end = len(item.runs[0][0].encode("utf-8"))
     assert layout.index_to_pos(end).x == pytest.approx(natural.index_to_pos(end).x, abs=0.1 * Pango.SCALE)
+
+
+# -- Paper is the screen at PRINT_SCALE, spacing included -------------------
+#
+# The font was taken down a step for paper while every length stayed at its
+# 100% size, so each gap, indent and pad came out ~11% too big for the text
+# beside it -- the paper version of #6. Asserted in em, as test_layout.py
+# does, so these hold whatever PRINT_SCALE settles on.
+
+def _screen_em(px):
+    return px / printing.tagdefs.BASE_FONT_PX
+
+
+def _paper_em(points):
+    return points / printing.PRINT_BASE_PT
+
+
+def _blocks_for(markdown_text):
+    return printing._build_blocks(
+        _PdfContext(), printing.tagdefs.tag_style_props(False),
+        print_model_for(markdown_text), 400, 700, False,
+    )
+
+
+def test_print_base_font_is_the_screen_font_at_print_scale():
+    assert printing.PRINT_BASE_PT == pytest.approx(zoomdefs.BASE_PT * printing.PRINT_SCALE)
+
+
+def test_printed_block_gaps_keep_the_screens_em_ratio():
+    model = print_model_for("One paragraph.\n\nAnother paragraph.\n")
+    blocks = _blocks_for("One paragraph.\n\nAnother paragraph.\n")
+    leading = printing._leading_pt(_PdfContext(), printing._base_font())
+    assert _paper_em(blocks[1].gap - leading) == pytest.approx(_screen_em(model[1].gap))
+
+
+def test_printed_list_indents_keep_the_screens_em_ratio():
+    tags = printing.tagdefs
+    for level in (1, 2, 3):
+        screen = tags.list_marker_column(level) - tags.CONTENT_MARGIN
+        assert _paper_em(printing._left_margin_pt([f"list-indent-{level}"])) == pytest.approx(
+            _screen_em(screen))
+    item = print_model_for("- item\n")[0]
+    assert _paper_em(-printing._marker_hang_pt(item)) == pytest.approx(
+        _screen_em(tags.LIST_HANGING_INDENT))
+
+
+@pytest.mark.parametrize("paper, screen", [
+    ("CODE_BLOCK_PAD_PT", "CODE_BLOCK_PADDING"),
+    ("CODE_BLOCK_RADIUS_PT", "CODE_BLOCK_RADIUS"),
+    ("HEADING_RULE_PAD_PT", "HEADING_RULE_PAD"),
+])
+def test_printed_block_decorations_keep_the_screens_em_ratio(paper, screen):
+    assert _paper_em(getattr(printing, paper)) == pytest.approx(
+        _screen_em(getattr(printing.tagdefs, screen)))
+
+
+def test_printed_table_rows_are_padded_like_the_screens():
+    """Each row on screen is its labels' top and bottom margins plus a
+    one-pixel rule; on paper it was 6pt of padding each side plus a 6pt
+    gap, twice the screen's overhead, which is what made table-heavy
+    documents run to extra pages."""
+    from lectern import tables as tabledefs
+    blocks = _blocks_for("| a | b |\n|---|---|\n| 1 | 2 |\n| 3 | 4 |\n")
+    table = next(b for b in blocks if b.kind == "table")
+    row_layouts, row_heights = table.rows
+    text_height = max(layout.get_pixel_size()[1] for layout in row_layouts[1])
+    assert _paper_em(row_heights[1] - text_height) == pytest.approx(
+        _screen_em(2 * tabledefs.CELL_PAD_Y))
+    assert _paper_em(printing.TABLE_ROW_GAP_PT) == pytest.approx(
+        _screen_em(tabledefs.ROW_RULE_PX))

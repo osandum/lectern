@@ -8,6 +8,12 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, GLib
 
 MIN_COLUMN_CHARS = 3  # floor so an all-empty or all-tiny column doesn't collapse to nothing
+# Each cell's padding, as label margins, and the rule between rows, a
+# Gtk.Separator one pixel tall. Shared with printing.py, which draws the
+# same rows on paper and used to pad them by its own, twice-as-big numbers.
+CELL_PAD_X = 8
+CELL_PAD_Y = 6
+ROW_RULE_PX = 1
 
 
 def _longest_word_length(text):
@@ -251,7 +257,8 @@ def build_table_widget(table_node, link_color):
         for col_index, cell_node in enumerate(cells):
             label = Gtk.Label(
                 xalign=0.0, wrap=True, hexpand=True, selectable=True,
-                margin_top=6, margin_bottom=6, margin_start=8, margin_end=8,
+                margin_top=CELL_PAD_Y, margin_bottom=CELL_PAD_Y,
+                margin_start=CELL_PAD_X, margin_end=CELL_PAD_X,
             )
             # Table text lives in these labels, not in the TextBuffer, so
             # the TextView's own click-drag selection can't reach it --
