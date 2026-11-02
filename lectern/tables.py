@@ -120,28 +120,65 @@ def extract_rows(table_node):
     return [[inline_plain_text(cell) for cell in cells] for cells in _iter_rows(table_node)]
 
 
+# A cell's inline styles, by the tag name the body text uses for each --
+# so print can style cell runs from tags.tag_style_props like a paragraph's
+# -- and the Pango markup element the screen's labels spell it with.
+_CELL_STYLES = {"strong": "strong", "em": "em", "s": "strike"}
+_CELL_MARKUP = {"strong": "b", "em": "i", "strike": "s", "code-inline": "tt"}
+
+
+def cell_runs(cell_node):
+    """A cell's inline content as [(text, tag_names, href)] runs, href None
+    outside a link. The one walk behind both the screen's label markup and
+    the printed cell, so the two support the same styles: the handful
+    renderer.py supports for body text that plausibly turn up in a table
+    cell, not the full inline grammar.
+
+    `code_inline` is a leaf with its text in .content and no children;
+    recursing into it instead once made a cell like
+    `[`../app/foo/`](../app/foo/)` render blank.
+    """
+    runs = []
+
+    def walk(node, tags, href):
+        t = node.type
+        if t == "text":
+            runs.append((node.content, tags, href))
+        elif t == "code_inline":
+            runs.append((node.content, tags + ["code-inline"], href))
+        elif t == "softbreak":
+            runs.append((" ", tags, href))
+        elif t == "link":
+            # Nested links aren't valid Markdown, so this can't nest --
+            # simply adopt the innermost href, matching CommonMark's own
+            # "link text can't itself contain a link" rule.
+            for child in node.children:
+                walk(child, tags + ["link"], node.attrs.get("href", ""))
+        else:
+            style = _CELL_STYLES.get(t)
+            for child in node.children:
+                walk(child, tags + [style] if style else tags, href)
+
+    walk(cell_node, [], None)
+    return runs
+
+
 def _cell_markup(cell_node, link_color, highlights=()):
-    """Render a cell's inline content as Pango markup for an on-screen
-    Gtk.Label -- preserves links as clickable <a href> spans (so a cell
-    like `[`../app/foo/`](../app/foo/)` is navigable, not just readable)
-    plus the same handful of inline styles renderer.py supports for body
-    text. Only covers what plausibly turns up in a table cell, not the
-    full inline grammar the main buffer renderer handles.
+    """A cell's runs as Pango markup for an on-screen Gtk.Label -- links
+    as clickable <a href> spans, so a cell like `[`../app/foo/`](../app/foo/)`
+    is navigable, not just readable.
 
     `highlights` is find's `[(start, end, color)]` over the cell's plain
     text, baked straight into the markup -- see TableCell.highlight for
-    why they can't just be Pango attributes layered on afterward.
+    why they can't just be Pango attributes layered on afterward. Each run
+    opens and closes its own elements, so a match straddling a style
+    boundary just yields one span each side of it instead of a span
+    crossing a tag.
     """
     parts = []
     emitted = 0  # plain-text characters emitted so far, to index highlights by
 
     def emit(text):
-        """Append `text`, escaped, wrapping any highlighted slice of it in
-        a background span. Slicing per emitted run (rather than once over
-        the finished markup) is what keeps the result well-formed: a match
-        straddling an inline tag boundary just yields one span each side
-        of it instead of a span crossing the tag.
-        """
         nonlocal emitted
         start, end = emitted, emitted + len(text)
         emitted = end
@@ -157,60 +194,26 @@ def _cell_markup(cell_node, link_color, highlights=()):
             cursor = hi
         parts.append(GLib.markup_escape_text(text[cursor - start:]))
 
-    def open_link(href):
+    for text, tags, href in cell_runs(cell_node):
+        elements = [_CELL_MARKUP[tag] for tag in tags if tag in _CELL_MARKUP]
         if href:
             # Color applied here, not via the shared "link" TextTag --
             # table cells are separate Gtk.Label widgets outside that
             # tag table (see tags.link_color_hex's docstring).
             escaped = GLib.markup_escape_text(href)
             parts.append(f'<a href="{escaped}"><span foreground="{link_color}">')
-
-    def close_link(href):
+        parts.extend(f"<{e}>" for e in elements)
+        emit(text)
+        parts.extend(f"</{e}>" for e in reversed(elements))
         if href:
             parts.append("</span></a>")
-
-    def walk(node, href=None):
-        t = node.type
-        if t == "text":
-            open_link(href)
-            emit(node.content)
-            close_link(href)
-        elif t == "code_inline":
-            open_link(href)
-            parts.append("<tt>")
-            emit(node.content)
-            parts.append("</tt>")
-            close_link(href)
-        elif t == "softbreak":
-            emit(" ")
-        elif t == "strong":
-            parts.append("<b>")
-            for child in node.children:
-                walk(child, href)
-            parts.append("</b>")
-        elif t == "em":
-            parts.append("<i>")
-            for child in node.children:
-                walk(child, href)
-            parts.append("</i>")
-        elif t == "s":
-            parts.append("<s>")
-            for child in node.children:
-                walk(child, href)
-            parts.append("</s>")
-        elif t == "link":
-            # Nested links aren't valid Markdown, so this can't nest --
-            # simply adopt the innermost href, matching CommonMark's own
-            # "link text can't itself contain a link" rule.
-            inner_href = node.attrs.get("href", "")
-            for child in node.children:
-                walk(child, inner_href)
-        else:
-            for child in node.children:
-                walk(child, href)
-
-    walk(cell_node)
     return "".join(parts)
+
+
+def extract_cell_runs(table_node):
+    """cell_runs for every cell, [row][col], header row first -- what print
+    lays a table's cells out from."""
+    return [[cell_runs(cell) for cell in cells] for cells in _iter_rows(table_node)]
 
 
 class TableCell:

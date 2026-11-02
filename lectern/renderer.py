@@ -57,14 +57,19 @@ def _without_trailing_newline(runs):
 
 
 class PrintItem:
-    __slots__ = ("kind", "runs", "block_tags", "rows", "language", "image", "gap", "diagram")
+    __slots__ = ("kind", "runs", "block_tags", "rows", "cells", "language", "image", "gap",
+                 "diagram")
 
     def __init__(self, kind, runs=None, block_tags=None, rows=None, language=None,
-                 image=None, diagram=None):
+                 image=None, diagram=None, cells=None):
         self.kind = kind
         self.runs = runs or []
         self.block_tags = block_tags or []
         self.rows = rows
+        # For "table": each cell's styled runs (tables.cell_runs), [row][col]
+        # like `rows`, which stays the plain text. Paper used to print from
+        # `rows`, and so lost every bold, italic and code span in a table.
+        self.cells = cells
         self.language = language
         # Space above this block, in the same screen pixels the buffer's
         # block-gap tags use, filled in by the walker once the collapsed
@@ -500,7 +505,9 @@ class MarkdownRenderer:
         # (see tables.py's build_table_widget docstring).
         self.anchor_descriptors[anchor] = {"kind": "table", "rows": rows}
         buffer.insert(it, "\n")
-        self.print_model.append(PrintItem("table", rows=rows, block_tags=list(ctx.block_tags)))
+        self.print_model.append(PrintItem(
+            "table", rows=rows, cells=tables.extract_cell_runs(node),
+            block_tags=list(ctx.block_tags)))
 
     def _enclosing_href(self, inline_tags):
         """The href of the link an inline node sits inside, or None. The

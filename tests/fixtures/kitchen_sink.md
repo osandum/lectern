@@ -178,7 +178,7 @@ line 100 of a deliberately long code block
 
 | Feature      | Supported | Notes                        |
 |--------------|-----------|-------------------------------|
-| Tables       | Yes       | Column widths sized by median cell length |
+| Tables       | Yes       | Columns sized by **what their cells need** |
 | Task lists   | Yes       | Read-only glyphs              |
 | Footnotes    | Yes       | Click to jump                 |
 | Editing      | No        | This is a viewer              |

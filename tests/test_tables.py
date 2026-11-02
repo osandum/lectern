@@ -127,9 +127,8 @@ class _PdfContext:
 
 
 def test_printed_table_shares_the_width_the_same_way():
-    rows = tables.extract_rows(_table_node(LOGINS))
-    layouts, _heights, widths = printing._build_table_rows(
-        _PdfContext(), tag_style_props(False), rows, 480)
+    layouts, _heights, widths, _items = printing._build_table_rows(
+        _PdfContext(), tag_style_props(False), tables.extract_cell_runs(_table_node(LOGINS)), 480)
     assert sum(widths) == pytest.approx(480)
     assert widths[1] > 2 * widths[0]
     assert all(row[0].get_line_count() == 1 for row in layouts)

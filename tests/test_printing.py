@@ -431,3 +431,69 @@ def test_printed_table_rows_are_padded_like_the_screens():
         _screen_em(2 * tabledefs.CELL_PAD_Y))
     assert _paper_em(printing.TABLE_ROW_GAP_PT) == pytest.approx(
         _screen_em(tabledefs.ROW_RULE_PX))
+
+
+# -- Table cells keep their inline styles on paper ----------------------------
+
+STYLED_TABLE = """\
+| Name | Note |
+|---|---|
+| **bold** | *slanted* and ~~gone~~ |
+| `code` | [site](https://example.com/t) and [here](other.md) |
+"""
+
+
+def _printed_table(markdown_text):
+    block = next(b for b in _blocks_for(markdown_text) if b.kind == "table")
+    return block.rows[0], block.row_items
+
+
+def _attrs_at(layout, text):
+    """Every Pango attribute type covering `text`'s first character, with
+    font descriptions unpacked into the fields they set."""
+    from gi.repository import Pango
+    index = layout.get_text().encode("utf-8").index(text.encode("utf-8"))
+    found = {}
+    for attr in layout.get_attributes().get_attributes():
+        if not attr.start_index <= index < attr.end_index:
+            continue
+        desc = attr.as_font_desc()
+        if desc is not None:
+            found["weight"] = desc.desc.get_weight()
+            found["style"] = desc.desc.get_style()
+            found["family"] = desc.desc.get_family()
+        elif attr.klass.type == Pango.AttrType.STRIKETHROUGH:
+            found["strikethrough"] = True
+        elif attr.klass.type == Pango.AttrType.FOREGROUND:
+            found["foreground"] = True
+    return found
+
+
+def test_printed_table_cells_keep_their_inline_styles():
+    from gi.repository import Pango
+    layouts, _items = _printed_table(STYLED_TABLE)
+    assert _attrs_at(layouts[0][0], "Name")["weight"] == Pango.Weight.BOLD
+    assert _attrs_at(layouts[1][0], "bold")["weight"] == Pango.Weight.BOLD
+    assert _attrs_at(layouts[1][1], "slanted")["style"] == Pango.Style.ITALIC
+    assert _attrs_at(layouts[1][1], "gone").get("strikethrough")
+    assert _attrs_at(layouts[1][1], "and").get("weight", Pango.Weight.NORMAL) == Pango.Weight.NORMAL
+    assert "mono" in _attrs_at(layouts[2][0], "code")["family"].lower()
+    assert _attrs_at(layouts[2][1], "site").get("foreground")
+
+
+def test_printed_table_cells_get_code_chips_and_scheme_links_only():
+    _layouts, items = _printed_table(STYLED_TABLE)
+    assert printing._inline_code_spans(items[2][0]) == [(0, 4)]
+    links = printing._link_spans(items[2][1], items[2][1].hrefs)
+    assert [href for _s, _e, href in links] == ["https://example.com/t"]
+
+
+def test_table_cell_links_become_pdf_annotations(tmp_path):
+    out = tmp_path / "out.pdf"
+    printing.PrintCoordinator().print_document(
+        None, print_model_for(STYLED_TABLE), False, "Doc", "doc.md",
+        action=Gtk.PrintOperationAction.EXPORT, export_path=str(out),
+    )
+    text = pdf_texts(out)
+    assert len(re.findall(rb"/Subtype\s*/Link", text)) == 1
+    assert b"https://example.com/t" in text

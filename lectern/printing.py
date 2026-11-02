@@ -459,34 +459,46 @@ def _cell_extents(layout):
     return Pango.units_to_double(narrowest), Pango.units_to_double(widest)
 
 
-def _build_table_rows(context, style_table, rows, width_pt, font=None):
-    if not rows:
-        return [], [], []
-    # Shared with tables.py's on-screen <b>...</b> header markup via
-    # tags.py's "table-header" entry, so "headers are bold" is one fact.
-    header_weight = style_table.get("table-header", {}).get("weight", Pango.Weight.BOLD)
-    ncols = max(len(r) for r in rows)
-    row_layouts = []
+class _CellItem:
+    """One table cell as the paragraph helpers expect an item: runs of
+    (text, tag_names). A link run also gets a tag of its own naming its
+    href in `hrefs`, which is the mapping _link_spans looks links up in --
+    scheme links only, as for body text (see _on_begin_print)."""
+    __slots__ = ("runs", "hrefs")
+
+    def __init__(self, runs, heading):
+        self.runs, self.hrefs = [], {}
+        for text, tags, href in runs:
+            tags = list(tags) + (["table-header"] if heading else [])
+            if href and GLib.uri_parse_scheme(href) is not None:
+                name = f"cell-link-{len(self.hrefs)}"
+                self.hrefs[name] = href
+                tags.append(name)
+            self.runs.append((text, tags))
+
+
+def _build_table_rows(context, style_table, cells, width_pt, font=None):
+    """Cell layouts, row heights and column widths for a table whose cells
+    are tables.cell_runs, styled as a paragraph's runs are -- the header
+    row through tags.py's "table-header" entry, which is where the
+    screen's <b> header markup comes from too."""
+    if not cells:
+        return [], [], [], []
+    ncols = max(len(r) for r in cells)
+    row_layouts, row_items = [], []
     mins, maxes = [0.0] * ncols, [0.0] * ncols
-    for row_index, row in enumerate(rows):
-        cells = []
+    for row_index, row in enumerate(cells):
+        layouts, items = [], []
         for col_index in range(ncols):
-            text = row[col_index] if col_index < len(row) else ""
-            layout = context.create_pango_layout()
-            layout.set_font_description(font or _base_font())
-            layout.set_text(text, -1)
-            if row_index == 0:
-                al = Pango.AttrList()
-                attr = Pango.attr_weight_new(header_weight)
-                attr.start_index = 0
-                attr.end_index = len(text.encode("utf-8"))
-                al.insert(attr)
-                layout.set_attributes(al)
+            item = _CellItem(row[col_index] if col_index < len(row) else [], row_index == 0)
+            layout = _build_text_layout(context, style_table, item, 1.0, font=font)
             lo, hi = _cell_extents(layout)
             mins[col_index] = max(mins[col_index], lo + 2 * TABLE_CELL_PAD_X_PT)
             maxes[col_index] = max(maxes[col_index], hi + 2 * TABLE_CELL_PAD_X_PT)
-            cells.append(layout)
-        row_layouts.append(cells)
+            layouts.append(layout)
+            items.append(item)
+        row_layouts.append(layouts)
+        row_items.append(items)
     # The same allocation the screen's table makes (tables._TableLayout),
     # from the same two measurements, so a column that keeps its cells on
     # one line on screen keeps them on one line on paper. Paper's one
@@ -494,16 +506,16 @@ def _build_table_rows(context, style_table, rows, width_pt, font=None):
     # don't fit side by side is shrunk, and WORD_CHAR breaks them.
     col_widths = tabledefs.allocate_columns(mins, maxes, width_pt)
     row_heights = []
-    for cells in row_layouts:
+    for layouts in row_layouts:
         max_h = 0.0
-        for col_index, layout in enumerate(cells):
+        for col_index, layout in enumerate(layouts):
             layout.set_wrap(Pango.WrapMode.WORD_CHAR)
             layout.set_width(Pango.units_from_double(
                 max(col_widths[col_index] - 2 * TABLE_CELL_PAD_X_PT, 1.0)))
             _w, h = layout.get_pixel_size()
             max_h = max(max_h, h + 2 * TABLE_CELL_PAD_Y_PT)
         row_heights.append(max_h)
-    return row_layouts, row_heights, col_widths
+    return row_layouts, row_heights, col_widths, row_items
 
 
 class _Block:
@@ -590,9 +602,13 @@ class _Block:
         return block
 
     @classmethod
-    def table(cls, x, row_layouts, row_heights, col_widths):
+    def table(cls, x, row_layouts, row_heights, col_widths, row_items, chip_rgb):
         block = cls("table", x)
         block.rows = (row_layouts, row_heights)
+        # Each cell's _CellItem, [row][col] like the layouts: what its code
+        # chips and link annotations are found from at draw time.
+        block.row_items = row_items
+        block.chip_rgb = chip_rgb
         block.col_widths = col_widths
         block.height = sum(row_heights) + TABLE_ROW_GAP_PT * max(len(row_heights) - 1, 0)
         return block
@@ -737,11 +753,12 @@ def _build_blocks(context, style_table, print_model, page_width, page_height, da
             blocks.append(_Block.hr())
         elif item.kind == "table":
             x = _left_margin_pt(item.block_tags)
-            row_layouts, row_heights, col_widths = _build_table_rows(
-                context, style_table, item.rows, page_width - x, font
+            row_layouts, row_heights, col_widths, row_items = _build_table_rows(
+                context, style_table, item.cells, page_width - x, font
             )
             if row_layouts:
-                blocks.append(_Block.table(x, row_layouts, row_heights, col_widths))
+                blocks.append(_Block.table(
+                    x, row_layouts, row_heights, col_widths, row_items, code_bg_rgb))
         if len(blocks) > before:
             # One leading on top of the collapsed margin -- on screen
             # every line carries it, including a block's last.
@@ -879,12 +896,14 @@ def _paginate(blocks, page_height):
                     # row is the table's true last row -- it draws a rule
                     # after every row except that one, to match the
                     # on-screen rules-between-rows style exactly.
-                    rows_here.append((row_layouts[i2], row_y, row_heights[i2], i2))
+                    rows_here.append((row_layouts[i2], row_y, row_heights[i2], i2,
+                                      block.row_items[i2]))
                     row_y += row_heights[i2] + TABLE_ROW_GAP_PT
                     i2 += 1
                 current.append({
                     "type": "table", "x": block.x, "col_widths": block.col_widths,
                     "rows": rows_here, "total_rows": total_rows,
+                    "chip_rgb": block.chip_rgb,
                 })
                 y = row_y
                 if i2 < len(row_layouts):
@@ -1013,6 +1032,18 @@ def _draw_inline_code_chips(cr, entry):
     cr.restore()
 
 
+def _cell_entry(layout, item, x, y, chip_rgb):
+    """A table cell in the shape the paragraph drawing helpers take, so a
+    cell's code chips and links are drawn by the same code as a
+    paragraph's. Their "y" is the first line's baseline, not the top."""
+    lines = _line_geometry(layout)
+    return {
+        "lines": lines, "x": x, "y": y + lines[0][3], "origin_baseline": lines[0][3],
+        "chips": _inline_code_spans(item), "chip_rgb": chip_rgb,
+        "links": _link_spans(item, item.hrefs),
+    }
+
+
 def _draw_link_annotations(cr, entry):
     """Lay a clickable PDF 'Link' annotation over every hyperlink run on
     this page fragment -- the piece that makes a printed link actually
@@ -1067,11 +1098,16 @@ def _draw_entry(cr, entry, page_width):
         # (no per-cell boxes: tried a full grid, rejected as too heavy/
         # inconsistent with a plain-rules look).
         x0, col_widths = entry["x"], entry["col_widths"]
-        for cell_layouts, row_y, row_h, row_index in entry["rows"]:
+        for cell_layouts, row_y, row_h, row_index, cell_items in entry["rows"]:
             cx = x0
             for col_index, layout in enumerate(cell_layouts):
-                cr.move_to(cx + TABLE_CELL_PAD_X_PT, row_y + TABLE_CELL_PAD_Y_PT)
+                cell_x, cell_y = cx + TABLE_CELL_PAD_X_PT, row_y + TABLE_CELL_PAD_Y_PT
+                cell = _cell_entry(layout, cell_items[col_index], cell_x, cell_y,
+                                   entry["chip_rgb"])
+                _draw_inline_code_chips(cr, cell)
+                cr.move_to(cell_x, cell_y)
                 PangoCairo.show_layout(cr, layout)
+                _draw_link_annotations(cr, cell)
                 cx += col_widths[col_index]
             if row_index < entry["total_rows"] - 1:
                 rule_y = row_y + row_h + TABLE_ROW_GAP_PT / 2
