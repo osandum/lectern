@@ -1,6 +1,7 @@
 """A small per-document store for preferences that should survive a
-relaunch -- currently just the print header/footer toggle, but written to
-hold others later (see #30).
+relaunch -- the print header/footer toggle (see #30), and the sheet the
+document was last printed on: paper size, orientation and the dialog's
+Scale (printing.PrintPage).
 
 Keyed not to a specific *file* but to whatever "the same document" means
 across sessions: a checksum of the document's own title if it has one,
@@ -9,8 +10,8 @@ as a Flatpak, and the file-forwarding portal mounts the very same host
 file at a different sandboxed path on every open, which would defeat a
 path-based key outright. The trade-off is that two unrelated documents
 sharing a title or file name (two different README.md's, say) share one
-sticky entry; acceptable for a boolean toggle, worth remembering if this
-store grows richer settings later.
+sticky entry; acceptable for a toggle and a choice of paper, which at
+worst opens the print dialog on the other document's settings.
 
 Capped at a fixed number of entries, least-recently-*written* dropped
 first -- not least-recently-*read*, so merely opening a document doesn't

@@ -497,3 +497,136 @@ def test_table_cell_links_become_pdf_annotations(tmp_path):
     text = pdf_texts(out)
     assert len(re.findall(rb"/Subtype\s*/Link", text)) == 1
     assert b"https://example.com/t" in text
+
+
+# -- The dialog's Scale reflows the document ----------------------------------
+
+LONG = "# Hello\n\n" + "more text. " * 900 + "\n"
+
+
+def run_scaled_export(markdown_text, tmp_path, scale, header_footer=False):
+    """run_export with the print dialog's Scale set. EXPORT is the one
+    path where GTK doesn't apply it, so this also covers draw-page making
+    up for that."""
+    coordinator = printing.PrintCoordinator()
+    op = Gtk.PrintOperation()
+    op.set_default_page_setup(printing._print_page_setup(header_footer))
+    settings = Gtk.PrintSettings()
+    settings.set_scale(scale)
+    op.set_print_settings(settings)
+    out = tmp_path / f"scaled-{scale}.pdf"
+    op.set_export_filename(str(out))
+    state = {"header_footer": header_footer,
+             "header_left": printing._header_left_text("Hello", "hello.md")}
+    op.connect("begin-print", coordinator._on_begin_print, print_model_for(markdown_text),
+               False, state)
+    op.connect("draw-page", coordinator._on_draw_page, state)
+    assert op.run(Gtk.PrintOperationAction.EXPORT, None) == Gtk.PrintOperationResult.APPLY
+    return state, out
+
+
+def test_scale_lays_the_document_out_on_a_page_divided_by_it(tmp_path):
+    full, _ = run_scaled_export(LONG, tmp_path, 100)
+    small, _ = run_scaled_export(LONG, tmp_path, 80)
+    assert small["width"] == pytest.approx(full["width"] / 0.8)
+    assert small["height"] == pytest.approx(full["height"] / 0.8)
+    assert small["paper_width"] == pytest.approx(full["width"])
+
+
+def test_a_smaller_scale_reflows_onto_fewer_pages_and_a_bigger_onto_more(tmp_path):
+    counts = {s: len(run_scaled_export(LONG, tmp_path, s)[0]["pages"]) for s in (70, 100, 140)}
+    assert counts[70] < counts[100] < counts[140]
+
+
+def test_lines_rewrap_to_the_scaled_width(tmp_path):
+    full, _ = run_scaled_export(LONG, tmp_path, 100)
+    small, _ = run_scaled_export(LONG, tmp_path, 80)
+    words_per_line = []
+    for state in (full, small):
+        paragraph = next(b for b in state["blocks"] if b.kind == "layout" and b.heading_level is None)
+        words_per_line.append(len(paragraph.layout.get_text().split()) / paragraph.layout.get_line_count())
+    assert words_per_line[1] > words_per_line[0] * 1.15
+
+
+def test_the_document_is_drawn_at_the_scale(tmp_path, monkeypatch):
+    """EXPORT doesn't apply the Scale itself, so draw-page has to."""
+    drawn = []
+    real = printing._draw_entry
+
+    def spy(cr, entry, page_width):
+        drawn.append(cr.get_matrix().xx)
+        real(cr, entry, page_width)
+
+    monkeypatch.setattr(printing, "_draw_entry", spy)
+    run_scaled_export("Some text.\n", tmp_path, 80)
+    assert drawn and all(xx == pytest.approx(0.8) for xx in drawn)
+
+
+def test_running_head_and_foot_keep_their_size_and_place_on_paper(tmp_path):
+    full, _ = run_scaled_export(LONG, tmp_path, 100, header_footer=True)
+    small, _ = run_scaled_export(LONG, tmp_path, 80, header_footer=True)
+    assert small["header_band"] * 0.8 == pytest.approx(full["header_band"])
+    assert small["paper_height"] == pytest.approx(full["paper_height"])
+
+
+def test_missing_scale_makes_up_whatever_gtk_did_not_apply():
+    import cairo
+    identity = cairo.Matrix(1, 0, 0, 1, 18, 18)
+    assert printing._missing_scale(identity, 0.8, 1) == pytest.approx(0.8)
+    applied = cairo.Matrix(0.8, 0, 0, 0.8, 18, 18)
+    assert printing._missing_scale(applied, 0.8, 1) == pytest.approx(1.0)
+    rotated = cairo.Matrix(0, -0.8, 0.8, 0, 18, 18)  # landscape
+    assert printing._missing_scale(rotated, 0.8, 1) == pytest.approx(1.0)
+    assert printing._missing_scale(identity, 0.8, 2) == 1.0  # n-up: trust GTK
+
+
+# -- The sheet a document was printed on is remembered ------------------------
+
+def test_print_page_round_trips_through_plain_data():
+    import json
+    letter = Gtk.PaperSize.new(Gtk.PAPER_NAME_LETTER)
+    page = printing.PrintPage(letter, Gtk.PageOrientation.LANDSCAPE, 80.0)
+    back = printing.PrintPage.from_data(json.loads(json.dumps(page.to_data())))
+    assert back.paper.get_name() == Gtk.PAPER_NAME_LETTER
+    assert back.orientation == Gtk.PageOrientation.LANDSCAPE
+    assert back.scale == 80.0
+
+
+def test_a_custom_paper_size_round_trips_too():
+    custom = Gtk.PaperSize.new_custom("receipt", "Receipt", 80, 200, Gtk.Unit.MM)
+    back = printing.PrintPage.from_data(printing.PrintPage(custom, None, 100.0).to_data())
+    assert back.paper.get_width(Gtk.Unit.MM) == pytest.approx(80)
+    assert back.paper.get_height(Gtk.Unit.MM) == pytest.approx(200)
+
+
+@pytest.mark.parametrize("data", [None, "A4", {"paper": "not a variant"}, {"scale": "big"}])
+def test_an_unreadable_stored_page_is_dropped(data):
+    assert printing.PrintPage.from_data(data) is None
+
+
+def test_printing_reports_the_sheet_it_ran_with(tmp_path):
+    coordinator = printing.PrintCoordinator()
+    letter = Gtk.PaperSize.new(Gtk.PAPER_NAME_LETTER)
+    coordinator.print_document(
+        None, print_model_for(LONG), False, "Hello", "hello.md",
+        action=Gtk.PrintOperationAction.EXPORT, export_path=str(tmp_path / "out.pdf"),
+        page=printing.PrintPage(letter, Gtk.PageOrientation.LANDSCAPE, 80.0),
+    )
+    page = coordinator.page
+    assert page.paper.get_name() == Gtk.PAPER_NAME_LETTER
+    assert page.orientation == Gtk.PageOrientation.LANDSCAPE
+    assert page.scale == pytest.approx(80.0)
+
+
+def test_a_remembered_sheet_is_the_sheet_printed_on(tmp_path):
+    """The PDF's page box is letter, landscape: the remembered page reached
+    the job, not just the dialog's defaults."""
+    out = tmp_path / "out.pdf"
+    printing.PrintCoordinator().print_document(
+        None, print_model_for(LONG), False, "Hello", "hello.md",
+        action=Gtk.PrintOperationAction.EXPORT, export_path=str(out),
+        page=printing.PrintPage(Gtk.PaperSize.new(Gtk.PAPER_NAME_LETTER),
+                                Gtk.PageOrientation.LANDSCAPE, 80.0),
+    )
+    boxes = set(re.findall(rb"/MediaBox\s*\[\s*0 0 ([\d.]+) ([\d.]+)\s*\]", pdf_texts(out)))
+    assert {(round(float(w)), round(float(h))) for w, h in boxes} == {(792, 612)}

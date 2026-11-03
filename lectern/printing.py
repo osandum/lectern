@@ -90,15 +90,23 @@ RIGHT_EXTRA_MARGIN_PT = 14.0
 # too. Only applies when there's a footer to make room for.
 FOOTER_MARGIN_SHIFT_PT = 14.0
 
-def _print_page_setup(header_footer=False):
+def _print_page_setup(header_footer=False, paper=None, orientation=None):
     """A Gtk.PageSetup with 56pt left, 42pt right, 28pt top, and GTK's own
     default bottom margin -- minus FOOTER_MARGIN_SHIFT_PT when there's a
     footer to make room for, untouched otherwise. Used as the operation's
     default so it still shows up, editable, in the print dialog's "Page
     Setup" tab -- and so `Gtk.PrintContext.get_width/height` already
     return the reduced text column by the time `_on_begin_print` sees
-    them."""
+    them.
+
+    `paper` (a Gtk.PaperSize) and `orientation` are what the reader last
+    printed this document on, if anything (see PrintPage); the margins are
+    Lectern's either way."""
     setup = Gtk.PageSetup()
+    if paper is not None:
+        setup.set_paper_size(paper)
+    if orientation is not None:
+        setup.set_orientation(orientation)
     setup.set_top_margin(PAGE_MARGIN_PT, Gtk.Unit.POINTS)
     setup.set_left_margin(PAGE_MARGIN_PT + LEFT_EXTRA_MARGIN_PT, Gtk.Unit.POINTS)
     setup.set_right_margin(PAGE_MARGIN_PT + RIGHT_EXTRA_MARGIN_PT, Gtk.Unit.POINTS)
@@ -1231,12 +1239,94 @@ def _draw_header_footer_line(cr, context, font, left, right, y, width):
     cr.restore()
 
 
+def _reader_scale(settings):
+    """The print dialog's Scale, as a factor: 1.0 at 100%. Applied on top
+    of PRINT_SCALE, the way a browser's print Scale reflows a page."""
+    percent = settings.get_scale() if settings is not None else 100.0
+    return percent / 100.0 if percent > 0 else 1.0
+
+
+def _missing_scale(matrix, scale, number_up):
+    """What draw-page has to scale by itself for the page to come out at
+    `scale`.
+
+    GTK applies the dialog's Scale with a cairo_scale after moving into
+    the margins (gtkprintoperation.c, common_render_page) -- on the
+    dialog path, the portal's and print preview, but not on EXPORT, which
+    leaves it at 1. Rather than know which path is running, this reads
+    what the page's matrix already carries and makes up the difference.
+    That assumes the context's own units are points, as on every surface
+    GTK prints through (PDF and PostScript), so its matrix scale is the
+    applied Scale and nothing else. With several pages to a sheet GTK
+    shrinks each page as well, so the matrix says nothing about the
+    Scale, and it is trusted to have applied it.
+    """
+    if number_up > 1:
+        return 1.0
+    applied = math.sqrt(abs(matrix.xx * matrix.yy - matrix.xy * matrix.yx))
+    if applied <= 0 or math.isclose(applied, scale, rel_tol=1e-6):
+        return 1.0
+    return scale / applied
+
+
+class PrintPage:
+    """The sheet a document was last printed on -- paper size, orientation
+    and the dialog's Scale -- as plain data for sticky_settings, so the
+    dialog opens on them next time instead of on A4, portrait, 100%.
+
+    Read from the page setup the job actually ran with (begin-print's
+    Gtk.PrintContext), not from the dialog's settings, so it is the same
+    on the dialog's path and the portal's. The paper is kept as GTK's own
+    GVariant serialisation, which round-trips a custom size as well as a
+    named one.
+    """
+    __slots__ = ("paper", "orientation", "scale")
+
+    def __init__(self, paper=None, orientation=None, scale=100.0):
+        self.paper = paper
+        self.orientation = orientation
+        self.scale = scale
+
+    @classmethod
+    def from_job(cls, page_setup, scale):
+        return cls(page_setup.get_paper_size().copy(), page_setup.get_orientation(),
+                   scale * 100.0)
+
+    def to_data(self):
+        return {
+            "paper": self.paper.to_gvariant().print_(True) if self.paper else None,
+            "orientation": int(self.orientation) if self.orientation is not None else None,
+            "scale": self.scale,
+        }
+
+    @classmethod
+    def from_data(cls, data):
+        """The PrintPage stored as `data`, or None. A value that won't
+        parse -- a hand-edited or older store -- is dropped rather than
+        let it stop the document printing."""
+        if not isinstance(data, dict):
+            return None
+        try:
+            paper = (Gtk.PaperSize.new_from_gvariant(GLib.Variant.parse(None, data["paper"]))
+                     if data.get("paper") else None)
+            orientation = (Gtk.PageOrientation(data["orientation"])
+                           if data.get("orientation") is not None else None)
+            scale = float(data.get("scale", 100.0))
+        except (GLib.Error, KeyError, TypeError, ValueError):
+            return None
+        return cls(paper, orientation, scale if scale > 0 else 100.0)
+
+
 class PrintCoordinator:
-    """One instance per print action; holds no state between calls."""
+    """One instance per print action. After print_document, `page` is the
+    PrintPage the job ran with, or None if nothing printed."""
+
+    def __init__(self):
+        self.page = None
 
     def print_document(self, parent_window, print_model, dark, doc_title, file_name,
                         action=Gtk.PrintOperationAction.PRINT_DIALOG, export_path=None,
-                        header_footer=False, link_targets=None):
+                        header_footer=False, link_targets=None, page=None):
         # header_footer is a plain argument, decided by the caller before
         # the dialog even opens -- not read out of the dialog itself.
         # GtkPrintOperation's create-custom-widget/custom-widget-apply
@@ -1249,7 +1339,8 @@ class PrintCoordinator:
         # instead.
         op = Gtk.PrintOperation()
         op.set_job_name(file_name)
-        op.set_default_page_setup(_print_page_setup(header_footer))
+        page = page or PrintPage()
+        op.set_default_page_setup(_print_page_setup(header_footer, page.paper, page.orientation))
         # "Print to File" otherwise suggests a bare "output.pdf"
         # (gtkprintbackendfile.c falls back to that literal string when
         # this key is unset) -- job_name above has no bearing on it, that
@@ -1258,6 +1349,11 @@ class PrintCoordinator:
         # titles across edits, but only one file name.
         settings = Gtk.PrintSettings()
         settings.set(Gtk.PRINT_SETTINGS_OUTPUT_BASENAME, PurePath(file_name).stem)
+        settings.set_scale(page.scale)
+        if page.paper is not None:
+            settings.set_paper_size(page.paper)
+        if page.orientation is not None:
+            settings.set_orientation(page.orientation)
         op.set_print_settings(settings)
         if export_path:
             op.set_export_filename(export_path)
@@ -1271,7 +1367,10 @@ class PrintCoordinator:
         }
         op.connect("begin-print", self._on_begin_print, print_model, dark, state)
         op.connect("draw-page", self._on_draw_page, state)
-        return op.run(action, parent_window)
+        result = op.run(action, parent_window)
+        if result == Gtk.PrintOperationResult.APPLY and "page" in state:
+            self.page = state["page"]
+        return result
 
     def _on_begin_print(self, op, context, print_model, dark, state):
         style_table = tagdefs.tag_style_props(dark)
@@ -1286,13 +1385,29 @@ class PrintCoordinator:
             if target.get("type") == "url" and target.get("href")
             and GLib.uri_parse_scheme(target["href"]) is not None
         }
-        width, height = context.get_width(), context.get_height()
-        header_band = HEADER_BAND_PT if state["header_footer"] else 0.0
-        footer_band = FOOTER_BAND_PT if state["header_footer"] else 0.0
+        settings = op.get_print_settings()
+        scale = _reader_scale(settings)
+        state["scale"] = scale
+        state["page"] = PrintPage.from_job(context.get_page_setup(), scale)
+        state["number_up"] = settings.get_number_up() if settings is not None else 1
+        # The page as the document sees it: the paper divided by the
+        # reader's scale, which GTK multiplies everything drawn by. Laid
+        # out on that, the text reflows -- at 80% each line and page holds
+        # a quarter more -- where a layout on the paper itself would only
+        # be shrunk whole, line and page breaks and all.
+        paper_width, paper_height = context.get_width(), context.get_height()
+        width, height = paper_width / scale, paper_height / scale
+        # The running head and foot are page chrome, not document, so they
+        # keep their size on paper; in the document's units that is their
+        # paper size divided by the scale.
+        header_band = HEADER_BAND_PT / scale if state["header_footer"] else 0.0
+        footer_band = FOOTER_BAND_PT / scale if state["header_footer"] else 0.0
         body_top = header_band + BODY_TOP_MARGIN_PT
         body_height = height - body_top - footer_band
         state["width"] = width
         state["height"] = height
+        state["paper_width"] = paper_width
+        state["paper_height"] = paper_height
         state["header_band"] = header_band
         state["body_top"] = body_top
         blocks = _build_blocks(
@@ -1308,22 +1423,29 @@ class PrintCoordinator:
 
     def _on_draw_page(self, op, context, page_nr, state):
         cr = context.get_cairo_context()
+        missing = _missing_scale(cr.get_matrix(), state["scale"], state["number_up"])
         cr.save()
+        cr.scale(missing, missing)
         cr.translate(0, state["body_top"])
         for entry in state["pages"][page_nr]:
             _draw_entry(cr, entry, state["width"])
         cr.restore()
         if state["header_footer"]:
+            # In paper units: the scale GTK applied, undone.
+            applied = state["scale"] / missing
+            cr.save()
+            cr.scale(1 / applied, 1 / applied)
             font = _header_footer_font()
             print_time = GLib.DateTime.new_now_local().format("%x %X")
             _draw_header_footer_line(
                 cr, context, font, state["header_left"], print_time,
-                HEADER_TEXT_TOP_PT, state["width"],
+                HEADER_TEXT_TOP_PT, state["paper_width"],
             )
-            footer_y = state["height"] - FOOTER_BAND_PT + FOOTER_TEXT_TOP_PT
+            footer_y = state["paper_height"] - FOOTER_BAND_PT + FOOTER_TEXT_TOP_PT
             page_label = _("Page {page} of {total}").format(
                 page=page_nr + 1, total=len(state["pages"]),
             )
             _draw_header_footer_line(
-                cr, context, font, None, page_label, footer_y, state["width"],
+                cr, context, font, None, page_label, footer_y, state["paper_width"],
             )
+            cr.restore()

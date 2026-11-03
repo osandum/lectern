@@ -15,7 +15,7 @@ from .renderer import MarkdownRenderer
 from .findbar import FindController
 from .zoom import ZoomController
 from .filewatch import FileWatcher
-from .printing import PrintCoordinator
+from .printing import PrintCoordinator, PrintPage
 from .decorated_textview import DecoratedTextView
 from . import sticky_settings
 from . import recent
@@ -414,6 +414,11 @@ class LecternWindow(Adw.ApplicationWindow):
         file_name = self._document.basename if self._document else "document"
         doc_title = self._document.title if self._document else None
         header_footer = self.lookup_action("print-header-footer").get_state().get_boolean()
+        # The sheet this document was last printed on, so the dialog opens
+        # on its paper, orientation and Scale rather than the defaults.
+        # Keyed like the header/footer toggle (see sticky_settings).
+        key = sticky_settings.key_for(doc_title, self._document.basename if self._document else None)
+        page = PrintPage.from_data(sticky_settings.get_sticky(key, "print_page", None))
         coordinator.print_document(
             # Paper is white regardless of the desktop theme, so print
             # always renders in the light palette -- following the app's
@@ -424,7 +429,10 @@ class LecternWindow(Adw.ApplicationWindow):
             # So a link in the document prints as a real clickable PDF
             # annotation, not just blue underlined text.
             link_targets=self._renderer.dispatch_targets,
+            page=page,
         )
+        if coordinator.page is not None:
+            sticky_settings.set_sticky(key, "print_page", coordinator.page.to_data())
 
     def _action_properties(self, action, param):
         if self._document is None:
