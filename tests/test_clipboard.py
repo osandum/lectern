@@ -373,6 +373,16 @@ def test_diagram_is_left_out_of_markdown_entirely():
     assert "Before." in md and "After." in md
 
 
+def test_a_fallback_fence_caption_is_left_out_of_both_flavours():
+    # The "Not drawn: ..." note under a fence Lectern couldn't draw is the
+    # viewer speaking, not the author: pasting it would put words in the
+    # document that aren't in its source.
+    html, markdown = to_html_and_markdown("```mermaid\ngantt\n```\n\nafter\n")
+    assert "Not drawn" not in html
+    assert "Not drawn" not in markdown
+    assert markdown.endswith("gantt\n```\n\nafter")
+
+
 def test_two_diagrams_each_get_their_own_data_uri():
     renderer, buffer = render(_FLOWCHART + "\n" + _FLOWCHART)
     assert len(renderer.diagrams) == 2

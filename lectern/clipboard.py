@@ -164,6 +164,12 @@ def walk_lines(buffer, start, end):
 
     while it.compare(end) < 0:
         names = _tag_names(it)
+        if "fence-caption" in names:
+            # Lectern's own note on why a diagram wasn't drawn, not the
+            # author's: it has no source form. Its bare terminator then
+            # closes a line with no runs, which flush_line drops.
+            it.forward_char()
+            continue
         if path is None:
             path, kind = _nesting_path(names), _line_kind(names)
         anchor = it.get_child_anchor()

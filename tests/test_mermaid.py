@@ -1263,6 +1263,17 @@ def test_a_fallback_says_when_mermaid_itself_would_refuse_the_diagram():
         "Not drawn: mermaid would refuse this diagram (syntax error at '(')")
 
 
+@pytest.mark.parametrize("source", [
+    "sequenceDiagram\n  A->>B: hi\n  deactivate B\n",
+    "flowchart LR\n  A --> B\n  linkStyle 3 stroke:red\n",
+])
+def test_errors_copied_from_mermaid_are_worded_as_mermaids(source):
+    # Not only the lexer and parser: these checks copy a throw in
+    # mermaid's own database, so the document is what needs fixing.
+    with pytest.raises(mermaid.Invalid):
+        mermaid.parse(source)
+
+
 def test_a_fallback_says_when_lectern_is_what_cant_draw_it():
     renderer, buffer = render("```mermaid\ngantt\n  title Nope\n```\n")
     assert _caption(renderer, buffer).startswith("Not drawn: Lectern can’t draw this diagram yet (")
@@ -1272,7 +1283,8 @@ def test_the_caption_clears_the_code_panel_and_the_next_block_does_not_pad_again
     renderer, _buffer = render("```mermaid\ngantt\n```\n\nafter\n")
     caption, after = renderer.print_model[1:]
     assert caption.gap == tagdefs.CODE_BLOCK_PADDING + tagdefs.FENCE_CAPTION_GAP
-    assert after.gap == 16       # a paragraph's own margin, no panel padding
+    # The fence's own bottom margin, with no panel padding added on top.
+    assert after.gap == MarkdownRenderer._BLOCK_BOTTOM_MARGIN["fence"]
 
 
 def test_other_fences_are_untouched():

@@ -20,7 +20,7 @@ import re
 
 from . import layered
 from . import scene as sc
-from .common import Unsupported, curve_setting, decode_entities, parse_label, preprocess
+from .common import Invalid, Unsupported, curve_setting, decode_entities, parse_label, preprocess
 
 # -- geometry, in nominal 96dpi pixels -------------------------------------
 
@@ -332,7 +332,7 @@ class _Actions:
         # one that doesn't exist (yet).
         for child in children:
             if isinstance(child, list) and any(int(n) >= len(self.db.edges) for n in child):
-                raise Unsupported("linkStyle for an edge that doesn't exist")
+                raise Invalid("linkStyle for an edge that doesn't exist")
 
     def num_list(self, children):
         return [token.value for token in children if token.type == "NUM"]

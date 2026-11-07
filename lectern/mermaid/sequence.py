@@ -11,7 +11,7 @@ import math
 import re
 
 from . import scene as sc
-from .common import Unsupported, decode_entities, label_lines, preprocess
+from .common import Invalid, Unsupported, decode_entities, label_lines, preprocess
 
 # -- geometry, in nominal 96dpi pixels -------------------------------------
 
@@ -190,7 +190,7 @@ def parse(source):
     def activate(key, start):
         # mermaid throws on deactivating a participant that isn't active.
         if not start and not active.get(key):
-            raise Unsupported(f"deactivating {key!r}, which isn't active")
+            raise Invalid(f"deactivating {key!r}, which isn't active")
         active[key] = active.get(key, 0) + (1 if start else -1)
 
     for line in lines[1:]:

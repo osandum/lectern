@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lectern 0.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/osandum/lectern/issues\n"
-"POT-Creation-Date: 2026-10-17 12:47+0200\n"
+"POT-Creation-Date: 2026-11-07 10:16+0100\n"
 "PO-Revision-Date: 2026-08-15 17:46+0200\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
@@ -82,10 +82,24 @@ msgstr "Kuvaa ei voitu purkaa"
 msgid "{reason}: {src}"
 msgstr "{reason}: {src}"
 
-#: lectern/printing.py:1208
+#: lectern/printing.py:1445
 #, python-brace-format
 msgid "Page {page} of {total}"
 msgstr "Sivu {page}/{total}"
+
+#: lectern/renderer.py:495
+#, python-brace-format
+msgid "Not drawn: mermaid would refuse this diagram ({reason})"
+msgstr ""
+
+#: lectern/renderer.py:497
+#, python-brace-format
+msgid "Not drawn: Lectern can’t draw this diagram yet ({reason})"
+msgstr ""
+
+#: lectern/renderer.py:502
+msgid "Not drawn: Lectern failed laying out this diagram"
+msgstr ""
 
 #: lectern/window.py:81
 msgid "Load"
@@ -111,7 +125,7 @@ msgstr "Tulosta…"
 msgid "Header and Footer When Printing"
 msgstr "Ylä- ja alatunniste tulostettaessa"
 
-#: lectern/window.py:114 lectern/window.py:433
+#: lectern/window.py:114 lectern/window.py:441
 msgid "Document Properties"
 msgstr "Asiakirjan ominaisuudet"
 
@@ -175,83 +189,83 @@ msgstr "Loitonna"
 msgid "Zoom in"
 msgstr "Lähennä"
 
-#: lectern/window.py:435
+#: lectern/window.py:443
 #, python-brace-format
 msgid "Name: {name}"
 msgstr "Nimi: {name}"
 
-#: lectern/window.py:436
+#: lectern/window.py:444
 #, python-brace-format
 msgid "Location: {location}"
 msgstr "Sijainti: {location}"
 
-#: lectern/window.py:437
+#: lectern/window.py:445
 #, python-brace-format
 msgid "Size: {size} bytes"
 msgstr "Koko: {size} tavua"
 
-#: lectern/window.py:438
+#: lectern/window.py:446
 #, python-brace-format
 msgid "Words: {count}"
 msgstr "Sanoja: {count}"
 
-#: lectern/window.py:439
+#: lectern/window.py:447
 #, python-brace-format
 msgid "Est. reading time: {minutes} min"
 msgstr "Arvioitu lukuaika: {minutes} min"
 
-#: lectern/window.py:444
+#: lectern/window.py:452
 msgid "OK"
 msgstr "OK"
 
-#: lectern/window.py:488
+#: lectern/window.py:496
 #, python-brace-format
 msgid "{position} / {count}"
 msgstr "{position} / {count}"
 
-#: lectern/window.py:490
+#: lectern/window.py:498
 msgid "No matches"
 msgstr "Ei osumia"
 
-#: lectern/window.py:502
+#: lectern/window.py:510
 #, python-brace-format
 msgid "This document contains {count} remote image, not loaded"
 msgid_plural "This document contains {count} remote images, not loaded"
 msgstr[0] "Tässä asiakirjassa on {count} lataamaton etäkuva"
 msgstr[1] "Tässä asiakirjassa on {count} lataamatonta etäkuvaa"
 
-#: lectern/window.py:640
+#: lectern/window.py:648
 msgid "Couldn’t open link"
 msgstr "Linkkiä ei voitu avata"
 
-#: lectern/window.py:746
+#: lectern/window.py:754
 msgid "No Document"
 msgstr "Ei asiakirjaa"
 
-#: lectern/window.py:747
+#: lectern/window.py:755
 msgid "Open a Markdown file to view it here."
 msgstr "Avaa Markdown-tiedosto nähdäksesi sen tässä."
 
-#: lectern/window.py:752
+#: lectern/window.py:760
 msgid "Open File…"
 msgstr "Avaa tiedosto…"
 
-#: lectern/window.py:807
+#: lectern/window.py:815
 msgid "Open Markdown File"
 msgstr "Avaa Markdown-tiedosto"
 
-#: lectern/window.py:808
+#: lectern/window.py:816
 msgid "Markdown files"
 msgstr "Markdown-tiedostot"
 
-#: lectern/window.py:873
+#: lectern/window.py:881
 msgid "Couldn’t Open File"
 msgstr "Tiedostoa ei voitu avata"
 
-#: lectern/window.py:933
+#: lectern/window.py:941
 msgid "Reloaded"
 msgstr "Ladattu uudelleen"
 
-#: lectern/window.py:936
+#: lectern/window.py:944
 msgid "File no longer available"
 msgstr "Tiedosto ei ole enää saatavilla"

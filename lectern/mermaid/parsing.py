@@ -99,8 +99,8 @@ def parse(tables, tokens, actions):
         while True:
             action = tables.STATES[states[-1]].get(token.type)
             if action is None:
-                raise Invalid(f"syntax error at {token.value!r}" if token.value
-                              else "syntax error at the end of the diagram")
+                raise Invalid("syntax error at the end of the diagram" if at_end
+                              else f"syntax error at {token.value!r}")
             if action >= 0:          # shift; $END never is
                 states.append(action)
                 values.append(token)

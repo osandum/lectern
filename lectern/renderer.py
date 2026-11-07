@@ -18,6 +18,7 @@ from . import tags as tagdefs
 from . import tables
 from . import highlighting
 from . import images as imagelib
+from .i18n import _
 
 
 def slugify_heading(text):
@@ -491,14 +492,14 @@ class MarkdownRenderer:
             diagram = mermaid.parse(code)
             scene = mermaid.build_scene(diagram, mermaid.ui_font())
         except mermaid.Invalid as ex:
-            return f"Not drawn: mermaid would refuse this diagram ({ex})"
+            return _("Not drawn: mermaid would refuse this diagram ({reason})").format(reason=ex)
         except mermaid.Unsupported as ex:
-            return f"Not drawn: Lectern can’t draw this diagram yet ({ex})"
+            return _("Not drawn: Lectern can’t draw this diagram yet ({reason})").format(reason=ex)
         except Exception:
             # A viewer must not fail to open a document because one
             # diagram in it tripped over a bug in this layout code. The
             # code-block fallback still shows the reader the source.
-            return "Not drawn: Lectern failed laying out this diagram"
+            return _("Not drawn: Lectern failed laying out this diagram")
         view = mermaid.DiagramView(scene, mermaid.ui_font())
         # No code panel is painted around a diagram, so it doesn't need
         # the room a fence otherwise reserves for one.
