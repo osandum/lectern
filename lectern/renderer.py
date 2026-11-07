@@ -178,6 +178,9 @@ class MarkdownRenderer:
         # from its node type's default, read and cleared by
         # _walk_block_node right after dispatch.
         self._block_padding_override = None
+        # Set by _emit_fence_caption: the padding a block owes the next one
+        # below it, where that differs from what it needed above.
+        self._block_trailing_padding_override = None
         self._prev_block_bottom = None
         self._prev_block_padding = 0
         self._link_color = tagdefs.link_color_hex(dark=False)  # overwritten by render()
@@ -285,6 +288,10 @@ class MarkdownRenderer:
         if self._block_padding_override is not None:
             padding = self._block_padding_override
             self._block_padding_override = None
+        trailing = padding
+        if self._block_trailing_padding_override is not None:
+            trailing = self._block_trailing_padding_override
+            self._block_trailing_padding_override = None
         if start_mark is not None:
             gap = max(prev_bottom, self._BLOCK_TOP_MARGIN.get(t, 0))
             gap += prev_padding + padding
@@ -292,7 +299,7 @@ class MarkdownRenderer:
             self._record_print_gap(first_item, gap)
         self._prev_block_bottom = self._block_bottom_margin(child)
         if t not in self._CONTAINER_BLOCKS:
-            self._prev_block_padding = padding
+            self._prev_block_padding = trailing
 
     def _dispatch_block_node(self, t, child, buffer, it, ctx):
         if t == "heading":
@@ -429,8 +436,11 @@ class MarkdownRenderer:
         info = (node.info or "").strip()
         language = info.split()[0] if info else None
         code = node.content
-        if language and language.lower() == "mermaid" and self._emit_diagram(code, buffer, it, ctx):
-            return
+        caption = None
+        if language and language.lower() == "mermaid":
+            caption = self._emit_diagram(code, buffer, it, ctx)
+            if caption is None:
+                return
         runs = []
         for text, pyg_tag in highlighting.highlight_runs(code, language):
             run_tags = ["code-block"] + ([pyg_tag] if pyg_tag else [])
@@ -446,10 +456,30 @@ class MarkdownRenderer:
             PrintItem("code-block", runs=_without_trailing_newline(runs),
                       block_tags=list(ctx.block_tags), language=language)
         )
+        if caption:
+            self._emit_fence_caption(caption, buffer, it, ctx)
+
+    def _emit_fence_caption(self, caption, buffer, it, ctx):
+        """A dim line under a mermaid fence shown as source, saying why it
+        wasn't drawn -- without it, a typo in the document looks exactly
+        like a diagram Lectern doesn't support. It sits outside the code
+        panel, so its gap clears the panel's padding, and the panel's
+        padding no longer needs reserving above whatever comes next."""
+        start_mark = buffer.create_mark(None, it, True)
+        buffer.insert_with_tags_by_name(it, caption, *(ctx.block_tags + ["fence-caption"]))
+        buffer.insert(it, "\n")
+        gap = tagdefs.CODE_BLOCK_PADDING + tagdefs.FENCE_CAPTION_GAP
+        self._apply_gap(buffer, start_mark, gap)
+        item = PrintItem("paragraph", runs=[(caption, ["fence-caption"])],
+                         block_tags=list(ctx.block_tags))
+        item.gap = gap
+        self.print_model.append(item)
+        self._block_trailing_padding_override = 0
 
     def _emit_diagram(self, code, buffer, it, ctx):
-        """Draw a ```mermaid fence as a diagram. False means "couldn't",
-        and the caller emits the fence as an ordinary code block.
+        """Draw a ```mermaid fence as a diagram. Returns None if it did,
+        else the caption to put under the fence, which the caller then
+        emits as an ordinary code block.
 
         The import is deferred rather than made at module level for the
         same reason document.py defers markdown-it: a document with no
@@ -460,13 +490,15 @@ class MarkdownRenderer:
         try:
             diagram = mermaid.parse(code)
             scene = mermaid.build_scene(diagram, mermaid.ui_font())
-        except mermaid.Unsupported:
-            return False
+        except mermaid.Invalid as ex:
+            return f"Not drawn: mermaid would refuse this diagram ({ex})"
+        except mermaid.Unsupported as ex:
+            return f"Not drawn: Lectern can’t draw this diagram yet ({ex})"
         except Exception:
             # A viewer must not fail to open a document because one
             # diagram in it tripped over a bug in this layout code. The
             # code-block fallback still shows the reader the source.
-            return False
+            return "Not drawn: Lectern failed laying out this diagram"
         view = mermaid.DiagramView(scene, mermaid.ui_font())
         # No code panel is painted around a diagram, so it doesn't need
         # the room a fence otherwise reserves for one.
@@ -482,7 +514,7 @@ class MarkdownRenderer:
         self.print_model.append(
             PrintItem("diagram", diagram=diagram, block_tags=list(ctx.block_tags))
         )
-        return True
+        return None
 
     def _emit_hr(self, buffer, it, ctx):
         anchor = buffer.create_child_anchor(it)

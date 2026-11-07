@@ -26,6 +26,7 @@ from lectern.mermaid import flowchart, layered, scene as sc, sequence, text as t
 from lectern.mermaid.common import Unsupported, parse_init
 from lectern.renderer import MarkdownRenderer
 from lectern.tags import create_tag_table
+from lectern import tags as tagdefs
 
 _PARSER = make_parser()
 
@@ -1236,9 +1237,42 @@ def test_mermaid_fence_becomes_a_diagram_widget():
 def test_unsupported_mermaid_falls_back_to_a_code_block():
     renderer, buffer = render("```mermaid\ngantt\n  title Nope\n```\n")
     assert renderer.diagrams == []
-    assert [item.kind for item in renderer.print_model] == ["code-block"]
+    assert [item.kind for item in renderer.print_model] == ["code-block", "paragraph"]
     start, end = buffer.get_bounds()
     assert "gantt" in buffer.get_text(start, end, False)
+
+
+def _caption(renderer, buffer):
+    """The fallback caption's text, checked to be the same on screen and
+    on paper."""
+    tag = buffer.get_tag_table().lookup("fence-caption")
+    it = buffer.get_start_iter()
+    assert it.forward_to_tag_toggle(tag)
+    end = it.copy()
+    end.forward_to_tag_toggle(tag)
+    text = it.get_text(end)
+    assert renderer.print_model[-1].runs == [(text, ["fence-caption"])]
+    return text
+
+
+def test_a_fallback_says_when_mermaid_itself_would_refuse_the_diagram():
+    # A `(` in an unquoted edge label is a syntax error in mermaid too:
+    # the fix belongs in the document, and the caption should say so.
+    renderer, buffer = render("```mermaid\nflowchart LR\n  A -->|e(s)| B\n```\n")
+    assert _caption(renderer, buffer) == (
+        "Not drawn: mermaid would refuse this diagram (syntax error at '(')")
+
+
+def test_a_fallback_says_when_lectern_is_what_cant_draw_it():
+    renderer, buffer = render("```mermaid\ngantt\n  title Nope\n```\n")
+    assert _caption(renderer, buffer).startswith("Not drawn: Lectern can’t draw this diagram yet (")
+
+
+def test_the_caption_clears_the_code_panel_and_the_next_block_does_not_pad_again():
+    renderer, _buffer = render("```mermaid\ngantt\n```\n\nafter\n")
+    caption, after = renderer.print_model[1:]
+    assert caption.gap == tagdefs.CODE_BLOCK_PADDING + tagdefs.FENCE_CAPTION_GAP
+    assert after.gap == 16       # a paragraph's own margin, no panel padding
 
 
 def test_other_fences_are_untouched():

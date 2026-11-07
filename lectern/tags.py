@@ -113,6 +113,10 @@ INLINE_CODE_PAD_Y = 2
 INLINE_CODE_RADIUS = 4
 HEADING_RULE_PAD = 6
 HEADING_RULE_WIDTH = 1
+# Space between a fence's code panel and the caption saying why a mermaid
+# fence was shown as source instead of drawn (renderer._emit_code_block),
+# on top of the CODE_BLOCK_PADDING the panel itself reaches down into.
+FENCE_CAPTION_GAP = 6
 
 # Indent step, in pixels, per nesting level of list content (~2em).
 LIST_INDENT_STEP = 30
@@ -239,6 +243,7 @@ def tag_style_props(dark):
         "em": {"style": Pango.Style.ITALIC},
         "strong": {"weight": Pango.Weight.BOLD},
         "strike": {"strikethrough": True},
+        "fence-caption": {"foreground-rgba": _rgba(palette["dim"]), "scale": 0.85},
         "code-inline": {
             "family": "monospace",
             "scale": 0.92,

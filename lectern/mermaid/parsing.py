@@ -14,7 +14,7 @@ it.
 """
 import re
 
-from .common import Unsupported
+from .common import Invalid
 
 
 class Token:
@@ -44,7 +44,7 @@ def _rule(pattern):
 def lex(lexer, text):
     """The tokens jison's lexer would make of `text`, given a generated
     lexer table. In each state, the first of its rules that matches wins
-    -- jison's default, not the longest match. Raises Unsupported where
+    -- jison's default, not the longest match. Raises Invalid where
     jison's lexer would fail."""
     stack = ["INITIAL"]
     first = True        # a rule's begin_once happens the first time only
@@ -55,7 +55,7 @@ def lex(lexer, text):
             if match:
                 break
         else:
-            raise Unsupported(f"lexical error at {text[pos:pos + 16]!r}")
+            raise Invalid(f"lexical error at {text[pos:pos + 16]!r}")
         value = match.group()
         steps, token = lexer.ACTIONS[index]
         for step in steps:
@@ -75,7 +75,7 @@ def lex(lexer, text):
         # An empty match that changes nothing would match again forever.
         stalled = stalled + 1 if match.end() == pos else 0
         if stalled > 3:
-            raise Unsupported(f"lexical error at {text[pos:pos + 16]!r}")
+            raise Invalid(f"lexical error at {text[pos:pos + 16]!r}")
         pos = match.end()
         if token == "EOF":
             return
@@ -91,7 +91,7 @@ def parse(tables, tokens, actions):
     """Run a generated parse table over `tokens`, calling
     `actions.<name>(children)` for each reduction, in the order jison runs
     a grammar's actions. A rule with no method of its name reduces to
-    None. Returns what the start rule reduced to. Raises Unsupported on a
+    None. Returns what the start rule reduced to. Raises Invalid on a
     syntax error, as mermaid's parser would fail."""
     states, values = [tables.START], []
     for token in _with_end(tokens):
@@ -99,7 +99,8 @@ def parse(tables, tokens, actions):
         while True:
             action = tables.STATES[states[-1]].get(token.type)
             if action is None:
-                raise Unsupported(f"syntax error at {token.type} {token.value!r}")
+                raise Invalid(f"syntax error at {token.value!r}" if token.value
+                              else "syntax error at the end of the diagram")
             if action >= 0:          # shift; $END never is
                 states.append(action)
                 values.append(token)

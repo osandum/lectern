@@ -27,7 +27,7 @@ from . import entities
 from . import flowchart
 from . import sequence
 from . import text as textlib
-from .common import Unsupported
+from .common import Invalid, Unsupported
 from .view import DiagramView
 
 # First word of the source -> the module that parses that diagram type.

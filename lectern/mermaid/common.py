@@ -31,7 +31,14 @@ _TRAILING_COMMA_RE = re.compile(r",\s*([}\]])")
 
 class Unsupported(Exception):
     """This source is mermaid we don't draw. The caller (renderer.py)
-    falls back to rendering the fence as a highlighted code block."""
+    falls back to rendering the fence as a highlighted code block, with
+    the message as a caption under it."""
+
+
+class Invalid(Unsupported):
+    """Not just beyond what Lectern draws: mermaid's own parser refuses
+    this source too, so GitHub would show a syntax error for it. Said
+    apart because the reader's fix is then in the document, not here."""
 
 
 def parse_label(text):
