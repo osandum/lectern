@@ -83,6 +83,31 @@
   </requires>
 
   <releases>
+    <release version="0.4.7" date="2026-11-23">
+      <description>
+        <p>
+          Mermaid state diagrams are now drawn, composite states, choices,
+          forks and joins included, and flowcharts take the colours their
+          classDef, class, style and linkStyle statements give them,
+          adapted to stay readable on a dark page. A mermaid diagram that
+          isn't drawn now says why underneath it: whether mermaid itself
+          would refuse it, or Lectern doesn't draw it yet.
+        </p>
+        <p>
+          Printing reflows to the print dialog's Scale, the way a browser
+          does, and remembers the scale, paper size and orientation for
+          each document. Spacing on paper now matches the screen, table
+          columns are sized by what their cells need, and printed table
+          cells keep their bold, italic, code and links.
+        </p>
+        <p>
+          List items numbered 10 and up line their text up with the rest,
+          inline code no longer crowds the words beside it, a code block
+          with no language is no longer coloured by guesswork, and the
+          values in Document Properties can be selected.
+        </p>
+      </description>
+    </release>
     <release version="0.4.6" date="2026-10-28">
       <description>
         <p>
