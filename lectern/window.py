@@ -437,18 +437,23 @@ class LecternWindow(Adw.ApplicationWindow):
     def _action_properties(self, action, param):
         if self._document is None:
             return
-        dialog = Adw.AlertDialog(
-            heading=_("Document Properties"),
-            body="\n".join([
-                _("Name: {name}").format(name=self._document.basename),
-                _("Location: {location}").format(location=self._document.parent_path or "—"),
-                _("Size: {size} bytes").format(size=f"{self._document.size_bytes():,}"),
-                _("Words: {count}").format(count=f"{self._document.word_count():,}"),
-                _("Est. reading time: {minutes} min").format(
-                    minutes=self._document.reading_time_minutes()
-                ),
-            ]),
-        )
+        rows = Gtk.ListBox(selection_mode=Gtk.SelectionMode.NONE)
+        rows.add_css_class("boxed-list")
+        for title, value in [
+            (_("Name"), self._document.basename),
+            (_("Location"), self._document.parent_path or "—"),
+            (_("Size"), _("{size} bytes").format(size=f"{self._document.size_bytes():,}")),
+            (_("Words"), f"{self._document.word_count():,}"),
+            (_("Est. reading time"), _("{minutes} min").format(
+                minutes=self._document.reading_time_minutes()
+            )),
+        ]:
+            # A row's subtitle, unlike an AlertDialog's body, can be made
+            # selectable -- the location is the one thing worth copying.
+            row = Adw.ActionRow(title=title, subtitle=value, subtitle_selectable=True)
+            row.add_css_class("property")
+            rows.append(row)
+        dialog = Adw.AlertDialog(heading=_("Document Properties"), extra_child=rows)
         dialog.add_response("ok", _("OK"))
         dialog.present(self)
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lectern 0.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/osandum/lectern/issues\n"
-"POT-Creation-Date: 2026-11-07 10:16+0100\n"
+"POT-Creation-Date: 2026-11-07 10:24+0100\n"
 "PO-Revision-Date: 2026-08-15 17:46+0200\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
@@ -30,6 +30,10 @@ msgstr "사용한 기술"
 #: lectern/about.py:84
 msgid "A read-only, Papers-style Markdown viewer."
 msgstr "Papers 스타일의 읽기 전용 마크다운 뷰어입니다."
+
+#: lectern/about.py:137
+msgid "_Report an Issue"
+msgstr ""
 
 #: lectern/document.py:95
 #, python-brace-format
@@ -125,7 +129,7 @@ msgstr "인쇄…"
 msgid "Header and Footer When Printing"
 msgstr "인쇄 시 머리글과 바닥글"
 
-#: lectern/window.py:114 lectern/window.py:441
+#: lectern/window.py:114 lectern/window.py:456
 msgid "Document Properties"
 msgstr "문서 속성"
 
@@ -190,81 +194,86 @@ msgid "Zoom in"
 msgstr "확대"
 
 #: lectern/window.py:443
-#, python-brace-format
-msgid "Name: {name}"
-msgstr "이름: {name}"
+msgid "Name"
+msgstr "이름"
 
 #: lectern/window.py:444
-#, python-brace-format
-msgid "Location: {location}"
-msgstr "위치: {location}"
+msgid "Location"
+msgstr "위치"
+
+#: lectern/window.py:445
+msgid "Size"
+msgstr "크기"
 
 #: lectern/window.py:445
 #, python-brace-format
-msgid "Size: {size} bytes"
-msgstr "크기: {size} 바이트"
+msgid "{size} bytes"
+msgstr "{size} 바이트"
 
 #: lectern/window.py:446
-#, python-brace-format
-msgid "Words: {count}"
-msgstr "단어 수: {count}"
+msgid "Words"
+msgstr "단어 수"
+
+#: lectern/window.py:447
+msgid "Est. reading time"
+msgstr "예상 읽기 시간"
 
 #: lectern/window.py:447
 #, python-brace-format
-msgid "Est. reading time: {minutes} min"
-msgstr "예상 읽기 시간: {minutes}분"
+msgid "{minutes} min"
+msgstr "{minutes}분"
 
-#: lectern/window.py:452
+#: lectern/window.py:457
 msgid "OK"
 msgstr "확인"
 
-#: lectern/window.py:496
+#: lectern/window.py:501
 #, python-brace-format
 msgid "{position} / {count}"
 msgstr "{position} / {count}"
 
-#: lectern/window.py:498
+#: lectern/window.py:503
 msgid "No matches"
 msgstr "일치하는 항목 없음"
 
-#: lectern/window.py:510
+#: lectern/window.py:515
 #, python-brace-format
 msgid "This document contains {count} remote image, not loaded"
 msgid_plural "This document contains {count} remote images, not loaded"
 msgstr[0] "이 문서에는 불러오지 않은 원격 이미지 {count}개가 있습니다"
 
-#: lectern/window.py:648
+#: lectern/window.py:653
 msgid "Couldn’t open link"
 msgstr "링크를 열 수 없습니다"
 
-#: lectern/window.py:754
+#: lectern/window.py:759
 msgid "No Document"
 msgstr "문서 없음"
 
-#: lectern/window.py:755
+#: lectern/window.py:760
 msgid "Open a Markdown file to view it here."
 msgstr "마크다운 파일을 열면 여기에 표시됩니다."
 
-#: lectern/window.py:760
+#: lectern/window.py:765
 msgid "Open File…"
 msgstr "파일 열기…"
 
-#: lectern/window.py:815
+#: lectern/window.py:820
 msgid "Open Markdown File"
 msgstr "마크다운 파일 열기"
 
-#: lectern/window.py:816
+#: lectern/window.py:821
 msgid "Markdown files"
 msgstr "마크다운 파일"
 
-#: lectern/window.py:881
+#: lectern/window.py:886
 msgid "Couldn’t Open File"
 msgstr "파일을 열 수 없습니다"
 
-#: lectern/window.py:941
+#: lectern/window.py:946
 msgid "Reloaded"
 msgstr "다시 불러왔습니다"
 
-#: lectern/window.py:944
+#: lectern/window.py:949
 msgid "File no longer available"
 msgstr "파일을 더 이상 사용할 수 없습니다"

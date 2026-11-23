@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lectern 0.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/osandum/lectern/issues\n"
-"POT-Creation-Date: 2026-11-07 10:16+0100\n"
+"POT-Creation-Date: 2026-11-07 10:24+0100\n"
 "PO-Revision-Date: 2026-08-15 17:46+0200\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
@@ -30,6 +30,10 @@ msgstr "Feito com"
 #: lectern/about.py:84
 msgid "A read-only, Papers-style Markdown viewer."
 msgstr "Um visualizador de Markdown só de leitura, ao estilo do Papers."
+
+#: lectern/about.py:137
+msgid "_Report an Issue"
+msgstr ""
 
 #: lectern/document.py:95
 #, python-brace-format
@@ -125,7 +129,7 @@ msgstr "Imprimir…"
 msgid "Header and Footer When Printing"
 msgstr "Cabeçalho e rodapé ao imprimir"
 
-#: lectern/window.py:114 lectern/window.py:441
+#: lectern/window.py:114 lectern/window.py:456
 msgid "Document Properties"
 msgstr "Propriedades do documento"
 
@@ -190,82 +194,87 @@ msgid "Zoom in"
 msgstr "Ampliar"
 
 #: lectern/window.py:443
-#, python-brace-format
-msgid "Name: {name}"
-msgstr "Nome: {name}"
+msgid "Name"
+msgstr "Nome"
 
 #: lectern/window.py:444
-#, python-brace-format
-msgid "Location: {location}"
-msgstr "Localização: {location}"
+msgid "Location"
+msgstr "Localização"
+
+#: lectern/window.py:445
+msgid "Size"
+msgstr "Tamanho"
 
 #: lectern/window.py:445
 #, python-brace-format
-msgid "Size: {size} bytes"
-msgstr "Tamanho: {size} bytes"
+msgid "{size} bytes"
+msgstr "{size} bytes"
 
 #: lectern/window.py:446
-#, python-brace-format
-msgid "Words: {count}"
-msgstr "Palavras: {count}"
+msgid "Words"
+msgstr "Palavras"
+
+#: lectern/window.py:447
+msgid "Est. reading time"
+msgstr "Tempo de leitura estimado"
 
 #: lectern/window.py:447
 #, python-brace-format
-msgid "Est. reading time: {minutes} min"
-msgstr "Tempo de leitura estimado: {minutes} min"
+msgid "{minutes} min"
+msgstr "{minutes} min"
 
-#: lectern/window.py:452
+#: lectern/window.py:457
 msgid "OK"
 msgstr "Aceitar"
 
-#: lectern/window.py:496
+#: lectern/window.py:501
 #, python-brace-format
 msgid "{position} / {count}"
 msgstr "{position} / {count}"
 
-#: lectern/window.py:498
+#: lectern/window.py:503
 msgid "No matches"
 msgstr "Sem resultados"
 
-#: lectern/window.py:510
+#: lectern/window.py:515
 #, python-brace-format
 msgid "This document contains {count} remote image, not loaded"
 msgid_plural "This document contains {count} remote images, not loaded"
 msgstr[0] "Este documento contém {count} imagem remota, não carregada"
 msgstr[1] "Este documento contém {count} imagens remotas, não carregadas"
 
-#: lectern/window.py:648
+#: lectern/window.py:653
 msgid "Couldn’t open link"
 msgstr "Não foi possível abrir a hiperligação"
 
-#: lectern/window.py:754
+#: lectern/window.py:759
 msgid "No Document"
 msgstr "Nenhum documento"
 
-#: lectern/window.py:755
+#: lectern/window.py:760
 msgid "Open a Markdown file to view it here."
 msgstr "Abra um ficheiro Markdown para o ver aqui."
 
-#: lectern/window.py:760
+#: lectern/window.py:765
 msgid "Open File…"
 msgstr "Abrir ficheiro…"
 
-#: lectern/window.py:815
+#: lectern/window.py:820
 msgid "Open Markdown File"
 msgstr "Abrir ficheiro Markdown"
 
-#: lectern/window.py:816
+#: lectern/window.py:821
 msgid "Markdown files"
 msgstr "Ficheiros Markdown"
 
-#: lectern/window.py:881
+#: lectern/window.py:886
 msgid "Couldn’t Open File"
 msgstr "Não foi possível abrir o ficheiro"
 
-#: lectern/window.py:941
+#: lectern/window.py:946
 msgid "Reloaded"
 msgstr "Recarregado"
 
-#: lectern/window.py:944
+#: lectern/window.py:949
 msgid "File no longer available"
 msgstr "O ficheiro já não está disponível"
