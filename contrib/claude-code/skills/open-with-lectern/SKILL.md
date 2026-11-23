@@ -1,6 +1,6 @@
 ---
 name: open-with-lectern
-description: Use right after writing a standalone Markdown deliverable (a report, summary, plan, writeup, or similar .md file meant for the user to read) to disk, in ANY project — not just when asked to. Instead of just naming the file path, also open it in Lectern, the user's GTK Markdown viewer. Trigger whenever the next thing you'd otherwise do is say "I've saved this to <path>.md" or similar. Do not trigger for incidental files (configs, code, data) or for .md files that are project source (docs, README, AGENTS.md) rather than a generated deliverable.
+description: Use right after writing a standalone Markdown deliverable (a report, summary, plan, writeup, or similar .md file meant for the user to read) to disk, in ANY project — not just when asked to. Instead of just naming the file path, also open it in Lectern, the user's GTK Markdown viewer. Trigger whenever the next thing you'd otherwise do is say "I've saved this to <path>.md" or similar — and read it *before* composing such a file, since it says what Lectern renders (mermaid diagrams, local images, tables, footnotes). Do not trigger for incidental files (configs, code, data) or for .md files that are project source (docs, README, AGENTS.md) rather than a generated deliverable.
 ---
 
 # Open with Lectern
@@ -34,6 +34,30 @@ last step, instead of just telling the user where the file is.
 4. Mention in your reply that you opened it — a short "opened in
    Lectern" alongside the path is enough, no need to explain the
    mechanism.
+
+## Writing for Lectern
+
+Lectern renders more than plain prose, so write the deliverable to use it:
+
+- **Mermaid diagrams are drawn natively** — `flowchart`/`graph`,
+  `sequenceDiagram`, `classDiagram` and `erDiagram`, including
+  subgraphs, `classDef`/`style`/`linkStyle` and `click` links. Prefer a
+  diagram to describing structure in prose. Other diagram types
+  (gantt, pie, state, …) fall back to a highlighted code block, so
+  avoid them. Edges are drawn at right angles like GitHub's, so keep
+  each diagram small (roughly ≤ 12–15 nodes, ≤ ~4 side by side, short
+  labels); several focused diagrams beat one crowded one.
+- **Local images are shown**, resolved relative to the `.md` file, and
+  linked images are clickable. Remote (`http(s)`) images are held back
+  behind a banner until the reader allows them, so save a generated
+  chart or screenshot next to the report and reference it by relative
+  path, not by URL.
+- **GFM tables, footnotes, task lists, strikethrough and bare-URL
+  autolinks** all render; column widths are fitted to content, so wide
+  comparison tables are fine.
+- **Copy and print preserve formatting** — the clipboard carries HTML
+  (diagrams as PNG) and Markdown, and PDF export keeps links clickable —
+  so there's no need to also produce an HTML version for sharing.
 
 ## Non-goals
 
