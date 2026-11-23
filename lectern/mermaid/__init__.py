@@ -26,6 +26,7 @@ from gi.repository import Gtk, Pango
 from . import entities
 from . import flowchart
 from . import sequence
+from . import state
 from . import text as textlib
 from .common import Invalid, Unsupported
 from .view import DiagramView
@@ -37,6 +38,7 @@ _PARSERS = {
     "sequencediagram": sequence.parse,
     "classdiagram": entities.parse_class,
     "erdiagram": entities.parse_er,
+    "statediagram": state.parse,
 }
 
 SUPPORTED_TYPES = tuple(sorted(_PARSERS))

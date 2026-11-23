@@ -196,7 +196,7 @@ def test_a_comment_after_code_falls_back_as_mermaid_refuses_it():
 
 @pytest.mark.parametrize("source", [
     "gantt\n  title Nope\n",                       # a type we don't draw
-    "stateDiagram-v2\n  [*] --> Still\n",          # ditto
+    "journey\n  title Nope\n",                     # ditto
     "flowchart TD\n  subgraph one\n  A\n",         # unclosed subgraph
     "flowchart TD\n  A\n  end\n",                  # `end` with no subgraph
     "flowchart TD\n  A --> B &\n",                # `&` with nothing after it

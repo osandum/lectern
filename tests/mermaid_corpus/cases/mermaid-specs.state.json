@@ -1,0 +1,402 @@
+[
+  {
+    "id": "state-parser.spec.js:23",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L23",
+    "source": "stateDiagram-v2\n        state valid { X }"
+  },
+  {
+    "id": "state-parser.spec.js:36",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L36",
+    "source": "stateDiagram-v2\n        state invalid syntax { Y }"
+  },
+  {
+    "id": "state-parser.spec.js:45",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L45",
+    "source": "stateDiagram-v2\n        state invalid syntax with more than 2 words { Z }"
+  },
+  {
+    "id": "state-parser.spec.js:56",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L56",
+    "source": "stateDiagram-v2\n        state \"Small State 1\" as namedState1"
+  },
+  {
+    "id": "state-parser.spec.js:68",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L68",
+    "source": "stateDiagram-v2\n        namedState1 : Small State 1"
+  },
+  {
+    "id": "state-parser.spec.js:78",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L78",
+    "source": "stateDiagram-v2\n        namedState1:Small State 1"
+  },
+  {
+    "id": "state-parser.spec.js:95",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L95",
+    "source": "stateDiagram-v2\n      assemble\n      assemblies\n      state assemble\n      state assemblies\n      "
+  },
+  {
+    "id": "state-parser.spec.js:105",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L105",
+    "source": "stateDiagram-v2\n      state \"as\" as as\n      "
+  },
+  {
+    "id": "state-parser.spec.js:129",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L129",
+    "source": "stateDiagram-v2\n        state \"Small State 1\" as namedState1\n        %% Notice that this is named \"Big State 1\" with an \"as\"\n        state \"Big State 1\" as bigState1 {\n            bigState1InternalState\n        }\n        namedState1 --> bigState1: should point to \\nBig State 1 container\n\n        state \"Small State 2\" as namedState2\n        %% Notice that bigState2 does not have a name; no \"as\"\n        state bigState2 {\n            bigState2InternalState\n        }\n        namedState2 --> bigState2: should point to \\nbigState2 container"
+  },
+  {
+    "id": "state-parser.spec.js:152",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L152",
+    "source": "stateDiagram-v2\n        state \"Big State 1\" as bigState1 {\n            state \"inner state 1\" as inner1\n            inner2: inner state 2\n            inner1 --> inner2\n        }"
+  },
+  {
+    "id": "state-parser.spec.js:167",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L167",
+    "source": "stateDiagram-v2\n        locked --> pending : recoverable error (ex: timeout)"
+  },
+  {
+    "id": "state-parser.spec.js:179",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L179",
+    "source": "stateDiagram-v2\n        A --> B : info: key: value"
+  },
+  {
+    "id": "state-parser.spec.js:189",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L189",
+    "source": "stateDiagram-v2\n        myState : status: active"
+  },
+  {
+    "id": "state-parser.spec.js:216",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L216",
+    "source": "stateDiagram-v2\n      State1\n      note right of State1\n        this sentence contains send note inside the note text\n      end note\n      State1 --> State2"
+  },
+  {
+    "id": "state-parser.spec.js:235",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-parser.spec.js#L235",
+    "source": "stateDiagram-v2\n      State1\n      note right of State1\n        this sentence contains end note as part of the note text\n      end note\n      State1 --> State2"
+  },
+  {
+    "id": "state-style.spec.js:20",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-style.spec.js#L20",
+    "source": "stateDiagram-v2\n classDef exampleClass background:#bbb;"
+  },
+  {
+    "id": "state-style.spec.js:28",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-style.spec.js#L28",
+    "source": "stateDiagram-v2\n classDef exampleClass background:#bbb, font-weight:bold, font-style:italic;"
+  },
+  {
+    "id": "state-style.spec.js:41",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-style.spec.js#L41",
+    "source": "stateDiagram-v2\n classDef exampleStyleClass background:#bbb,border:1.5px solid red;"
+  },
+  {
+    "id": "state-style.spec.js:52",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-style.spec.js#L52",
+    "source": "stateDiagram-v2\n classDef exampleStyleClass background:  #bbb,border:1.5px solid red;"
+  },
+  {
+    "id": "state-style.spec.js:63",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-style.spec.js#L63",
+    "source": "stateDiagram-v2\n classDef __proto__ background:#bbb,border:1.5px solid red;\n classDef constructor background:#bbb,border:1.5px solid red;"
+  },
+  {
+    "id": "state-style.spec.js:360",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-style.spec.js#L360",
+    "source": "stateDiagram-v2\n        id1\n        style id1 background:#bbb"
+  },
+  {
+    "id": "state-style.spec.js:368",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-style.spec.js#L368",
+    "source": "stateDiagram-v2\n        id1\n        id2\n        style id1,id2 background:#bbb"
+  },
+  {
+    "id": "state-style.spec.js:379",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/parser/state-style.spec.js#L379",
+    "source": "stateDiagram-v2\n        id1\n        id2\n        style id1,id2 background:#bbb, font-weight:bold, font-style:italic;"
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:24",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L24",
+    "source": "\n      stateDiagram-v2\n      [*] --> State1\n      State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:33",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L33",
+    "source": "stateDiagram-v2\n\n      State1 : this is another string\n      [*] --> State1\n      State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:45",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L45",
+    "source": "stateDiagram-v2\n\n      accDescr: a simple description of the diagram\n      State1 : this is another string\n      [*] --> State1\n      State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:57",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L57",
+    "source": "stateDiagram-v2\n\n      accTitle: a simple title of the diagram\n      State1 : this is another string\n      [*] --> State1\n      State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:72",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L72",
+    "source": "stateDiagram-v2\n\n      [*] --> State1\n      State1 --> [*]\n      State1 : this is a string\n      State1 : this is another string\n\n      State1 --> State2\n      State2 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:86",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L86",
+    "source": "stateDiagram-v2\n\n      hide empty description\n      [*] --> State1\n      State1 --> [*]\n      State1 : this is a string\n      State1 : this is another string\n\n      State1 --> State2\n      State2 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:95",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L95",
+    "source": "stateDiagram-v2\n      assemble\n      state assemble\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:111",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L111",
+    "source": "stateDiagram-v2\n      assemblies\n      state assemblies\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:132",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L132",
+    "source": "\n          stateDiagram-v2\n          [*] --> State1\n          State1 --> State2 : Transition 1\n          State1 --> State3 : Transition 2\n          State1 --> State4 : Transition 3\n          State1 --> [*]\n        "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:156",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L156",
+    "source": "stateDiagram-v2\n\n      scale 350 width\n      [*] --> State1\n      State1 --> [*]\n      State1 : this is a string with - in it\n      State1 : this is another string\n\n      State1 --> State2\n      State2 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:166",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L166",
+    "source": "stateDiagram-v2\n\n      scale 350 width\n      [*] --> State1 : This is the description with - in it\n      State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:175",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L175",
+    "source": "stateDiagram-v2\n\n      scale 350 width\n      [*] --> State1 : This is the description +-!\n      State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:187",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L187",
+    "source": "stateDiagram-v2\n\n      state Configuring {\n        [*] --> NewValueSelection\n        NewValueSelection --> NewValuePreview : EvNewValue\n        NewValuePreview --> NewValueSelection : EvNewValueRejected\n        NewValuePreview --> NewValueSelection : EvNewValueSaved1\n      }\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:203",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L203",
+    "source": "stateDiagram-v2\n\n      state Configuring {\n        [*] --> NewValueSelection\n        NewValueSelection --> NewValuePreview : EvNewValue\n        NewValuePreview --> NewValueSelection : EvNewValueRejected\n        NewValuePreview --> NewValueSelection : EvNewValueSaved\n\n        state NewValuePreview {\n          State1 --> State2\n        }\n      }\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:228",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L228",
+    "source": "stateDiagram-v2\n\n      scale 350 width\n      [*] --> NotShooting\n\n      state NotShooting {\n        [*] --> Idle\n        Idle --> Configuring : EvConfig\n        Configuring --> Idle : EvConfig\n      }\n\n      state Configuring {\n        [*] --> NewValueSelection\n        NewValueSelection --> NewValuePreview : EvNewValue\n        NewValuePreview --> NewValueSelection : EvNewValueRejected\n        NewValuePreview --> NewValueSelection : EvNewValueSaved\n\n        state NewValuePreview {\n          State1 --> State2\n        }\n      }\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:235",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L235",
+    "source": "stateDiagram-v2\n\n      state \"Long state description\" as state1\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:248",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L248",
+    "source": "stateDiagram-v2\n      state \"Not Shooting State\" as NotShooting {\n        state \"Idle mode\" as Idle\n        state \"Configuring mode\" as Configuring\n        [*] --> Idle\n        Idle --> Configuring : EvConfig\n        Configuring --> Idle : EvConfig\n      }\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:272",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L272",
+    "source": "stateDiagram-v2\n\n      scale 600 width\n\n      [*] --> State1\n      State1 --> State2 : Succeeded\n      State1 --> [*] : Aborted\n      State2 --> State3 : Succeeded\n      State2 --> [*] : Aborted\n      state State3 {\n        state \"Accumulate Enough Data\nLong State Name\" as long1\n        long1 : Just a test\n        [*] --> long1\n        long1 --> long1 : New Data\n        long1 --> ProcessData : Enough Data\n      }\n      State3 --> State3 : Failed\n      State3 --> [*] : Succeeded / Save Result\n      State3 --> [*] : Aborted\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:288",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L288",
+    "source": "stateDiagram-v2\n\n      state fork_state <<fork>>\n      [*] --> fork_state\n      fork_state --> State2\n      fork_state --> State3\n\n      state join_state <<join>>\n      State2 --> join_state\n      State3 --> join_state\n      join_state --> State4\n      State4 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:309",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L309",
+    "source": "stateDiagram-v2\n\n      [*] --> Active\n\n      state Active {\n        [*] --> NumLockOff\n        NumLockOff --> NumLockOn : EvNumLockPressed\n        NumLockOn --> NumLockOff : EvNumLockPressed\n        --\n        [*] --> CapsLockOff\n        CapsLockOff --> CapsLockOn : EvCapsLockPressed\n        CapsLockOn --> CapsLockOff : EvCapsLockPressed\n        --\n        [*] --> ScrollLockOff\n        ScrollLockOff --> ScrollLockOn : EvCapsLockPressed\n        ScrollLockOn --> ScrollLockOff : EvCapsLockPressed\n      }\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:324",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L324",
+    "source": "stateDiagram-v2\n\n      [*] --> Active\n\n      state Active {\n        [*] --> NumLockOff\n        --\n        [*] --> CapsLockOff\n        --\n        [*] --> ScrollLockOff\n      }\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:350",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L350",
+    "source": "stateDiagram-v2\n\n      [*] --> Active\n      Active --> Inactive\n\n      note left of Active : this is a short<br/>note\n\n      note right of Inactive\n      A note can also\n      be defined on\n      several lines\n      end note\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:374",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L374",
+    "source": "stateDiagram-v2\n      State1\n      note right of State1\n      Line1<br>Line2<br/>Line3<br />Line4<br\t/>Line5\n      end note\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:388",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L388",
+    "source": "stateDiagram-v2\n      foo: bar\n      note \"This is a floating note\" as N1\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:395",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L395",
+    "source": "stateDiagram-v2\n      state foo\n      note \"This is a floating note\" as N1\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:412",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L412",
+    "source": "stateDiagram-v2\n      [*] --> NotShooting\n\n      state \"Not Shooting State\" as NotShooting {\n        state \"Idle mode\" as Idle\n        state \"Configuring mode\" as Configuring\n        [*] --> Idle\n        Idle --> Configuring : EvConfig\n        Configuring --> Idle : EvConfig\n      }\n\n      note right of NotShooting : This is a note on a composite state\n      "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:431",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L431",
+    "source": "\n          stateDiagram-v2\n            state Active {\n              Idle\n            }\n            Inactive --> Idle: ACT\n            Active --> Active: LOG\n        "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:450",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L450",
+    "source": "\n        stateDiagram\n          [*] --> Still\n          Still --> [*]\n        "
+  },
+  {
+    "id": "stateDiagram-v2.spec.js:465",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram-v2.spec.js#L465",
+    "source": "\n        stateDiagram\n          direction LR\n          [*] --> Still\n          Still --> [*]\n        "
+  },
+  {
+    "id": "stateDiagram.spec.js:19",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L19",
+    "source": "\n      stateDiagram\n        [*] --> State1\n        State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:28",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L28",
+    "source": "stateDiagram\n\n          State1 : this is another string\n          [*] --> State1\n          State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:40",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L40",
+    "source": "stateDiagram\n\n          accDescr: a simple description of the diagram\n          State1 : this is another string\n          [*] --> State1\n          State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:55",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L55",
+    "source": "stateDiagram\n\n          accDescr {\n             a simple description of the diagram\n            using multiple lines\n          }\n          State1 : this is another string\n          [*] --> State1\n          State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:67",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L67",
+    "source": "stateDiagram\n\n          accTitle: a simple title of the diagram\n          State1 : this is another string\n          [*] --> State1\n          State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:82",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L82",
+    "source": "stateDiagram\n\n        [*] --> State1\n        State1 --> [*]\n        State1 : this is a string\n        State1 : this is another string\n\n        State1 --> State2\n        State2 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:96",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L96",
+    "source": "stateDiagram\n\n        hide empty description\n        [*] --> State1\n        State1 --> [*]\n        State1 : this is a string\n        State1 : this is another string\n\n        State1 --> State2\n        State2 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:105",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L105",
+    "source": "stateDiagram\n      assemble\n      state assemble\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:121",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L121",
+    "source": "stateDiagram\n      assemblies\n      state assemblies\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:128",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L128",
+    "source": "stateDiagram\n      state \"as\" as as\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:143",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L143",
+    "source": "stateDiagram\n\n        scale 350 width\n        [*] --> State1\n        State1 --> [*]\n        State1 : this is a string with - in it\n        State1 : this is another string\n\n        State1 --> State2\n        State2 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:153",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L153",
+    "source": "stateDiagram\n\n        scale 350 width\n        [*] --> State1 : This is the description with - in it\n        State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:162",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L162",
+    "source": "stateDiagram\n\n        scale 350 width\n        [*] --> State1 : This is the description +-!\n        State1 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:174",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L174",
+    "source": "stateDiagram\n\n        state Configuring {\n          [*] --> NewValueSelection\n          NewValueSelection --> NewValuePreview : EvNewValue\n          NewValuePreview --> NewValueSelection : EvNewValueRejected\n          NewValuePreview --> NewValueSelection : EvNewValueSaved1\n        }\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:190",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L190",
+    "source": "stateDiagram\n\n        state Configuring {\n          [*] --> NewValueSelection\n          NewValueSelection --> NewValuePreview : EvNewValue\n          NewValuePreview --> NewValueSelection : EvNewValueRejected\n          NewValuePreview --> NewValueSelection : EvNewValueSaved\n\n          state NewValuePreview {\n          State1 --> State2\n          }\n        }\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:215",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L215",
+    "source": "stateDiagram\n\n        scale 350 width\n        [*] --> NotShooting\n\n        state NotShooting {\n          [*] --> Idle\n          Idle --> Configuring : EvConfig\n          Configuring --> Idle : EvConfig\n        }\n\n        state Configuring {\n          [*] --> NewValueSelection\n          NewValueSelection --> NewValuePreview : EvNewValue\n          NewValuePreview --> NewValueSelection : EvNewValueRejected\n          NewValuePreview --> NewValueSelection : EvNewValueSaved\n\n          state NewValuePreview {\n          State1 --> State2\n          }\n        }\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:222",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L222",
+    "source": "stateDiagram\n\n        state \"Long state description\" as state1\n        "
+  },
+  {
+    "id": "stateDiagram.spec.js:235",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L235",
+    "source": "stateDiagram\n      state \"Not Shooting State\" as NotShooting {\n        state \"Idle mode\" as Idle\n        state \"Configuring mode\" as Configuring\n        [*] --> Idle\n        Idle --> Configuring : EvConfig\n        Configuring --> Idle : EvConfig\n      }\n        "
+  },
+  {
+    "id": "stateDiagram.spec.js:259",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L259",
+    "source": "stateDiagram\n\n        scale 600 width\n\n        [*] --> State1\n        State1 --> State2 : Succeeded\n        State1 --> [*] : Aborted\n        State2 --> State3 : Succeeded\n        State2 --> [*] : Aborted\n        state State3 {\n          state \"Accumulate Enough Data\nLong State Name\" as long1\n          long1 : Just a test\n          [*] --> long1\n          long1 --> long1 : New Data\n          long1 --> ProcessData : Enough Data\n        }\n        State3 --> State3 : Failed\n        State3 --> [*] : Succeeded / Save Result\n        State3 --> [*] : Aborted\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:275",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L275",
+    "source": "stateDiagram\n\n        state fork_state <<fork>>\n        [*] --> fork_state\n        fork_state --> State2\n        fork_state --> State3\n\n        state join_state <<join>>\n        State2 --> join_state\n        State3 --> join_state\n        join_state --> State4\n        State4 --> [*]\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:296",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L296",
+    "source": "stateDiagram\n\n        [*] --> Active\n\n        state Active {\n          [*] --> NumLockOff\n          NumLockOff --> NumLockOn : EvNumLockPressed\n          NumLockOn --> NumLockOff : EvNumLockPressed\n          --\n          [*] --> CapsLockOff\n          CapsLockOff --> CapsLockOn : EvCapsLockPressed\n          CapsLockOn --> CapsLockOff : EvCapsLockPressed\n          --\n          [*] --> ScrollLockOff\n          ScrollLockOff --> ScrollLockOn : EvCapsLockPressed\n          ScrollLockOn --> ScrollLockOff : EvCapsLockPressed\n        }\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:311",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L311",
+    "source": "stateDiagram\n\n        [*] --> Active\n\n        state Active {\n          [*] --> NumLockOff\n          --\n          [*] --> CapsLockOff\n          --\n          [*] --> ScrollLockOff\n        }\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:337",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L337",
+    "source": "stateDiagram\n\n        [*] --> Active\n        Active --> Inactive\n\n        note left of Active : this is a short<br/>note\n\n        note right of Inactive\n          A note can also\n          be defined on\n          several lines\n        end note\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:347",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L347",
+    "source": "stateDiagram\n        State1\n        note right of State1\n          Line1<br>Line2<br/>Line3<br />Line4<br\t/>Line5\n        end note\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:355",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L355",
+    "source": "stateDiagram\n        foo: bar\n        note \"This is a floating note\" as N1\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:363",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L363",
+    "source": "stateDiagram\n\n        state foo\n        note \"This is a floating note\" as N1\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:380",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L380",
+    "source": "stateDiagram\n\n        [*] --> NotShooting\n\n        state \"Not Shooting State\" as NotShooting {\n          state \"Idle mode\" as Idle\n          state \"Configuring mode\" as Configuring\n          [*] --> Idle\n          Idle --> Configuring : EvConfig\n          Configuring --> Idle : EvConfig\n        }\n\n        note right of NotShooting : This is a note on a composite state\n      "
+  },
+  {
+    "id": "stateDiagram.spec.js:400",
+    "origin": "mermaid@11.17.2/packages/mermaid/src/diagrams/state/stateDiagram.spec.js#L400",
+    "source": "stateDiagram\n\n      [*] --> \"Order Submitted\"\n      if \"Payment Accepted\" then\n        -->[yes] \"Pack products\"\n        --> \"Send parcel\"\n        -right-> (*)\n      else\n        ->[no] \"Send error message\"\n        -->[Cancel Order] [*]\n      endif\n        }\n\n        note right of NotShooting : This is a note on a composite state\n      "
+  }
+]

@@ -32,7 +32,7 @@ HERE = pathlib.Path(__file__).parent
 # e.g. to check documents of your own without them going near the
 # repository. The tests always use this one.
 CORPUS = pathlib.Path(os.environ.get("MERMAID_CORPUS", HERE))
-FAMILIES = ("flowchart", "sequence", "class", "er")
+FAMILIES = ("flowchart", "sequence", "class", "er", "state")
 
 
 def cases(family):
@@ -346,11 +346,51 @@ def lectern_er(source):
                              lambda m: re.sub(r"\s*,\s*", ", ", " ".join(m.split())))
 
 
+def mermaid_state(result):
+    """A recorded state diagram in the plain form: what its renderer is
+    handed. Links are by state, without the quotes mermaid keeps."""
+    if "error" in result:
+        return None
+    if "nodes" not in result:
+        return {"type": result["type"]}
+    return {
+        "direction": result["direction"],
+        "nodes": {n["id"]: {"shape": n["shape"], "label": _text(n["label"]),
+                            "description": [_text(d) for d in n.get("description", [])],
+                            "parent": n.get("parentId"), "dir": n.get("dir")}
+                  for n in result["nodes"]},
+        "edges": [[e["start"], e["end"], _text(e["label"])] for e in result["edges"]],
+        "links": {link["id"]: link["url"].strip('"') for link in result["links"]
+                  if any(n["id"] == link["id"] for n in result["nodes"])},
+    }
+
+
+def lectern_state(source):
+    from lectern.mermaid import state
+    from lectern.mermaid.common import Unsupported
+    try:
+        model = state.parse(source)
+        model.chart()       # what drawing refuses, too
+    except Unsupported:
+        return None
+    direction = {"TD": "TB"}.get(model.direction, model.direction)
+    return {
+        "direction": direction,
+        "nodes": {n["id"]: {"shape": n["shape"], "label": _text(n["label"]),
+                            "description": [_text(d) for d in n["description"]],
+                            "parent": n.get("parent"), "dir": n["dir"] if n["group"] else None}
+                  for n in model.nodes},
+        "edges": [[start, end, _text(label)] for start, end, label in model.edges],
+        "links": model.links,
+    }
+
+
 COMPARE = {
     "flowchart": (mermaid_flowchart, lectern_flowchart),
     "sequence": (mermaid_sequence, lectern_sequence),
     "class": (mermaid_class, lectern_class),
     "er": (mermaid_er, lectern_er),
+    "state": (mermaid_state, lectern_state),
 }
 
 

@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""Generate the flowchart parser's tables. Dev-time only: the output is
-committed, so nothing here runs in a build or at run time.
+"""Generate the flowchart and state parsers' tables. Dev-time only: the
+output is committed, so nothing here runs in a build or at run time.
 
-    generate.py lexer   recorded/flowchart-lexer.json -> _flowchart_lexer.py
-    generate.py tables  flowchart.lark -> _flowchart_tables.py (needs Lark)
+    generate.py lexer   recorded/<family>-lexer.json -> _<family>_lexer.py
+    generate.py tables  <family>.lark -> _<family>_tables.py (needs Lark)
+
+for each family (flowchart, state), or only the one `--family` names.
 
 `--check` compares with the committed file instead of writing it, which
 is what tests/test_mermaid_generated.py does.
 
 The lexer is mermaid's own, translated from its compiled form, which
 tests/mermaid_corpus/record/lexer_rules.mjs records (with Node). The
-parse table is Lark's LALR(1) table for flowchart.lark, written out as
+parse table is Lark's LALR(1) table for the family's grammar, written out as
 plain data, so the parser needs neither Lark nor its runtime: parsing.py
 runs both tables.
 """
@@ -23,7 +25,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 PACKAGE = ROOT / "lectern" / "mermaid"
-LEXER_DUMP = ROOT / "tests" / "mermaid_corpus" / "recorded" / "flowchart-lexer.json"
+RECORDED = ROOT / "tests" / "mermaid_corpus" / "recorded"
 
 
 # -- the lexer -------------------------------------------------------------
@@ -41,6 +43,10 @@ def python_regex(pattern):
     out, i, in_class = [], 0, False
     while i < len(pattern):
         c = pattern[i]
+        if not in_class and pattern.startswith(r"[\s\S]", i):
+            out.append(r"[\s\S]")       # any character at all, in either
+            i += len(r"[\s\S]")
+            continue
         if c == "\\" and i + 1 < len(pattern):
             escape = pattern[i + 1]
             if escape == "s":
@@ -84,22 +90,37 @@ _STATEMENT = re.compile(r"""
   | (?P<pop>this\.popState\(\);)
   | return\s+(?P<ret>\d+|"[^"]*"|'[^']*');
   | (?P<empty>yy_\.yytext\s*=\s*"";)
+  | (?P<pid>if\s*\(!processId\(\)\)\s*return;)
+  | (?P<slice>yy_\.yytext\s*=\s*yy_\.yytext\.(?:slice\((?P<a>-?\d+),\s*(?P<b>-?\d+)\)
+                                              |substr\((?P<c>\d+)\))(?P<strim>\.trim\(\))?;)
+  | (?P<trim>yy_\.yytext\s*=\s*yy_\.yytext\.trim\(\);)
+  | (?P<throw>throw\s+new\s+Error\((?P<message>'[^']*')[^;]*;)
   | (?P<br>const\s+re\s*=\s*/\\n\\s\*/g;\s*yy_\.yytext\s*=\s*yy_\.yytext\.replace\(re,\s*"<br/>"\);)
   | (?P<brk>break;)
   | (?P<ws>\s+)
 """, re.X)
 
-# jison's token names -> flowchart.lark's.
-_NAMES = {"(-": "ELLIPSESTART", "-)": "ELLIPSEEND", "subgraph": "SUBGRAPH", "end": "END",
+# jison's token names -> the grammars'. Anything not listed keeps its
+# jison name, upper-cased with its punctuation spelled out (Lark wants a
+# terminal's name in capitals).
+_FLOWCHART_NAMES = {"(-": "ELLIPSESTART", "-)": "ELLIPSEEND", "subgraph": "SUBGRAPH", "end": "END",
           "acc_title": "ACC_TITLE", "acc_title_value": "ACC_TITLE_VALUE",
           "acc_descr": "ACC_DESCR", "acc_descr_value": "ACC_DESCR_VALUE",
           "acc_descr_multiline_value": "ACC_DESCR_MULTILINE_VALUE",
           "direction_tb": "DIRECTION", "direction_bt": "DIRECTION", "direction_rl": "DIRECTION",
           "direction_lr": "DIRECTION", "direction_td": "DIRECTION"}
+_STATE_NAMES = {"-->": "ARROW", ";": "SEMI", "classDef": "CLASSDEF"}
+_PUNCTUATION = {"-->": "ARROW", ";": "SEMI"}
 
 
-def lexer_module():
-    dump = json.loads(LEXER_DUMP.read_text())
+def _token_name(family, name):
+    if family == "flowchart":
+        return _FLOWCHART_NAMES.get(name, name)
+    return _STATE_NAMES.get(name, _PUNCTUATION.get(name, name.upper()))
+
+
+def lexer_module(family):
+    dump = json.loads((RECORDED / f"{family}-lexer.json").read_text())
     terminals = {int(k): v for k, v in dump["terminals"].items()}
     cases = {int(m.group(1)): m.group(2) for m in re.finditer(
         r"case (\d+):(.*?)(?=case \d+:|default:|\}\s*\}\s*$)", dump["performAction"], re.S)}
@@ -121,10 +142,24 @@ def lexer_module():
                 steps.append(("text", ""))
             elif match.group("br"):
                 steps.append(("br",))
+            elif match.group("pid"):
+                steps.append(("process_id",))
+            elif match.group("slice"):
+                if match.group("c") is not None:
+                    steps.append(("slice", int(match.group("c")), None))
+                else:
+                    steps.append(("slice", int(match.group("a")), int(match.group("b"))))
+                if match.group("strim"):
+                    steps.append(("trim",))
+            elif match.group("trim"):
+                steps.append(("trim",))
+            elif match.group("throw"):
+                steps.append(("error", match.group("message")[1:-1]))
+                break
             elif match.group("ret"):
                 value = match.group("ret")
                 name = terminals[int(value)] if value.isdigit() else value[1:-1]
-                token = _NAMES.get(name, name)
+                token = _token_name(family, name)
                 break
         actions.append((tuple(steps), token))
     rules = []
@@ -133,14 +168,17 @@ def lexer_module():
             raise SystemExit(f"unexpected rule shape {source!r}")
         rules.append(python_regex(source[len("^(?:"):-1]))
     conditions = {state: c["rules"] for state, c in dump["conditions"].items()}
+    flags = (["# jison's case-insensitive option: every rule is matched ignoring case.",
+              "IGNORECASE = True", ""] if dump["options"].get("case-insensitive") else [])
     return "\n".join([
-        f'"""mermaid {dump["mermaid"]}\'s flowchart lexer, from its compiled form.',
+        f'"""mermaid {dump["mermaid"]}\'s {family} lexer, from its compiled form.',
         "",
         "Generated by build-aux/mermaid/generate.py from",
-        'tests/mermaid_corpus/recorded/flowchart-lexer.json. Don\'t edit."""',
+        f'tests/mermaid_corpus/recorded/{family}-lexer.json. Don\'t edit."""',
         "",
         f"MERMAID = {dump['mermaid']!r}",
         "",
+        *flags,
         "# Each rule's pattern, for re with re.ASCII.",
         f"RULES = {pprint.pformat(rules, width=100)}",
         "",
@@ -155,7 +193,7 @@ def lexer_module():
 
 # -- the parse table -------------------------------------------------------
 
-def tables_module():
+def tables_module(family):
     from lark import Lark
     from lark.lexer import Lexer
 
@@ -166,7 +204,7 @@ def tables_module():
         def lex(self, data):
             return iter(())
 
-    grammar = (PACKAGE / "flowchart.lark").read_text()
+    grammar = (PACKAGE / f"{family}.lark").read_text()
     lark = Lark(grammar, parser="lalr", lexer=_Tokens)
     table = lark.parser.parser.parser.parse_table
     # Lark numbers its states in an order that follows Python's string
@@ -203,9 +241,9 @@ def tables_module():
             how = str(rule.alias or name)
         shapes.append((name, len(rule.expansion), how))
     return "\n".join([
-        '"""The flowchart parser\'s LALR(1) table, for parsing.parse.',
+        f'"""The {family} parser\'s LALR(1) table, for parsing.parse.',
         "",
-        "Generated by build-aux/mermaid/generate.py from flowchart.lark, with",
+        f"Generated by build-aux/mermaid/generate.py from {family}.lark, with",
         'Lark. Don\'t edit."""',
         "",
         "START = 0",
@@ -220,26 +258,35 @@ def tables_module():
     ])
 
 
+FAMILIES = ("flowchart", "state")
 TARGETS = {
-    "lexer": (lexer_module, PACKAGE / "_flowchart_lexer.py"),
-    "tables": (tables_module, PACKAGE / "_flowchart_tables.py"),
+    "lexer": (lexer_module, "_{}_lexer.py"),
+    "tables": (tables_module, "_{}_tables.py"),
 }
+
+
+def target(kind, family):
+    """(a function making the module's text, the path it goes to)."""
+    make, name = TARGETS[kind]
+    return (lambda: make(family)), PACKAGE / name.format(family)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("target", choices=TARGETS)
+    parser.add_argument("--family", choices=FAMILIES)
     parser.add_argument("--check", action="store_true",
                         help="fail if the committed file isn't what would be generated")
     args = parser.parse_args()
-    make, path = TARGETS[args.target]
-    text = make()
-    if args.check:
-        if path.read_text() != text:
-            sys.exit(f"{path.name} is out of date: run build-aux/mermaid/generate.py {args.target}")
-        return
-    path.write_text(text)
-    print(f"wrote {path.relative_to(ROOT)}")
+    for family in [args.family] if args.family else FAMILIES:
+        make, path = target(args.target, family)
+        text = make()
+        if args.check:
+            if path.read_text() != text:
+                sys.exit(f"{path.name} is out of date: run build-aux/mermaid/generate.py {args.target}")
+            continue
+        path.write_text(text)
+        print(f"wrote {path.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

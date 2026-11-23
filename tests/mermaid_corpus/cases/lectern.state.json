@@ -1,0 +1,197 @@
+[
+  {
+    "id": "lectern:basic",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    [*] --> Still\n    Still --> [*]\n    Still --> Moving\n    Moving --> Still\n    Moving --> Crash\n    Crash --> [*]"
+  },
+  {
+    "id": "lectern:v1-header",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram\n    [*] --> A\n    A --> B : go\n    B --> [*]"
+  },
+  {
+    "id": "lectern:labels",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    s1 --> s2 : A transition\n    s2 --> s3 : with: a colon\n    s3 --> s1 :no space"
+  },
+  {
+    "id": "lectern:described",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    state \"This is a state description\" as s2\n    s2 : and another\n    s1 : first line\n    s1 --> s2"
+  },
+  {
+    "id": "lectern:two-descriptions",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    Busy : working hard\n    Busy : still\n    Idle --> Busy"
+  },
+  {
+    "id": "lectern:composite",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    [*] --> First\n    state First {\n        [*] --> second\n        second --> [*]\n    }\n    First --> Last\n    Last --> [*]"
+  },
+  {
+    "id": "lectern:nested-composite",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    [*] --> First\n    state First {\n        [*] --> Second\n        state Second {\n            [*] --> second\n            second --> Third\n            state Third {\n                [*] --> third\n                third --> [*]\n            }\n        }\n    }"
+  },
+  {
+    "id": "lectern:aliased-composite",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    state \"Long name\" as LN {\n        [*] --> inner\n    }\n    out --> LN"
+  },
+  {
+    "id": "lectern:choice",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    state if_state <<choice>>\n    [*] --> IsPositive\n    IsPositive --> if_state\n    if_state --> False: if n < 0\n    if_state --> True : if n >= 0"
+  },
+  {
+    "id": "lectern:fork-join",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    state fork_state <<fork>>\n      [*] --> fork_state\n      fork_state --> State2\n      fork_state --> State3\n\n      state join_state <<join>>\n      State2 --> join_state\n      State3 --> join_state\n      join_state --> State4\n      State4 --> [*]"
+  },
+  {
+    "id": "lectern:bracket-pseudo",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    state f [[fork]]\n    state j [[join]]\n    state c [[choice]]\n    [*] --> f\n    f --> a\n    f --> b\n    a --> j\n    b --> j\n    j --> c\n    c --> [*]"
+  },
+  {
+    "id": "lectern:direction-lr",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    direction LR\n    [*] --> A\n    A --> B\n    B --> C"
+  },
+  {
+    "id": "lectern:direction-lr-composite",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    direction LR\n    [*] --> A\n    state B {\n      direction LR\n      a --> b\n    }\n    A --> B"
+  },
+  {
+    "id": "lectern:direction-lr-composite-default",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    direction LR\n    A --> B\n    state B {\n      a --> b\n    }"
+  },
+  {
+    "id": "lectern:direction-in-label",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    A --> B : change direction LR\n    B --> C"
+  },
+  {
+    "id": "lectern:comments",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    %% a comment\n    A --> B %% trailing\n    B%%glued\n    B --> C"
+  },
+  {
+    "id": "lectern:classes",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    classDef bad fill:#f00,color:white,font-weight:bold\n    classDef movement font-style:italic\n    [*] --> Moving:::movement\n    Moving --> Crash\n    class Crash bad\n    style Moving stroke:#333,stroke-width:3px"
+  },
+  {
+    "id": "lectern:classdef-default",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    classDef default fill:#f00\n    A --> B"
+  },
+  {
+    "id": "lectern:click",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    A --> B\n    click A \"https://example.org\" \"a tooltip\"\n    click B href \"https://example.com\""
+  },
+  {
+    "id": "lectern:click-no-tooltip",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    A --> B\n    click A \"https://example.org\""
+  },
+  {
+    "id": "lectern:note",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    State1 --> State2\n    note right of State1 : Important information!"
+  },
+  {
+    "id": "lectern:note-block",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    State1 --> State2\n    note left of State2\n        A note\n        on two lines\n    end note"
+  },
+  {
+    "id": "lectern:concurrency",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    [*] --> Active\n    state Active {\n        [*] --> NumLockOff\n        NumLockOff --> NumLockOn : EvNumLockPressed\n        --\n        [*] --> CapsLockOff\n        CapsLockOff --> CapsLockOn : EvCapsLockPressed\n    }"
+  },
+  {
+    "id": "lectern:two-word-state",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    state Two words {\n      a --> b\n    }"
+  },
+  {
+    "id": "lectern:state-alone",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    state Lonely\n    A --> B"
+  },
+  {
+    "id": "lectern:case-insensitive-keywords",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    STATE C <<CHOICE>>\n    A --> C\n    C --> B"
+  },
+  {
+    "id": "lectern:self-loop",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    A --> A : again\n    A --> B"
+  },
+  {
+    "id": "lectern:edge-to-composite-inner",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    state Outer {\n      a --> b\n    }\n    x --> a"
+  },
+  {
+    "id": "lectern:markdown-label",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    A --> B : **bold**"
+  },
+  {
+    "id": "lectern:br-label",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    A --> B : one<br>two\n    B : first<br/>second"
+  },
+  {
+    "id": "lectern:hide-empty",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    hide empty description\n    A --> B"
+  },
+  {
+    "id": "lectern:semicolons",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    A --> B; B --> C"
+  },
+  {
+    "id": "lectern:dashes-in-id",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    my-state --> other"
+  },
+  {
+    "id": "lectern:unicode",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    Ålborg --> Århus : åh"
+  },
+  {
+    "id": "lectern:empty",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2"
+  },
+  {
+    "id": "lectern:composite-empty",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    state Empty {\n    }\n    A --> Empty"
+  },
+  {
+    "id": "lectern:composite-description-error",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    state Comp {\n      a --> b\n    }\n    Comp : one\n    Comp : two"
+  },
+  {
+    "id": "lectern:end-shared",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    A --> [*]\n    B --> [*]\n    [*] --> A\n    [*] --> B"
+  },
+  {
+    "id": "lectern:start-classed",
+    "origin": "lectern: state diagrams, first cut",
+    "source": "stateDiagram-v2\n    classDef s fill:#0f0\n    [*]:::s --> A"
+  }
+]

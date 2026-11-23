@@ -16,8 +16,9 @@ syntax-highlighted Python function](data/screenshots/01-reading.png)
 - Full CommonMark + GFM: tables, fenced code with syntax highlighting,
   task lists, footnotes, images.
 - Mermaid diagrams — `flowchart`/`graph` (including `subgraph` frames),
-  `sequenceDiagram`, `classDiagram` and `erDiagram` are drawn (and
-  printed) natively, with no browser involved. Any other diagram type, or
+  `sequenceDiagram`, `classDiagram`, `erDiagram` and `stateDiagram`
+  (including composite states) are drawn (and printed) natively, with no
+  browser involved. Any other diagram type, or
   syntax outside the supported subset, stays a highlighted code block.
 - Native GTK4/Libadwaita rendering (a single `Gtk.TextView` + tags) —
   no embedded browser engine, with spacing and typography following

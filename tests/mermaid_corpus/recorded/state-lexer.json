@@ -1,0 +1,369 @@
+{
+ "mermaid": "11.17.2",
+ "rules": [
+  "^(?:click\\b)",
+  "^(?:href\\b)",
+  "^(?:\"[^\"]*\")",
+  "^(?:default\\b)",
+  "^(?:.*direction\\s+TB[^\\n]*)",
+  "^(?:.*direction\\s+BT[^\\n]*)",
+  "^(?:.*direction\\s+RL[^\\n]*)",
+  "^(?:.*direction\\s+LR[^\\n]*)",
+  "^(?:[\\n]+)",
+  "^(?:[\\s]+)",
+  "^(?:((?!\\n)\\s)+)",
+  "^(?:#[^\\n]*)",
+  "^(?:%%(?!\\{)[^\\n]*)",
+  "^(?:scale\\s+)",
+  "^(?:\\d+)",
+  "^(?:\\s+width\\b)",
+  "^(?:accTitle\\s*:\\s*)",
+  "^(?:(?!\\n||)*[^\\n]*)",
+  "^(?:accDescr\\s*:\\s*)",
+  "^(?:(?!\\n||)*[^\\n]*)",
+  "^(?:accDescr\\s*\\{\\s*)",
+  "^(?:[\\}])",
+  "^(?:[^\\}]*)",
+  "^(?:classDef\\s+)",
+  "^(?:DEFAULT\\s+)",
+  "^(?:\\w+\\s+)",
+  "^(?:[^\\n]*)",
+  "^(?:class\\s+)",
+  "^(?:(\\w+)+((,\\s*\\w+)*))",
+  "^(?:[^\\n]*)",
+  "^(?:style\\s+)",
+  "^(?:[\\w,]+\\s+)",
+  "^(?:[^\\n]*)",
+  "^(?:scale\\s+)",
+  "^(?:\\d+)",
+  "^(?:\\s+width\\b)",
+  "^(?:state\\s+)",
+  "^(?:.*<<fork>>)",
+  "^(?:.*<<join>>)",
+  "^(?:.*<<choice>>)",
+  "^(?:.*\\[\\[fork\\]\\])",
+  "^(?:.*\\[\\[join\\]\\])",
+  "^(?:.*\\[\\[choice\\]\\])",
+  "^(?:.*direction\\s+TB[^\\n]*)",
+  "^(?:.*direction\\s+BT[^\\n]*)",
+  "^(?:.*direction\\s+RL[^\\n]*)",
+  "^(?:.*direction\\s+LR[^\\n]*)",
+  "^(?:[\"])",
+  "^(?:\\s*as\\s+)",
+  "^(?:[^\\n\\{]*)",
+  "^(?:[\"])",
+  "^(?:[^\"]*)",
+  "^(?:\\w+\\s+\\w+.*?\\{)",
+  "^(?:[^\\n\\s\\{]+)",
+  "^(?:\\n)",
+  "^(?:\\{)",
+  "^(?:\\})",
+  "^(?:[\\n])",
+  "^(?:note\\s+)",
+  "^(?:left of\\b)",
+  "^(?:right of\\b)",
+  "^(?:\")",
+  "^(?:\\s*as\\s*)",
+  "^(?:[\"])",
+  "^(?:[^\"]*)",
+  "^(?:[^\\n]*)",
+  "^(?:\\s*[^:\\n\\s\\-]+)",
+  "^(?:\\s*:[^:\\n;]+)",
+  "^(?:[\\s\\S]*?\\n\\s*end note\\b)",
+  "^(?:stateDiagram\\s+)",
+  "^(?:stateDiagram-v2\\s+)",
+  "^(?:hide empty description\\b)",
+  "^(?:\\[\\*\\])",
+  "^(?:[^:\\n\\s\\-\\{]+)",
+  "^(?:\\s*:(?:[^:\\n;]|:[^:\\n;])+)",
+  "^(?:-->)",
+  "^(?:--)",
+  "^(?::::)",
+  "^(?:$)",
+  "^(?:.)"
+ ],
+ "conditions": {
+  "LINE": {
+   "rules": [
+    10,
+    11,
+    12
+   ],
+   "inclusive": false
+  },
+  "struct": {
+   "rules": [
+    10,
+    11,
+    12,
+    23,
+    27,
+    30,
+    36,
+    43,
+    44,
+    45,
+    46,
+    56,
+    57,
+    58,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77
+   ],
+   "inclusive": false
+  },
+  "FLOATING_NOTE_ID": {
+   "rules": [
+    65
+   ],
+   "inclusive": false
+  },
+  "FLOATING_NOTE": {
+   "rules": [
+    62,
+    63,
+    64
+   ],
+   "inclusive": false
+  },
+  "NOTE_TEXT": {
+   "rules": [
+    67,
+    68
+   ],
+   "inclusive": false
+  },
+  "NOTE_ID": {
+   "rules": [
+    66
+   ],
+   "inclusive": false
+  },
+  "NOTE": {
+   "rules": [
+    59,
+    60,
+    61
+   ],
+   "inclusive": false
+  },
+  "STYLEDEF_STYLEOPTS": {
+   "rules": [],
+   "inclusive": false
+  },
+  "STYLEDEF_STYLES": {
+   "rules": [
+    32
+   ],
+   "inclusive": false
+  },
+  "STYLE_IDS": {
+   "rules": [],
+   "inclusive": false
+  },
+  "STYLE": {
+   "rules": [
+    31
+   ],
+   "inclusive": false
+  },
+  "CLASS_STYLE": {
+   "rules": [
+    29
+   ],
+   "inclusive": false
+  },
+  "CLASS": {
+   "rules": [
+    28
+   ],
+   "inclusive": false
+  },
+  "CLASSDEFID": {
+   "rules": [
+    26
+   ],
+   "inclusive": false
+  },
+  "CLASSDEF": {
+   "rules": [
+    24,
+    25
+   ],
+   "inclusive": false
+  },
+  "acc_descr_multiline": {
+   "rules": [
+    21,
+    22
+   ],
+   "inclusive": false
+  },
+  "acc_descr": {
+   "rules": [
+    19
+   ],
+   "inclusive": false
+  },
+  "acc_title": {
+   "rules": [
+    17
+   ],
+   "inclusive": false
+  },
+  "SCALE": {
+   "rules": [
+    14,
+    15,
+    34,
+    35
+   ],
+   "inclusive": false
+  },
+  "ALIAS": {
+   "rules": [],
+   "inclusive": false
+  },
+  "STATE_ID": {
+   "rules": [
+    49
+   ],
+   "inclusive": false
+  },
+  "STATE_STRING": {
+   "rules": [
+    50,
+    51
+   ],
+   "inclusive": false
+  },
+  "FORK_STATE": {
+   "rules": [],
+   "inclusive": false
+  },
+  "STATE": {
+   "rules": [
+    10,
+    11,
+    12,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    47,
+    48,
+    52,
+    53,
+    54,
+    55
+   ],
+   "inclusive": false
+  },
+  "ID": {
+   "rules": [
+    10,
+    11,
+    12
+   ],
+   "inclusive": false
+  },
+  "INITIAL": {
+   "rules": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    13,
+    16,
+    18,
+    20,
+    23,
+    27,
+    30,
+    33,
+    36,
+    55,
+    58,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    77,
+    78,
+    79
+   ],
+   "inclusive": true
+  }
+ },
+ "options": {
+  "case-insensitive": true
+ },
+ "performAction": "function anonymous(yy, yy_, $avoiding_name_collisions, YY_START) {\n        function processId() {\n          const idx = yy_.yytext.indexOf(\"%%\");\n          if (idx === 0) {\n            return false;\n          }\n          if (idx > 0) {\n            const before = yy_.yytext.slice(0, idx);\n            const after = yy_.yytext.slice(idx);\n            if (after) {\n              yy.lexer.unput(after);\n            }\n            yy_.yytext = before;\n          }\n          return true;\n        }\n        __name(processId, \"processId\");\n        var YYSTATE = YY_START;\n        switch ($avoiding_name_collisions) {\n          case 0:\n            return 38;\n            break;\n          case 1:\n            return 40;\n            break;\n          case 2:\n            return 39;\n            break;\n          case 3:\n            return 44;\n            break;\n          case 4:\n            return 51;\n            break;\n          case 5:\n            return 52;\n            break;\n          case 6:\n            return 53;\n            break;\n          case 7:\n            return 54;\n            break;\n          case 8:\n            return 5;\n            break;\n          case 9:\n            break;\n          case 10:\n            break;\n          case 11:\n            break;\n          case 12:\n            break;\n          case 13:\n            this.pushState(\"SCALE\");\n            return 17;\n            break;\n          case 14:\n            return 18;\n            break;\n          case 15:\n            this.popState();\n            break;\n          case 16:\n            this.begin(\"acc_title\");\n            return 33;\n            break;\n          case 17:\n            this.popState();\n            return \"acc_title_value\";\n            break;\n          case 18:\n            this.begin(\"acc_descr\");\n            return 35;\n            break;\n          case 19:\n            this.popState();\n            return \"acc_descr_value\";\n            break;\n          case 20:\n            this.begin(\"acc_descr_multiline\");\n            break;\n          case 21:\n            this.popState();\n            break;\n          case 22:\n            return \"acc_descr_multiline_value\";\n            break;\n          case 23:\n            this.pushState(\"CLASSDEF\");\n            return 41;\n            break;\n          case 24:\n            this.popState();\n            this.pushState(\"CLASSDEFID\");\n            return \"DEFAULT_CLASSDEF_ID\";\n            break;\n          case 25:\n            this.popState();\n            this.pushState(\"CLASSDEFID\");\n            return 42;\n            break;\n          case 26:\n            this.popState();\n            return 43;\n            break;\n          case 27:\n            this.pushState(\"CLASS\");\n            return 48;\n            break;\n          case 28:\n            this.popState();\n            this.pushState(\"CLASS_STYLE\");\n            return 49;\n            break;\n          case 29:\n            this.popState();\n            return 50;\n            break;\n          case 30:\n            this.pushState(\"STYLE\");\n            return 45;\n            break;\n          case 31:\n            this.popState();\n            this.pushState(\"STYLEDEF_STYLES\");\n            return 46;\n            break;\n          case 32:\n            this.popState();\n            return 47;\n            break;\n          case 33:\n            this.pushState(\"SCALE\");\n            return 17;\n            break;\n          case 34:\n            return 18;\n            break;\n          case 35:\n            this.popState();\n            break;\n          case 36:\n            this.pushState(\"STATE\");\n            break;\n          case 37:\n            this.popState();\n            yy_.yytext = yy_.yytext.slice(0, -8).trim();\n            return 25;\n            break;\n          case 38:\n            this.popState();\n            yy_.yytext = yy_.yytext.slice(0, -8).trim();\n            return 26;\n            break;\n          case 39:\n            this.popState();\n            yy_.yytext = yy_.yytext.slice(0, -10).trim();\n            return 27;\n            break;\n          case 40:\n            this.popState();\n            yy_.yytext = yy_.yytext.slice(0, -8).trim();\n            return 25;\n            break;\n          case 41:\n            this.popState();\n            yy_.yytext = yy_.yytext.slice(0, -8).trim();\n            return 26;\n            break;\n          case 42:\n            this.popState();\n            yy_.yytext = yy_.yytext.slice(0, -10).trim();\n            return 27;\n            break;\n          case 43:\n            return 51;\n            break;\n          case 44:\n            return 52;\n            break;\n          case 45:\n            return 53;\n            break;\n          case 46:\n            return 54;\n            break;\n          case 47:\n            this.pushState(\"STATE_STRING\");\n            break;\n          case 48:\n            this.pushState(\"STATE_ID\");\n            return \"AS\";\n            break;\n          case 49:\n            if (!processId()) return;\n            this.popState();\n            return \"ID\";\n            break;\n          case 50:\n            this.popState();\n            break;\n          case 51:\n            return \"STATE_DESCR\";\n            break;\n          case 52:\n            throw new Error('Error: State name must be a single word. Found: \"' + yy_.yytext.trim() + '\"');\n            break;\n          case 53:\n            return 19;\n            break;\n          case 54:\n            this.popState();\n            break;\n          case 55:\n            this.popState();\n            this.pushState(\"struct\");\n            return 20;\n            break;\n          case 56:\n            this.popState();\n            return 21;\n            break;\n          case 57:\n            break;\n          case 58:\n            this.begin(\"NOTE\");\n            return 29;\n            break;\n          case 59:\n            this.popState();\n            this.pushState(\"NOTE_ID\");\n            return 59;\n            break;\n          case 60:\n            this.popState();\n            this.pushState(\"NOTE_ID\");\n            return 60;\n            break;\n          case 61:\n            this.popState();\n            this.pushState(\"FLOATING_NOTE\");\n            break;\n          case 62:\n            this.popState();\n            this.pushState(\"FLOATING_NOTE_ID\");\n            return \"AS\";\n            break;\n          case 63:\n            break;\n          case 64:\n            return \"NOTE_TEXT\";\n            break;\n          case 65:\n            if (!processId()) return;\n            this.popState();\n            return \"ID\";\n            break;\n          case 66:\n            if (!processId()) return;\n            this.popState();\n            this.pushState(\"NOTE_TEXT\");\n            return 24;\n            break;\n          case 67:\n            this.popState();\n            yy_.yytext = yy_.yytext.substr(2).trim();\n            return 31;\n            break;\n          case 68:\n            this.popState();\n            yy_.yytext = yy_.yytext.slice(0, -8).trim();\n            return 31;\n            break;\n          case 69:\n            return 6;\n            break;\n          case 70:\n            return 6;\n            break;\n          case 71:\n            return 16;\n            break;\n          case 72:\n            return 57;\n            break;\n          case 73:\n            if (!processId()) return;\n            return 24;\n            break;\n          case 74:\n            yy_.yytext = yy_.yytext.trim();\n            return 14;\n            break;\n          case 75:\n            return 15;\n            break;\n          case 76:\n            return 28;\n            break;\n          case 77:\n            return 58;\n            break;\n          case 78:\n            return 5;\n            break;\n          case 79:\n            return \"INVALID\";\n            break;\n        }\n      }",
+ "terminals": {
+  "2": "error",
+  "4": "SPACE",
+  "5": "NL",
+  "6": "SD",
+  "14": "DESCR",
+  "15": "-->",
+  "16": "HIDE_EMPTY",
+  "17": "scale",
+  "18": "WIDTH",
+  "19": "COMPOSIT_STATE",
+  "20": "STRUCT_START",
+  "21": "STRUCT_STOP",
+  "22": "STATE_DESCR",
+  "23": "AS",
+  "24": "ID",
+  "25": "FORK",
+  "26": "JOIN",
+  "27": "CHOICE",
+  "28": "CONCURRENT",
+  "29": "note",
+  "31": "NOTE_TEXT",
+  "33": "acc_title",
+  "34": "acc_title_value",
+  "35": "acc_descr",
+  "36": "acc_descr_value",
+  "37": "acc_descr_multiline_value",
+  "38": "CLICK",
+  "39": "STRING",
+  "40": "HREF",
+  "41": "classDef",
+  "42": "CLASSDEF_ID",
+  "43": "CLASSDEF_STYLEOPTS",
+  "44": "DEFAULT",
+  "45": "style",
+  "46": "STYLE_IDS",
+  "47": "STYLEDEF_STYLEOPTS",
+  "48": "class",
+  "49": "CLASSENTITY_IDS",
+  "50": "STYLECLASS",
+  "51": "direction_tb",
+  "52": "direction_bt",
+  "53": "direction_rl",
+  "54": "direction_lr",
+  "56": ";",
+  "57": "EDGE_STATE",
+  "58": "STYLE_SEPARATOR",
+  "59": "left_of",
+  "60": "right_of"
+ }
+}

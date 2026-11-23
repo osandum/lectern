@@ -1,0 +1,4695 @@
+{
+ "mermaid": "11.17.2",
+ "results": {
+  "lectern:basic": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "Still",
+     "shape": "rect",
+     "label": "Still"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    },
+    {
+     "id": "Moving",
+     "shape": "rect",
+     "label": "Moving"
+    },
+    {
+     "id": "Crash",
+     "shape": "rect",
+     "label": "Crash"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "Still",
+     "label": ""
+    },
+    {
+     "start": "Still",
+     "end": "root_end",
+     "label": ""
+    },
+    {
+     "start": "Still",
+     "end": "Moving",
+     "label": ""
+    },
+    {
+     "start": "Moving",
+     "end": "Still",
+     "label": ""
+    },
+    {
+     "start": "Moving",
+     "end": "Crash",
+     "label": ""
+    },
+    {
+     "start": "Crash",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:v1-header": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "A",
+     "label": ""
+    },
+    {
+     "start": "A",
+     "end": "B",
+     "label": "go"
+    },
+    {
+     "start": "B",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:labels": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "s1",
+     "shape": "rect",
+     "label": "s1"
+    },
+    {
+     "id": "s2",
+     "shape": "rect",
+     "label": "s2"
+    },
+    {
+     "id": "s3",
+     "shape": "rect",
+     "label": "s3"
+    }
+   ],
+   "edges": [
+    {
+     "start": "s1",
+     "end": "s2",
+     "label": "A transition"
+    },
+    {
+     "start": "s2",
+     "end": "s3",
+     "label": "with: a colon"
+    },
+    {
+     "start": "s3",
+     "end": "s1",
+     "label": "no space"
+    }
+   ],
+   "links": []
+  },
+  "lectern:described": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "s2",
+     "shape": "rectWithTitle",
+     "label": "This is a state description",
+     "description": [
+      "and another"
+     ]
+    },
+    {
+     "id": "s1",
+     "shape": "rect",
+     "label": "first line"
+    }
+   ],
+   "edges": [
+    {
+     "start": "s1",
+     "end": "s2",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:two-descriptions": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "Busy",
+     "shape": "rectWithTitle",
+     "label": "working hard",
+     "description": [
+      "still"
+     ]
+    },
+    {
+     "id": "Idle",
+     "shape": "rect",
+     "label": "Idle"
+    }
+   ],
+   "edges": [
+    {
+     "start": "Idle",
+     "end": "Busy",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:composite": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "First",
+     "shape": "roundedWithTitle",
+     "label": "First",
+     "dir": "TB"
+    },
+    {
+     "id": "First_start",
+     "shape": "stateStart",
+     "label": "First_start",
+     "parentId": "First"
+    },
+    {
+     "id": "second",
+     "shape": "rect",
+     "label": "second",
+     "parentId": "First"
+    },
+    {
+     "id": "First_end",
+     "shape": "stateEnd",
+     "label": "First_end",
+     "parentId": "First"
+    },
+    {
+     "id": "Last",
+     "shape": "rect",
+     "label": "Last"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "First",
+     "label": ""
+    },
+    {
+     "start": "First_start",
+     "end": "second",
+     "label": ""
+    },
+    {
+     "start": "second",
+     "end": "First_end",
+     "label": ""
+    },
+    {
+     "start": "First",
+     "end": "Last",
+     "label": ""
+    },
+    {
+     "start": "Last",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:nested-composite": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "First",
+     "shape": "roundedWithTitle",
+     "label": "First",
+     "dir": "TB"
+    },
+    {
+     "id": "First_start",
+     "shape": "stateStart",
+     "label": "First_start",
+     "parentId": "First"
+    },
+    {
+     "id": "Second",
+     "shape": "roundedWithTitle",
+     "label": "Second",
+     "parentId": "First",
+     "dir": "TB"
+    },
+    {
+     "id": "Second_start",
+     "shape": "stateStart",
+     "label": "Second_start",
+     "parentId": "Second"
+    },
+    {
+     "id": "second",
+     "shape": "rect",
+     "label": "second",
+     "parentId": "Second"
+    },
+    {
+     "id": "Third",
+     "shape": "roundedWithTitle",
+     "label": "Third",
+     "parentId": "Second",
+     "dir": "TB"
+    },
+    {
+     "id": "Third_start",
+     "shape": "stateStart",
+     "label": "Third_start",
+     "parentId": "Third"
+    },
+    {
+     "id": "third",
+     "shape": "rect",
+     "label": "third",
+     "parentId": "Third"
+    },
+    {
+     "id": "Third_end",
+     "shape": "stateEnd",
+     "label": "Third_end",
+     "parentId": "Third"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "First",
+     "label": ""
+    },
+    {
+     "start": "First_start",
+     "end": "Second",
+     "label": ""
+    },
+    {
+     "start": "Second_start",
+     "end": "second",
+     "label": ""
+    },
+    {
+     "start": "second",
+     "end": "Third",
+     "label": ""
+    },
+    {
+     "start": "Third_start",
+     "end": "third",
+     "label": ""
+    },
+    {
+     "start": "third",
+     "end": "Third_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:aliased-composite": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "LN",
+     "shape": "roundedWithTitle",
+     "label": "Long name",
+     "dir": "TB"
+    },
+    {
+     "id": "LN_start",
+     "shape": "stateStart",
+     "label": "LN_start",
+     "parentId": "LN"
+    },
+    {
+     "id": "inner",
+     "shape": "rect",
+     "label": "inner",
+     "parentId": "LN"
+    },
+    {
+     "id": "out",
+     "shape": "rect",
+     "label": "out"
+    }
+   ],
+   "edges": [
+    {
+     "start": "LN_start",
+     "end": "inner",
+     "label": ""
+    },
+    {
+     "start": "out",
+     "end": "LN",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:choice": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "if_state",
+     "shape": "choice",
+     "label": "if_state"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "IsPositive",
+     "shape": "rect",
+     "label": "IsPositive"
+    },
+    {
+     "id": "False",
+     "shape": "rect",
+     "label": "False"
+    },
+    {
+     "id": "True",
+     "shape": "rect",
+     "label": "True"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "IsPositive",
+     "label": ""
+    },
+    {
+     "start": "IsPositive",
+     "end": "if_state",
+     "label": ""
+    },
+    {
+     "start": "if_state",
+     "end": "False",
+     "label": "if n &lt; 0"
+    },
+    {
+     "start": "if_state",
+     "end": "True",
+     "label": "if n >= 0"
+    }
+   ],
+   "links": []
+  },
+  "lectern:fork-join": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "fork_state",
+     "shape": "fork",
+     "label": "fork_state"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    },
+    {
+     "id": "State3",
+     "shape": "rect",
+     "label": "State3"
+    },
+    {
+     "id": "join_state",
+     "shape": "join",
+     "label": "join_state"
+    },
+    {
+     "id": "State4",
+     "shape": "rect",
+     "label": "State4"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "fork_state",
+     "label": ""
+    },
+    {
+     "start": "fork_state",
+     "end": "State2",
+     "label": ""
+    },
+    {
+     "start": "fork_state",
+     "end": "State3",
+     "label": ""
+    },
+    {
+     "start": "State2",
+     "end": "join_state",
+     "label": ""
+    },
+    {
+     "start": "State3",
+     "end": "join_state",
+     "label": ""
+    },
+    {
+     "start": "join_state",
+     "end": "State4",
+     "label": ""
+    },
+    {
+     "start": "State4",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:bracket-pseudo": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "f",
+     "shape": "fork",
+     "label": "f"
+    },
+    {
+     "id": "j",
+     "shape": "join",
+     "label": "j"
+    },
+    {
+     "id": "c",
+     "shape": "choice",
+     "label": "c"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "a",
+     "shape": "rect",
+     "label": "a"
+    },
+    {
+     "id": "b",
+     "shape": "rect",
+     "label": "b"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "f",
+     "label": ""
+    },
+    {
+     "start": "f",
+     "end": "a",
+     "label": ""
+    },
+    {
+     "start": "f",
+     "end": "b",
+     "label": ""
+    },
+    {
+     "start": "a",
+     "end": "j",
+     "label": ""
+    },
+    {
+     "start": "b",
+     "end": "j",
+     "label": ""
+    },
+    {
+     "start": "j",
+     "end": "c",
+     "label": ""
+    },
+    {
+     "start": "c",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:direction-lr": {
+   "type": "stateDiagram",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    },
+    {
+     "id": "C",
+     "shape": "rect",
+     "label": "C"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "A",
+     "label": ""
+    },
+    {
+     "start": "A",
+     "end": "B",
+     "label": ""
+    },
+    {
+     "start": "B",
+     "end": "C",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:direction-lr-composite": {
+   "type": "stateDiagram",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "roundedWithTitle",
+     "label": "B",
+     "dir": "LR"
+    },
+    {
+     "id": "a",
+     "shape": "rect",
+     "label": "a",
+     "parentId": "B"
+    },
+    {
+     "id": "b",
+     "shape": "rect",
+     "label": "b",
+     "parentId": "B"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "A",
+     "label": ""
+    },
+    {
+     "start": "a",
+     "end": "b",
+     "label": ""
+    },
+    {
+     "start": "A",
+     "end": "B",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:direction-lr-composite-default": {
+   "type": "stateDiagram",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "roundedWithTitle",
+     "label": "B",
+     "dir": "TB"
+    },
+    {
+     "id": "a",
+     "shape": "rect",
+     "label": "a",
+     "parentId": "B"
+    },
+    {
+     "id": "b",
+     "shape": "rect",
+     "label": "b",
+     "parentId": "B"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "label": ""
+    },
+    {
+     "start": "a",
+     "end": "b",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:direction-in-label": {
+   "type": "stateDiagram",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    },
+    {
+     "id": "C",
+     "shape": "rect",
+     "label": "C"
+    }
+   ],
+   "edges": [
+    {
+     "start": "B",
+     "end": "C",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:comments": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    },
+    {
+     "id": "C",
+     "shape": "rect",
+     "label": "C"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "label": ""
+    },
+    {
+     "start": "B",
+     "end": "C",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:classes": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "Moving",
+     "shape": "rect",
+     "label": "Moving"
+    },
+    {
+     "id": "Crash",
+     "shape": "rect",
+     "label": "Crash"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "Moving",
+     "label": ""
+    },
+    {
+     "start": "Moving",
+     "end": "Crash",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:classdef-default": {
+   "error": "Parse error on line 2:"
+  },
+  "lectern:click": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "label": ""
+    }
+   ],
+   "links": [
+    {
+     "id": "A",
+     "url": "\"https://example.org\""
+    },
+    {
+     "id": "B",
+     "url": "\"https://example.com\""
+    }
+   ]
+  },
+  "lectern:click-no-tooltip": {
+   "error": "Parse error on line 3:"
+  },
+  "lectern:note": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    },
+    {
+     "id": "State1----parent",
+     "shape": "noteGroup",
+     "label": "Important information!"
+    },
+    {
+     "id": "State1----note-1",
+     "shape": "note",
+     "label": "Important information!",
+     "parentId": "State1----parent"
+    }
+   ],
+   "edges": [
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "State1----note-1",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:note-block": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    },
+    {
+     "id": "State2----parent",
+     "shape": "noteGroup",
+     "label": "A note\n        on two lines"
+    },
+    {
+     "id": "State2----note-1",
+     "shape": "note",
+     "label": "A note\n        on two lines",
+     "parentId": "State2----parent"
+    }
+   ],
+   "edges": [
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    },
+    {
+     "start": "State2----note-1",
+     "end": "State2",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:concurrency": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "Active",
+     "shape": "roundedWithTitle",
+     "label": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-1",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-1_start",
+     "shape": "stateStart",
+     "label": "divider-id-1_start",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "NumLockOff",
+     "shape": "rect",
+     "label": "NumLockOff",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "NumLockOn",
+     "shape": "rect",
+     "label": "NumLockOn",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "id-t7359ybsuy-1",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "id-t7359ybsuy-1_start",
+     "shape": "stateStart",
+     "label": "id-t7359ybsuy-1_start",
+     "parentId": "id-t7359ybsuy-1"
+    },
+    {
+     "id": "CapsLockOff",
+     "shape": "rect",
+     "label": "CapsLockOff",
+     "parentId": "id-t7359ybsuy-1"
+    },
+    {
+     "id": "CapsLockOn",
+     "shape": "rect",
+     "label": "CapsLockOn",
+     "parentId": "id-t7359ybsuy-1"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "Active",
+     "label": ""
+    },
+    {
+     "start": "divider-id-1_start",
+     "end": "NumLockOff",
+     "label": ""
+    },
+    {
+     "start": "NumLockOff",
+     "end": "NumLockOn",
+     "label": "EvNumLockPressed"
+    },
+    {
+     "start": "id-t7359ybsuy-1_start",
+     "end": "CapsLockOff",
+     "label": ""
+    },
+    {
+     "start": "CapsLockOff",
+     "end": "CapsLockOn",
+     "label": "EvCapsLockPressed"
+    }
+   ],
+   "links": []
+  },
+  "lectern:two-word-state": {
+   "error": "Error: State name must be a single word. Found: \"Two words {\""
+  },
+  "lectern:state-alone": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:case-insensitive-keywords": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "C",
+     "shape": "choice",
+     "label": "C"
+    },
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "C",
+     "label": ""
+    },
+    {
+     "start": "C",
+     "end": "B",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:self-loop": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "A",
+     "label": "again"
+    },
+    {
+     "start": "A",
+     "end": "B",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:edge-to-composite-inner": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "Outer",
+     "shape": "roundedWithTitle",
+     "label": "Outer",
+     "dir": "TB"
+    },
+    {
+     "id": "a",
+     "shape": "rect",
+     "label": "a",
+     "parentId": "Outer"
+    },
+    {
+     "id": "b",
+     "shape": "rect",
+     "label": "b",
+     "parentId": "Outer"
+    },
+    {
+     "id": "x",
+     "shape": "rect",
+     "label": "x"
+    }
+   ],
+   "edges": [
+    {
+     "start": "a",
+     "end": "b",
+     "label": ""
+    },
+    {
+     "start": "x",
+     "end": "a",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:markdown-label": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "label": "**bold**"
+    }
+   ],
+   "links": []
+  },
+  "lectern:br-label": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "first<br>second"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "label": "one<br>two"
+    }
+   ],
+   "links": []
+  },
+  "lectern:hide-empty": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:semicolons": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B;",
+     "shape": "rect",
+     "label": "B;"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    },
+    {
+     "id": "C",
+     "shape": "rect",
+     "label": "C"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B;",
+     "label": ""
+    },
+    {
+     "start": "B",
+     "end": "C",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:dashes-in-id": {
+   "error": "Parse error on line 2:"
+  },
+  "lectern:unicode": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "Ålborg",
+     "shape": "rect",
+     "label": "Ålborg"
+    },
+    {
+     "id": "Århus",
+     "shape": "rect",
+     "label": "Århus"
+    }
+   ],
+   "edges": [
+    {
+     "start": "Ålborg",
+     "end": "Århus",
+     "label": "åh"
+    }
+   ],
+   "links": []
+  },
+  "lectern:empty": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [],
+   "edges": [],
+   "links": []
+  },
+  "lectern:composite-empty": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "Empty",
+     "shape": "roundedWithTitle",
+     "label": "Empty",
+     "dir": "TB"
+    },
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "Empty",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:composite-description-error": {
+   "error": "Group nodes can only have label. Remove the additional description for node [Comp]"
+  },
+  "lectern:end-shared": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "root_end",
+     "label": ""
+    },
+    {
+     "start": "B",
+     "end": "root_end",
+     "label": ""
+    },
+    {
+     "start": "root_start",
+     "end": "A",
+     "label": ""
+    },
+    {
+     "start": "root_start",
+     "end": "B",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "lectern:start-classed": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "A",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "state-parser.spec.js:23": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "valid",
+     "shape": "roundedWithTitle",
+     "label": "valid",
+     "dir": "TB"
+    },
+    {
+     "id": "X",
+     "shape": "rect",
+     "label": "X",
+     "parentId": "valid"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "state-parser.spec.js:36": {
+   "error": "Error: State name must be a single word. Found: \"invalid syntax {\""
+  },
+  "state-parser.spec.js:45": {
+   "error": "Error: State name must be a single word. Found: \"invalid syntax with more than 2 words {\""
+  },
+  "state-parser.spec.js:56": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "namedState1",
+     "shape": "rect",
+     "label": "Small State 1"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "state-parser.spec.js:68": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "namedState1",
+     "shape": "rect",
+     "label": "Small State 1"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "state-parser.spec.js:78": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "namedState1",
+     "shape": "rect",
+     "label": "Small State 1"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "state-parser.spec.js:95": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "assemble",
+     "shape": "rect",
+     "label": "assemble"
+    },
+    {
+     "id": "assemblies",
+     "shape": "rect",
+     "label": "assemblies"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "state-parser.spec.js:105": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "as",
+     "shape": "rect",
+     "label": "as"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "state-parser.spec.js:129": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "namedState1",
+     "shape": "rect",
+     "label": "Small State 1"
+    },
+    {
+     "id": "bigState1",
+     "shape": "roundedWithTitle",
+     "label": "Big State 1",
+     "dir": "TB"
+    },
+    {
+     "id": "bigState1InternalState",
+     "shape": "rect",
+     "label": "bigState1InternalState",
+     "parentId": "bigState1"
+    },
+    {
+     "id": "namedState2",
+     "shape": "rect",
+     "label": "Small State 2"
+    },
+    {
+     "id": "bigState2",
+     "shape": "roundedWithTitle",
+     "label": "bigState2",
+     "dir": "TB"
+    },
+    {
+     "id": "bigState2InternalState",
+     "shape": "rect",
+     "label": "bigState2InternalState",
+     "parentId": "bigState2"
+    }
+   ],
+   "edges": [
+    {
+     "start": "namedState1",
+     "end": "bigState1",
+     "label": "should point to \\nBig State 1 container"
+    },
+    {
+     "start": "namedState2",
+     "end": "bigState2",
+     "label": "should point to \\nbigState2 container"
+    }
+   ],
+   "links": []
+  },
+  "state-parser.spec.js:152": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "bigState1",
+     "shape": "roundedWithTitle",
+     "label": "Big State 1",
+     "dir": "TB"
+    },
+    {
+     "id": "inner1",
+     "shape": "rect",
+     "label": "inner state 1",
+     "parentId": "bigState1"
+    },
+    {
+     "id": "inner2",
+     "shape": "rect",
+     "label": "inner state 2",
+     "parentId": "bigState1"
+    }
+   ],
+   "edges": [
+    {
+     "start": "inner1",
+     "end": "inner2",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "state-parser.spec.js:167": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "locked",
+     "shape": "rect",
+     "label": "locked"
+    },
+    {
+     "id": "pending",
+     "shape": "rect",
+     "label": "pending"
+    }
+   ],
+   "edges": [
+    {
+     "start": "locked",
+     "end": "pending",
+     "label": "recoverable error (ex: timeout)"
+    }
+   ],
+   "links": []
+  },
+  "state-parser.spec.js:179": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "A",
+     "shape": "rect",
+     "label": "A"
+    },
+    {
+     "id": "B",
+     "shape": "rect",
+     "label": "B"
+    }
+   ],
+   "edges": [
+    {
+     "start": "A",
+     "end": "B",
+     "label": "info: key: value"
+    }
+   ],
+   "links": []
+  },
+  "state-parser.spec.js:189": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "myState",
+     "shape": "rect",
+     "label": "status: active"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "state-parser.spec.js:216": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "State1----parent",
+     "shape": "noteGroup",
+     "label": "this sentence contains send note inside the note text"
+    },
+    {
+     "id": "State1----note-0",
+     "shape": "note",
+     "label": "this sentence contains send note inside the note text",
+     "parentId": "State1----parent"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    }
+   ],
+   "edges": [
+    {
+     "start": "State1",
+     "end": "State1----note-0",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "state-parser.spec.js:235": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "State1----parent",
+     "shape": "noteGroup",
+     "label": "this sentence contains end note as part of the note text"
+    },
+    {
+     "id": "State1----note-0",
+     "shape": "note",
+     "label": "this sentence contains end note as part of the note text",
+     "parentId": "State1----parent"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    }
+   ],
+   "edges": [
+    {
+     "start": "State1",
+     "end": "State1----note-0",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "state-style.spec.js:20": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [],
+   "edges": [],
+   "links": []
+  },
+  "state-style.spec.js:28": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [],
+   "edges": [],
+   "links": []
+  },
+  "state-style.spec.js:41": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [],
+   "edges": [],
+   "links": []
+  },
+  "state-style.spec.js:52": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [],
+   "edges": [],
+   "links": []
+  },
+  "state-style.spec.js:63": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [],
+   "edges": [],
+   "links": []
+  },
+  "state-style.spec.js:360": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "id1",
+     "shape": "rect",
+     "label": "id1"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "state-style.spec.js:368": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "id1",
+     "shape": "rect",
+     "label": "id1"
+    },
+    {
+     "id": "id2",
+     "shape": "rect",
+     "label": "id2"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "state-style.spec.js:379": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "id1",
+     "shape": "rect",
+     "label": "id1"
+    },
+    {
+     "id": "id2",
+     "shape": "rect",
+     "label": "id2"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:24": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:33": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "this is another string"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:45": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "this is another string"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:57": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "this is another string"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:72": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rectWithTitle",
+     "label": "this is a string",
+     "description": [
+      "this is another string"
+     ]
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    },
+    {
+     "start": "State2",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:86": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rectWithTitle",
+     "label": "this is a string",
+     "description": [
+      "this is another string"
+     ]
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    },
+    {
+     "start": "State2",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:95": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "assemble",
+     "shape": "rect",
+     "label": "assemble"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:111": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "assemblies",
+     "shape": "rect",
+     "label": "assemblies"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:132": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    },
+    {
+     "id": "State3",
+     "shape": "rect",
+     "label": "State3"
+    },
+    {
+     "id": "State4",
+     "shape": "rect",
+     "label": "State4"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": "Transition 1"
+    },
+    {
+     "start": "State1",
+     "end": "State3",
+     "label": "Transition 2"
+    },
+    {
+     "start": "State1",
+     "end": "State4",
+     "label": "Transition 3"
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:156": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rectWithTitle",
+     "label": "this is a string with - in it",
+     "description": [
+      "this is another string"
+     ]
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    },
+    {
+     "start": "State2",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:166": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": "This is the description with - in it"
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:175": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": "This is the description +-!"
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:187": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "Configuring",
+     "shape": "roundedWithTitle",
+     "label": "Configuring",
+     "dir": "TB"
+    },
+    {
+     "id": "Configuring_start",
+     "shape": "stateStart",
+     "label": "Configuring_start",
+     "parentId": "Configuring"
+    },
+    {
+     "id": "NewValueSelection",
+     "shape": "rect",
+     "label": "NewValueSelection",
+     "parentId": "Configuring"
+    },
+    {
+     "id": "NewValuePreview",
+     "shape": "rect",
+     "label": "NewValuePreview",
+     "parentId": "Configuring"
+    }
+   ],
+   "edges": [
+    {
+     "start": "Configuring_start",
+     "end": "NewValueSelection",
+     "label": ""
+    },
+    {
+     "start": "NewValueSelection",
+     "end": "NewValuePreview",
+     "label": "EvNewValue"
+    },
+    {
+     "start": "NewValuePreview",
+     "end": "NewValueSelection",
+     "label": "EvNewValueRejected"
+    },
+    {
+     "start": "NewValuePreview",
+     "end": "NewValueSelection",
+     "label": "EvNewValueSaved1"
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:203": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "Configuring",
+     "shape": "roundedWithTitle",
+     "label": "Configuring",
+     "dir": "TB"
+    },
+    {
+     "id": "Configuring_start",
+     "shape": "stateStart",
+     "label": "Configuring_start",
+     "parentId": "Configuring"
+    },
+    {
+     "id": "NewValueSelection",
+     "shape": "rect",
+     "label": "NewValueSelection",
+     "parentId": "Configuring"
+    },
+    {
+     "id": "NewValuePreview",
+     "shape": "roundedWithTitle",
+     "label": "NewValuePreview",
+     "parentId": "Configuring",
+     "dir": "TB"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1",
+     "parentId": "NewValuePreview"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2",
+     "parentId": "NewValuePreview"
+    }
+   ],
+   "edges": [
+    {
+     "start": "Configuring_start",
+     "end": "NewValueSelection",
+     "label": ""
+    },
+    {
+     "start": "NewValueSelection",
+     "end": "NewValuePreview",
+     "label": "EvNewValue"
+    },
+    {
+     "start": "NewValuePreview",
+     "end": "NewValueSelection",
+     "label": "EvNewValueRejected"
+    },
+    {
+     "start": "NewValuePreview",
+     "end": "NewValueSelection",
+     "label": "EvNewValueSaved"
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:228": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "NotShooting",
+     "shape": "roundedWithTitle",
+     "label": "NotShooting",
+     "dir": "TB"
+    },
+    {
+     "id": "NotShooting_start",
+     "shape": "stateStart",
+     "label": "NotShooting_start",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "Idle",
+     "shape": "rect",
+     "label": "Idle",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "Configuring",
+     "shape": "roundedWithTitle",
+     "label": "Configuring",
+     "parentId": "NotShooting",
+     "dir": "TB"
+    },
+    {
+     "id": "Configuring_start",
+     "shape": "stateStart",
+     "label": "Configuring_start",
+     "parentId": "Configuring"
+    },
+    {
+     "id": "NewValueSelection",
+     "shape": "rect",
+     "label": "NewValueSelection",
+     "parentId": "Configuring"
+    },
+    {
+     "id": "NewValuePreview",
+     "shape": "roundedWithTitle",
+     "label": "NewValuePreview",
+     "parentId": "Configuring",
+     "dir": "TB"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1",
+     "parentId": "NewValuePreview"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2",
+     "parentId": "NewValuePreview"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "NotShooting",
+     "label": ""
+    },
+    {
+     "start": "NotShooting_start",
+     "end": "Idle",
+     "label": ""
+    },
+    {
+     "start": "Idle",
+     "end": "Configuring",
+     "label": "EvConfig"
+    },
+    {
+     "start": "Configuring",
+     "end": "Idle",
+     "label": "EvConfig"
+    },
+    {
+     "start": "Configuring_start",
+     "end": "NewValueSelection",
+     "label": ""
+    },
+    {
+     "start": "NewValueSelection",
+     "end": "NewValuePreview",
+     "label": "EvNewValue"
+    },
+    {
+     "start": "NewValuePreview",
+     "end": "NewValueSelection",
+     "label": "EvNewValueRejected"
+    },
+    {
+     "start": "NewValuePreview",
+     "end": "NewValueSelection",
+     "label": "EvNewValueSaved"
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:235": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "state1",
+     "shape": "rect",
+     "label": "Long state description"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:248": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "NotShooting",
+     "shape": "roundedWithTitle",
+     "label": "Not Shooting State",
+     "dir": "TB"
+    },
+    {
+     "id": "Idle",
+     "shape": "rect",
+     "label": "Idle mode",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "Configuring",
+     "shape": "rect",
+     "label": "Configuring mode",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "NotShooting_start",
+     "shape": "stateStart",
+     "label": "NotShooting_start",
+     "parentId": "NotShooting"
+    }
+   ],
+   "edges": [
+    {
+     "start": "NotShooting_start",
+     "end": "Idle",
+     "label": ""
+    },
+    {
+     "start": "Idle",
+     "end": "Configuring",
+     "label": "EvConfig"
+    },
+    {
+     "start": "Configuring",
+     "end": "Idle",
+     "label": "EvConfig"
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:272": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    },
+    {
+     "id": "State3",
+     "shape": "roundedWithTitle",
+     "label": "State3",
+     "dir": "TB"
+    },
+    {
+     "id": "long1",
+     "shape": "rectWithTitle",
+     "label": "Accumulate Enough Data\nLong State Name",
+     "description": [
+      "Just a test"
+     ],
+     "parentId": "State3"
+    },
+    {
+     "id": "State3_start",
+     "shape": "stateStart",
+     "label": "State3_start",
+     "parentId": "State3"
+    },
+    {
+     "id": "ProcessData",
+     "shape": "rect",
+     "label": "ProcessData",
+     "parentId": "State3"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": "Succeeded"
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": "Aborted"
+    },
+    {
+     "start": "State2",
+     "end": "State3",
+     "label": "Succeeded"
+    },
+    {
+     "start": "State2",
+     "end": "root_end",
+     "label": "Aborted"
+    },
+    {
+     "start": "State3_start",
+     "end": "long1",
+     "label": ""
+    },
+    {
+     "start": "long1",
+     "end": "long1",
+     "label": "New Data"
+    },
+    {
+     "start": "long1",
+     "end": "ProcessData",
+     "label": "Enough Data"
+    },
+    {
+     "start": "State3",
+     "end": "State3",
+     "label": "Failed"
+    },
+    {
+     "start": "State3",
+     "end": "root_end",
+     "label": "Succeeded / Save Result"
+    },
+    {
+     "start": "State3",
+     "end": "root_end",
+     "label": "Aborted"
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:288": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "fork_state",
+     "shape": "fork",
+     "label": "fork_state"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    },
+    {
+     "id": "State3",
+     "shape": "rect",
+     "label": "State3"
+    },
+    {
+     "id": "join_state",
+     "shape": "join",
+     "label": "join_state"
+    },
+    {
+     "id": "State4",
+     "shape": "rect",
+     "label": "State4"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "fork_state",
+     "label": ""
+    },
+    {
+     "start": "fork_state",
+     "end": "State2",
+     "label": ""
+    },
+    {
+     "start": "fork_state",
+     "end": "State3",
+     "label": ""
+    },
+    {
+     "start": "State2",
+     "end": "join_state",
+     "label": ""
+    },
+    {
+     "start": "State3",
+     "end": "join_state",
+     "label": ""
+    },
+    {
+     "start": "join_state",
+     "end": "State4",
+     "label": ""
+    },
+    {
+     "start": "State4",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:309": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "Active",
+     "shape": "roundedWithTitle",
+     "label": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-1",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-1_start",
+     "shape": "stateStart",
+     "label": "divider-id-1_start",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "NumLockOff",
+     "shape": "rect",
+     "label": "NumLockOff",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "NumLockOn",
+     "shape": "rect",
+     "label": "NumLockOn",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "divider-id-2",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-2_start",
+     "shape": "stateStart",
+     "label": "divider-id-2_start",
+     "parentId": "divider-id-2"
+    },
+    {
+     "id": "CapsLockOff",
+     "shape": "rect",
+     "label": "CapsLockOff",
+     "parentId": "divider-id-2"
+    },
+    {
+     "id": "CapsLockOn",
+     "shape": "rect",
+     "label": "CapsLockOn",
+     "parentId": "divider-id-2"
+    },
+    {
+     "id": "id-nnaqamzxyul-2",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "id-nnaqamzxyul-2_start",
+     "shape": "stateStart",
+     "label": "id-nnaqamzxyul-2_start",
+     "parentId": "id-nnaqamzxyul-2"
+    },
+    {
+     "id": "ScrollLockOff",
+     "shape": "rect",
+     "label": "ScrollLockOff",
+     "parentId": "id-nnaqamzxyul-2"
+    },
+    {
+     "id": "ScrollLockOn",
+     "shape": "rect",
+     "label": "ScrollLockOn",
+     "parentId": "id-nnaqamzxyul-2"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "Active",
+     "label": ""
+    },
+    {
+     "start": "divider-id-1_start",
+     "end": "NumLockOff",
+     "label": ""
+    },
+    {
+     "start": "NumLockOff",
+     "end": "NumLockOn",
+     "label": "EvNumLockPressed"
+    },
+    {
+     "start": "NumLockOn",
+     "end": "NumLockOff",
+     "label": "EvNumLockPressed"
+    },
+    {
+     "start": "divider-id-2_start",
+     "end": "CapsLockOff",
+     "label": ""
+    },
+    {
+     "start": "CapsLockOff",
+     "end": "CapsLockOn",
+     "label": "EvCapsLockPressed"
+    },
+    {
+     "start": "CapsLockOn",
+     "end": "CapsLockOff",
+     "label": "EvCapsLockPressed"
+    },
+    {
+     "start": "id-nnaqamzxyul-2_start",
+     "end": "ScrollLockOff",
+     "label": ""
+    },
+    {
+     "start": "ScrollLockOff",
+     "end": "ScrollLockOn",
+     "label": "EvCapsLockPressed"
+    },
+    {
+     "start": "ScrollLockOn",
+     "end": "ScrollLockOff",
+     "label": "EvCapsLockPressed"
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:324": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "Active",
+     "shape": "roundedWithTitle",
+     "label": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-1",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-1_start",
+     "shape": "stateStart",
+     "label": "divider-id-1_start",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "NumLockOff",
+     "shape": "rect",
+     "label": "NumLockOff",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "divider-id-2",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-2_start",
+     "shape": "stateStart",
+     "label": "divider-id-2_start",
+     "parentId": "divider-id-2"
+    },
+    {
+     "id": "CapsLockOff",
+     "shape": "rect",
+     "label": "CapsLockOff",
+     "parentId": "divider-id-2"
+    },
+    {
+     "id": "id-ntu3ont6o9d-3",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "id-ntu3ont6o9d-3_start",
+     "shape": "stateStart",
+     "label": "id-ntu3ont6o9d-3_start",
+     "parentId": "id-ntu3ont6o9d-3"
+    },
+    {
+     "id": "ScrollLockOff",
+     "shape": "rect",
+     "label": "ScrollLockOff",
+     "parentId": "id-ntu3ont6o9d-3"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "Active",
+     "label": ""
+    },
+    {
+     "start": "divider-id-1_start",
+     "end": "NumLockOff",
+     "label": ""
+    },
+    {
+     "start": "divider-id-2_start",
+     "end": "CapsLockOff",
+     "label": ""
+    },
+    {
+     "start": "id-ntu3ont6o9d-3_start",
+     "end": "ScrollLockOff",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:350": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "Active",
+     "shape": "rect",
+     "label": "Active"
+    },
+    {
+     "id": "Inactive",
+     "shape": "rect",
+     "label": "Inactive"
+    },
+    {
+     "id": "Active----parent",
+     "shape": "noteGroup",
+     "label": "this is a short<br>note"
+    },
+    {
+     "id": "Active----note-2",
+     "shape": "note",
+     "label": "this is a short<br>note",
+     "parentId": "Active----parent"
+    },
+    {
+     "id": "Inactive----parent",
+     "shape": "noteGroup",
+     "label": "A note can also\n      be defined on\n      several lines"
+    },
+    {
+     "id": "Inactive----note-3",
+     "shape": "note",
+     "label": "A note can also\n      be defined on\n      several lines",
+     "parentId": "Inactive----parent"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "Active",
+     "label": ""
+    },
+    {
+     "start": "Active",
+     "end": "Inactive",
+     "label": ""
+    },
+    {
+     "start": "Active----note-2",
+     "end": "Active",
+     "label": ""
+    },
+    {
+     "start": "Inactive",
+     "end": "Inactive----note-3",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:374": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "State1----parent",
+     "shape": "noteGroup",
+     "label": "Line1<br>Line2<br>Line3<br>Line4<br>Line5"
+    },
+    {
+     "id": "State1----note-0",
+     "shape": "note",
+     "label": "Line1<br>Line2<br>Line3<br>Line4<br>Line5",
+     "parentId": "State1----parent"
+    }
+   ],
+   "edges": [
+    {
+     "start": "State1",
+     "end": "State1----note-0",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:388": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "foo",
+     "shape": "rect",
+     "label": "bar"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:395": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [],
+   "edges": [],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:412": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "NotShooting",
+     "shape": "roundedWithTitle",
+     "label": "Not Shooting State",
+     "dir": "TB"
+    },
+    {
+     "id": "Idle",
+     "shape": "rect",
+     "label": "Idle mode",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "Configuring",
+     "shape": "rect",
+     "label": "Configuring mode",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "NotShooting_start",
+     "shape": "stateStart",
+     "label": "NotShooting_start",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "NotShooting----parent",
+     "shape": "noteGroup",
+     "label": "This is a note on a composite state"
+    },
+    {
+     "id": "NotShooting----note-4",
+     "shape": "note",
+     "label": "This is a note on a composite state",
+     "parentId": "NotShooting----parent"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "NotShooting",
+     "label": ""
+    },
+    {
+     "start": "NotShooting_start",
+     "end": "Idle",
+     "label": ""
+    },
+    {
+     "start": "Idle",
+     "end": "Configuring",
+     "label": "EvConfig"
+    },
+    {
+     "start": "Configuring",
+     "end": "Idle",
+     "label": "EvConfig"
+    },
+    {
+     "start": "NotShooting",
+     "end": "NotShooting----note-4",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:431": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "Active",
+     "shape": "roundedWithTitle",
+     "label": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "Idle",
+     "shape": "rect",
+     "label": "Idle",
+     "parentId": "Active"
+    },
+    {
+     "id": "Inactive",
+     "shape": "rect",
+     "label": "Inactive"
+    }
+   ],
+   "edges": [
+    {
+     "start": "Inactive",
+     "end": "Idle",
+     "label": "ACT"
+    },
+    {
+     "start": "Active",
+     "end": "Active",
+     "label": "LOG"
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:450": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "Still",
+     "shape": "rect",
+     "label": "Still"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "Still",
+     "label": ""
+    },
+    {
+     "start": "Still",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram-v2.spec.js:465": {
+   "type": "stateDiagram",
+   "direction": "LR",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "Still",
+     "shape": "rect",
+     "label": "Still"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "Still",
+     "label": ""
+    },
+    {
+     "start": "Still",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:19": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:28": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "this is another string"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:40": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "this is another string"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:55": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "this is another string"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:67": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "this is another string"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:82": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rectWithTitle",
+     "label": "this is a string",
+     "description": [
+      "this is another string"
+     ]
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    },
+    {
+     "start": "State2",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:96": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rectWithTitle",
+     "label": "this is a string",
+     "description": [
+      "this is another string"
+     ]
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    },
+    {
+     "start": "State2",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:105": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "assemble",
+     "shape": "rect",
+     "label": "assemble"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "stateDiagram.spec.js:121": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "assemblies",
+     "shape": "rect",
+     "label": "assemblies"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "stateDiagram.spec.js:128": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "as",
+     "shape": "rect",
+     "label": "as"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "stateDiagram.spec.js:143": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rectWithTitle",
+     "label": "this is a string with - in it",
+     "description": [
+      "this is another string"
+     ]
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    },
+    {
+     "start": "State2",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:153": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": "This is the description with - in it"
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:162": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": "This is the description +-!"
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:174": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "Configuring",
+     "shape": "roundedWithTitle",
+     "label": "Configuring",
+     "dir": "TB"
+    },
+    {
+     "id": "Configuring_start",
+     "shape": "stateStart",
+     "label": "Configuring_start",
+     "parentId": "Configuring"
+    },
+    {
+     "id": "NewValueSelection",
+     "shape": "rect",
+     "label": "NewValueSelection",
+     "parentId": "Configuring"
+    },
+    {
+     "id": "NewValuePreview",
+     "shape": "rect",
+     "label": "NewValuePreview",
+     "parentId": "Configuring"
+    }
+   ],
+   "edges": [
+    {
+     "start": "Configuring_start",
+     "end": "NewValueSelection",
+     "label": ""
+    },
+    {
+     "start": "NewValueSelection",
+     "end": "NewValuePreview",
+     "label": "EvNewValue"
+    },
+    {
+     "start": "NewValuePreview",
+     "end": "NewValueSelection",
+     "label": "EvNewValueRejected"
+    },
+    {
+     "start": "NewValuePreview",
+     "end": "NewValueSelection",
+     "label": "EvNewValueSaved1"
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:190": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "Configuring",
+     "shape": "roundedWithTitle",
+     "label": "Configuring",
+     "dir": "TB"
+    },
+    {
+     "id": "Configuring_start",
+     "shape": "stateStart",
+     "label": "Configuring_start",
+     "parentId": "Configuring"
+    },
+    {
+     "id": "NewValueSelection",
+     "shape": "rect",
+     "label": "NewValueSelection",
+     "parentId": "Configuring"
+    },
+    {
+     "id": "NewValuePreview",
+     "shape": "roundedWithTitle",
+     "label": "NewValuePreview",
+     "parentId": "Configuring",
+     "dir": "TB"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1",
+     "parentId": "NewValuePreview"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2",
+     "parentId": "NewValuePreview"
+    }
+   ],
+   "edges": [
+    {
+     "start": "Configuring_start",
+     "end": "NewValueSelection",
+     "label": ""
+    },
+    {
+     "start": "NewValueSelection",
+     "end": "NewValuePreview",
+     "label": "EvNewValue"
+    },
+    {
+     "start": "NewValuePreview",
+     "end": "NewValueSelection",
+     "label": "EvNewValueRejected"
+    },
+    {
+     "start": "NewValuePreview",
+     "end": "NewValueSelection",
+     "label": "EvNewValueSaved"
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:215": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "NotShooting",
+     "shape": "roundedWithTitle",
+     "label": "NotShooting",
+     "dir": "TB"
+    },
+    {
+     "id": "NotShooting_start",
+     "shape": "stateStart",
+     "label": "NotShooting_start",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "Idle",
+     "shape": "rect",
+     "label": "Idle",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "Configuring",
+     "shape": "roundedWithTitle",
+     "label": "Configuring",
+     "parentId": "NotShooting",
+     "dir": "TB"
+    },
+    {
+     "id": "Configuring_start",
+     "shape": "stateStart",
+     "label": "Configuring_start",
+     "parentId": "Configuring"
+    },
+    {
+     "id": "NewValueSelection",
+     "shape": "rect",
+     "label": "NewValueSelection",
+     "parentId": "Configuring"
+    },
+    {
+     "id": "NewValuePreview",
+     "shape": "roundedWithTitle",
+     "label": "NewValuePreview",
+     "parentId": "Configuring",
+     "dir": "TB"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1",
+     "parentId": "NewValuePreview"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2",
+     "parentId": "NewValuePreview"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "NotShooting",
+     "label": ""
+    },
+    {
+     "start": "NotShooting_start",
+     "end": "Idle",
+     "label": ""
+    },
+    {
+     "start": "Idle",
+     "end": "Configuring",
+     "label": "EvConfig"
+    },
+    {
+     "start": "Configuring",
+     "end": "Idle",
+     "label": "EvConfig"
+    },
+    {
+     "start": "Configuring_start",
+     "end": "NewValueSelection",
+     "label": ""
+    },
+    {
+     "start": "NewValueSelection",
+     "end": "NewValuePreview",
+     "label": "EvNewValue"
+    },
+    {
+     "start": "NewValuePreview",
+     "end": "NewValueSelection",
+     "label": "EvNewValueRejected"
+    },
+    {
+     "start": "NewValuePreview",
+     "end": "NewValueSelection",
+     "label": "EvNewValueSaved"
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:222": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "state1",
+     "shape": "rect",
+     "label": "Long state description"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "stateDiagram.spec.js:235": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "NotShooting",
+     "shape": "roundedWithTitle",
+     "label": "Not Shooting State",
+     "dir": "TB"
+    },
+    {
+     "id": "Idle",
+     "shape": "rect",
+     "label": "Idle mode",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "Configuring",
+     "shape": "rect",
+     "label": "Configuring mode",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "NotShooting_start",
+     "shape": "stateStart",
+     "label": "NotShooting_start",
+     "parentId": "NotShooting"
+    }
+   ],
+   "edges": [
+    {
+     "start": "NotShooting_start",
+     "end": "Idle",
+     "label": ""
+    },
+    {
+     "start": "Idle",
+     "end": "Configuring",
+     "label": "EvConfig"
+    },
+    {
+     "start": "Configuring",
+     "end": "Idle",
+     "label": "EvConfig"
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:259": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    },
+    {
+     "id": "State3",
+     "shape": "roundedWithTitle",
+     "label": "State3",
+     "dir": "TB"
+    },
+    {
+     "id": "long1",
+     "shape": "rectWithTitle",
+     "label": "Accumulate Enough Data\nLong State Name",
+     "description": [
+      "Just a test"
+     ],
+     "parentId": "State3"
+    },
+    {
+     "id": "State3_start",
+     "shape": "stateStart",
+     "label": "State3_start",
+     "parentId": "State3"
+    },
+    {
+     "id": "ProcessData",
+     "shape": "rect",
+     "label": "ProcessData",
+     "parentId": "State3"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "State1",
+     "label": ""
+    },
+    {
+     "start": "State1",
+     "end": "State2",
+     "label": "Succeeded"
+    },
+    {
+     "start": "State1",
+     "end": "root_end",
+     "label": "Aborted"
+    },
+    {
+     "start": "State2",
+     "end": "State3",
+     "label": "Succeeded"
+    },
+    {
+     "start": "State2",
+     "end": "root_end",
+     "label": "Aborted"
+    },
+    {
+     "start": "State3_start",
+     "end": "long1",
+     "label": ""
+    },
+    {
+     "start": "long1",
+     "end": "long1",
+     "label": "New Data"
+    },
+    {
+     "start": "long1",
+     "end": "ProcessData",
+     "label": "Enough Data"
+    },
+    {
+     "start": "State3",
+     "end": "State3",
+     "label": "Failed"
+    },
+    {
+     "start": "State3",
+     "end": "root_end",
+     "label": "Succeeded / Save Result"
+    },
+    {
+     "start": "State3",
+     "end": "root_end",
+     "label": "Aborted"
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:275": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "fork_state",
+     "shape": "fork",
+     "label": "fork_state"
+    },
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "State2",
+     "shape": "rect",
+     "label": "State2"
+    },
+    {
+     "id": "State3",
+     "shape": "rect",
+     "label": "State3"
+    },
+    {
+     "id": "join_state",
+     "shape": "join",
+     "label": "join_state"
+    },
+    {
+     "id": "State4",
+     "shape": "rect",
+     "label": "State4"
+    },
+    {
+     "id": "root_end",
+     "shape": "stateEnd",
+     "label": "root_end"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "fork_state",
+     "label": ""
+    },
+    {
+     "start": "fork_state",
+     "end": "State2",
+     "label": ""
+    },
+    {
+     "start": "fork_state",
+     "end": "State3",
+     "label": ""
+    },
+    {
+     "start": "State2",
+     "end": "join_state",
+     "label": ""
+    },
+    {
+     "start": "State3",
+     "end": "join_state",
+     "label": ""
+    },
+    {
+     "start": "join_state",
+     "end": "State4",
+     "label": ""
+    },
+    {
+     "start": "State4",
+     "end": "root_end",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:296": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "Active",
+     "shape": "roundedWithTitle",
+     "label": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-1",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-1_start",
+     "shape": "stateStart",
+     "label": "divider-id-1_start",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "NumLockOff",
+     "shape": "rect",
+     "label": "NumLockOff",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "NumLockOn",
+     "shape": "rect",
+     "label": "NumLockOn",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "divider-id-2",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-2_start",
+     "shape": "stateStart",
+     "label": "divider-id-2_start",
+     "parentId": "divider-id-2"
+    },
+    {
+     "id": "CapsLockOff",
+     "shape": "rect",
+     "label": "CapsLockOff",
+     "parentId": "divider-id-2"
+    },
+    {
+     "id": "CapsLockOn",
+     "shape": "rect",
+     "label": "CapsLockOn",
+     "parentId": "divider-id-2"
+    },
+    {
+     "id": "id-0am0ihqlyiro-4",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "id-0am0ihqlyiro-4_start",
+     "shape": "stateStart",
+     "label": "id-0am0ihqlyiro-4_start",
+     "parentId": "id-0am0ihqlyiro-4"
+    },
+    {
+     "id": "ScrollLockOff",
+     "shape": "rect",
+     "label": "ScrollLockOff",
+     "parentId": "id-0am0ihqlyiro-4"
+    },
+    {
+     "id": "ScrollLockOn",
+     "shape": "rect",
+     "label": "ScrollLockOn",
+     "parentId": "id-0am0ihqlyiro-4"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "Active",
+     "label": ""
+    },
+    {
+     "start": "divider-id-1_start",
+     "end": "NumLockOff",
+     "label": ""
+    },
+    {
+     "start": "NumLockOff",
+     "end": "NumLockOn",
+     "label": "EvNumLockPressed"
+    },
+    {
+     "start": "NumLockOn",
+     "end": "NumLockOff",
+     "label": "EvNumLockPressed"
+    },
+    {
+     "start": "divider-id-2_start",
+     "end": "CapsLockOff",
+     "label": ""
+    },
+    {
+     "start": "CapsLockOff",
+     "end": "CapsLockOn",
+     "label": "EvCapsLockPressed"
+    },
+    {
+     "start": "CapsLockOn",
+     "end": "CapsLockOff",
+     "label": "EvCapsLockPressed"
+    },
+    {
+     "start": "id-0am0ihqlyiro-4_start",
+     "end": "ScrollLockOff",
+     "label": ""
+    },
+    {
+     "start": "ScrollLockOff",
+     "end": "ScrollLockOn",
+     "label": "EvCapsLockPressed"
+    },
+    {
+     "start": "ScrollLockOn",
+     "end": "ScrollLockOff",
+     "label": "EvCapsLockPressed"
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:311": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "Active",
+     "shape": "roundedWithTitle",
+     "label": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-1",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-1_start",
+     "shape": "stateStart",
+     "label": "divider-id-1_start",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "NumLockOff",
+     "shape": "rect",
+     "label": "NumLockOff",
+     "parentId": "divider-id-1"
+    },
+    {
+     "id": "divider-id-2",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "divider-id-2_start",
+     "shape": "stateStart",
+     "label": "divider-id-2_start",
+     "parentId": "divider-id-2"
+    },
+    {
+     "id": "CapsLockOff",
+     "shape": "rect",
+     "label": "CapsLockOff",
+     "parentId": "divider-id-2"
+    },
+    {
+     "id": "id-5yzyyys405g-5",
+     "shape": "divider",
+     "label": "",
+     "parentId": "Active",
+     "dir": "TB"
+    },
+    {
+     "id": "id-5yzyyys405g-5_start",
+     "shape": "stateStart",
+     "label": "id-5yzyyys405g-5_start",
+     "parentId": "id-5yzyyys405g-5"
+    },
+    {
+     "id": "ScrollLockOff",
+     "shape": "rect",
+     "label": "ScrollLockOff",
+     "parentId": "id-5yzyyys405g-5"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "Active",
+     "label": ""
+    },
+    {
+     "start": "divider-id-1_start",
+     "end": "NumLockOff",
+     "label": ""
+    },
+    {
+     "start": "divider-id-2_start",
+     "end": "CapsLockOff",
+     "label": ""
+    },
+    {
+     "start": "id-5yzyyys405g-5_start",
+     "end": "ScrollLockOff",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:337": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "Active",
+     "shape": "rect",
+     "label": "Active"
+    },
+    {
+     "id": "Inactive",
+     "shape": "rect",
+     "label": "Inactive"
+    },
+    {
+     "id": "Active----parent",
+     "shape": "noteGroup",
+     "label": "this is a short<br>note"
+    },
+    {
+     "id": "Active----note-2",
+     "shape": "note",
+     "label": "this is a short<br>note",
+     "parentId": "Active----parent"
+    },
+    {
+     "id": "Inactive----parent",
+     "shape": "noteGroup",
+     "label": "A note can also\n          be defined on\n          several lines"
+    },
+    {
+     "id": "Inactive----note-3",
+     "shape": "note",
+     "label": "A note can also\n          be defined on\n          several lines",
+     "parentId": "Inactive----parent"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "Active",
+     "label": ""
+    },
+    {
+     "start": "Active",
+     "end": "Inactive",
+     "label": ""
+    },
+    {
+     "start": "Active----note-2",
+     "end": "Active",
+     "label": ""
+    },
+    {
+     "start": "Inactive",
+     "end": "Inactive----note-3",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:347": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "State1",
+     "shape": "rect",
+     "label": "State1"
+    },
+    {
+     "id": "State1----parent",
+     "shape": "noteGroup",
+     "label": "Line1<br>Line2<br>Line3<br>Line4<br>Line5"
+    },
+    {
+     "id": "State1----note-0",
+     "shape": "note",
+     "label": "Line1<br>Line2<br>Line3<br>Line4<br>Line5",
+     "parentId": "State1----parent"
+    }
+   ],
+   "edges": [
+    {
+     "start": "State1",
+     "end": "State1----note-0",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:355": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "foo",
+     "shape": "rect",
+     "label": "bar"
+    }
+   ],
+   "edges": [],
+   "links": []
+  },
+  "stateDiagram.spec.js:363": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [],
+   "edges": [],
+   "links": []
+  },
+  "stateDiagram.spec.js:380": {
+   "type": "stateDiagram",
+   "direction": "TB",
+   "nodes": [
+    {
+     "id": "root_start",
+     "shape": "stateStart",
+     "label": "root_start"
+    },
+    {
+     "id": "NotShooting",
+     "shape": "roundedWithTitle",
+     "label": "Not Shooting State",
+     "dir": "TB"
+    },
+    {
+     "id": "Idle",
+     "shape": "rect",
+     "label": "Idle mode",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "Configuring",
+     "shape": "rect",
+     "label": "Configuring mode",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "NotShooting_start",
+     "shape": "stateStart",
+     "label": "NotShooting_start",
+     "parentId": "NotShooting"
+    },
+    {
+     "id": "NotShooting----parent",
+     "shape": "noteGroup",
+     "label": "This is a note on a composite state"
+    },
+    {
+     "id": "NotShooting----note-4",
+     "shape": "note",
+     "label": "This is a note on a composite state",
+     "parentId": "NotShooting----parent"
+    }
+   ],
+   "edges": [
+    {
+     "start": "root_start",
+     "end": "NotShooting",
+     "label": ""
+    },
+    {
+     "start": "NotShooting_start",
+     "end": "Idle",
+     "label": ""
+    },
+    {
+     "start": "Idle",
+     "end": "Configuring",
+     "label": "EvConfig"
+    },
+    {
+     "start": "Configuring",
+     "end": "Idle",
+     "label": "EvConfig"
+    },
+    {
+     "start": "NotShooting",
+     "end": "NotShooting----note-4",
+     "label": ""
+    }
+   ],
+   "links": []
+  },
+  "stateDiagram.spec.js:400": {
+   "error": "Parse error on line 3:"
+  }
+ }
+}

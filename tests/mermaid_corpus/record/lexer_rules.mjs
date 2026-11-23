@@ -1,7 +1,7 @@
-// Dev-time only: record mermaid's compiled flowchart lexer in
-// ../recorded/flowchart-lexer.json -- every rule's regex as jison compiled
+// Dev-time only: record mermaid's compiled flowchart and state lexers in
+// ../recorded/<family>-lexer.json -- every rule's regex as jison compiled
 // it, the rules each state has active, the rule actions, and the token
-// names. build-aux/mermaid/generate.py turns it into Lectern's lexer.
+// names. build-aux/mermaid/generate.py turns each into Lectern's lexer.
 //
 //   node lexer_rules.mjs
 //
@@ -23,17 +23,22 @@ const { default: mermaid } = await import("mermaid");
 mermaid.initialize({ startOnLoad: false, logLevel: "fatal" });
 const version = JSON.parse(await readFile(join(here, "node_modules/mermaid/package.json"), "utf8")).version;
 
-const diagram = await mermaid.mermaidAPI.getDiagramFromText("flowchart LR\n  A");
-const parser = diagram.parser.parser ?? diagram.parser;
-const lexer = parser.lexer;
-const out = join(here, "..", "recorded", "flowchart-lexer.json");
-await writeFile(out, JSON.stringify({
-  mermaid: version,
-  rules: lexer.rules.map((r) => r.source),
-  conditions: Object.fromEntries(Object.entries(lexer.conditions).map(
-    ([state, c]) => [state, { rules: c.rules, inclusive: c.inclusive }])),
-  options: lexer.options,
-  performAction: lexer.performAction.toString(),
-  terminals: parser.terminals_,
-}, null, 1) + "\n");
-console.log(`flowchart lexer: ${lexer.rules.length} rules, mermaid ${version}`);
+// family -> a source of that type, to get its parser from.
+const FAMILIES = { flowchart: "flowchart LR\n  A", state: "stateDiagram-v2\n  A" };
+
+for (const [family, source] of Object.entries(FAMILIES)) {
+  const diagram = await mermaid.mermaidAPI.getDiagramFromText(source);
+  const parser = diagram.parser.parser ?? diagram.parser;
+  const lexer = parser.lexer;
+  const out = join(here, "..", "recorded", `${family}-lexer.json`);
+  await writeFile(out, JSON.stringify({
+    mermaid: version,
+    rules: lexer.rules.map((r) => r.source),
+    conditions: Object.fromEntries(Object.entries(lexer.conditions).map(
+      ([state, c]) => [state, { rules: c.rules, inclusive: c.inclusive }])),
+    options: lexer.options,
+    performAction: lexer.performAction.toString(),
+    terminals: parser.terminals_,
+  }, null, 1) + "\n");
+  console.log(`${family} lexer: ${lexer.rules.length} rules, mermaid ${version}`);
+}

@@ -85,12 +85,29 @@ const EXTRACT = {
       })),
     };
   },
+  // What the renderer is handed (getData), not the statements: that is
+  // where `[*]` becomes a start or an end and descriptions become labels.
+  state: (db) => {
+    const data = db.getData();
+    return {
+      direction: data.direction,
+      nodes: data.nodes.map((n) => defined({
+        id: n.id, shape: n.shape, label: n.label,
+        description: n.description?.length ? n.description : undefined,
+        parentId: n.parentId, dir: n.isGroup ? n.dir : undefined,
+      })),
+      edges: data.edges.map((e) => ({ start: e.start, end: e.end, label: e.label ?? "" })),
+      links: [...db.getLinks()].map(([key, link]) => ({
+        id: typeof key === "string" ? key : key?.id, url: link.url,
+      })),
+    };
+  },
 };
 
 // mermaid's diagram type -> the family above that models it.
 const FAMILY = {
   "flowchart-v2": "flowchart", flowchart: "flowchart", sequence: "sequence",
-  classDiagram: "class", class: "class", er: "er",
+  classDiagram: "class", class: "class", er: "er", stateDiagram: "state", state: "state",
 };
 
 // MERMAID_CORPUS points both at another corpus directory, e.g. to check

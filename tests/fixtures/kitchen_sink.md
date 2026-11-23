@@ -293,6 +293,26 @@ erDiagram
     }
 ```
 
+A state diagram, with a composite state, a choice and a titled state:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Loading
+    Loading : reading the file
+    Loading : and parsing it
+    state ok <<choice>>
+    Loading --> ok
+    ok --> Shown : parsed
+    ok --> Failed : error
+    state Shown {
+        [*] --> Reading
+        Reading --> Searching : Ctrl+F
+        Searching --> Reading : Esc
+    }
+    Shown --> [*] : close
+    Failed --> [*]
+```
+
 A diagram type this viewer doesn't draw falls back to the code block, so
 the source stays readable rather than being silently dropped:
 

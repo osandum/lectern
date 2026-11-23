@@ -1,0 +1,79 @@
+// mermaid's state diagram grammar, transcribed rule for rule from
+// stateDiagram.jison (mermaid 11.17.2), as Lark EBNF.
+//
+// This file is not read at run time. build-aux/mermaid/generate.py has
+// Lark build its LALR(1) table, written out as _state_tables.py and run
+// by parsing.py. The terminals are only declared here: the tokens come
+// from mermaid's own lexer, generated from its compiled form into
+// _state_lexer.py. The token names are jison's, in capitals (`-->` is
+// ARROW).
+//
+// The `-> name`s are the actions in state.py's _Actions, which build the
+// statements stateDiagram.jison's actions do.
+
+start: SPACE start                                                  -> pass_on
+     | NL start                                                     -> pass_on
+     | SD document                                                  -> root
+
+document:                                                           -> doc_empty
+        | document line                                             -> doc_line
+
+line: SPACE statement                                               -> line_spaced
+    | statement                                                     -> line_plain
+    | NL                                                            -> line_nl
+
+statement: class_def_statement                                      -> stmt_pass
+         | style_statement                                          -> stmt_pass
+         | css_class_statement                                      -> stmt_pass
+         | id_statement                                             -> stmt_pass
+         | id_statement DESCR                                       -> stmt_described
+         | id_statement ARROW id_statement                          -> stmt_relation
+         | id_statement ARROW id_statement DESCR                    -> stmt_relation
+         | HIDE_EMPTY                                               -> stmt_none
+         | SCALE WIDTH                                              -> stmt_none
+         | COMPOSIT_STATE                                           -> stmt_none
+         | COMPOSIT_STATE STRUCT_START document STRUCT_STOP         -> stmt_composite
+         | STATE_DESCR AS ID                                        -> stmt_aliased
+         | STATE_DESCR AS ID STRUCT_START document STRUCT_STOP      -> stmt_aliased_composite
+         | FORK                                                     -> stmt_fork
+         | JOIN                                                     -> stmt_join
+         | CHOICE                                                   -> stmt_choice
+         | CONCURRENT                                               -> stmt_divider
+         | NOTE note_position ID NOTE_TEXT                          -> stmt_note
+         | NOTE NOTE_TEXT AS ID                                     -> stmt_none
+         | direction                                                -> stmt_pass
+         | ACC_TITLE ACC_TITLE_VALUE                                -> stmt_none
+         | ACC_DESCR ACC_DESCR_VALUE                                -> stmt_none
+         | ACC_DESCR_MULTILINE_VALUE                                -> stmt_none
+         | CLICK id_statement STRING STRING NL                      -> stmt_click
+         | CLICK id_statement HREF STRING NL                        -> stmt_click_href
+
+class_def_statement: CLASSDEF CLASSDEF_ID CLASSDEF_STYLEOPTS        -> class_def
+                   | CLASSDEF DEFAULT CLASSDEF_STYLEOPTS            -> class_def
+
+style_statement: STYLE STYLE_IDS STYLEDEF_STYLEOPTS                 -> style_def
+
+css_class_statement: CLASS CLASSENTITY_IDS STYLECLASS               -> apply_class
+
+direction: DIRECTION_TB                                             -> dir_tb
+         | DIRECTION_BT                                             -> dir_bt
+         | DIRECTION_RL                                             -> dir_rl
+         | DIRECTION_LR                                             -> dir_lr
+
+id_statement: ID                                                    -> id_plain
+            | EDGE_STATE                                            -> id_plain
+            | ID STYLE_SEPARATOR ID                                 -> id_classed
+            | EDGE_STATE STYLE_SEPARATOR ID                         -> id_classed
+
+note_position: LEFT_OF
+             | RIGHT_OF
+
+// Every token the grammar names. The lexer can also return tokens no
+// rule here has (INVALID, DEFAULT_CLASSDEF_ID); those fail the parse, as
+// they do in jison.
+%declare SPACE NL SD DESCR ARROW HIDE_EMPTY SCALE WIDTH COMPOSIT_STATE STRUCT_START STRUCT_STOP
+%declare STATE_DESCR AS ID FORK JOIN CHOICE CONCURRENT NOTE NOTE_TEXT ACC_TITLE ACC_TITLE_VALUE
+%declare ACC_DESCR ACC_DESCR_VALUE ACC_DESCR_MULTILINE_VALUE CLICK STRING HREF CLASSDEF
+%declare CLASSDEF_ID CLASSDEF_STYLEOPTS DEFAULT STYLE STYLE_IDS STYLEDEF_STYLEOPTS CLASS
+%declare CLASSENTITY_IDS STYLECLASS DIRECTION_TB DIRECTION_BT DIRECTION_RL DIRECTION_LR
+%declare EDGE_STATE STYLE_SEPARATOR LEFT_OF RIGHT_OF

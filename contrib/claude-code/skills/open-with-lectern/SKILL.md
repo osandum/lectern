@@ -40,10 +40,11 @@ last step, instead of just telling the user where the file is.
 Lectern renders more than plain prose, so write the deliverable to use it:
 
 - **Mermaid diagrams are drawn natively** — `flowchart`/`graph`,
-  `sequenceDiagram`, `classDiagram` and `erDiagram`, including
-  subgraphs, `classDef`/`style`/`linkStyle` and `click` links. Prefer a
-  diagram to describing structure in prose. Other diagram types
-  (gantt, pie, state, …) fall back to a highlighted code block, so
+  `sequenceDiagram`, `classDiagram`, `erDiagram` and `stateDiagram`,
+  including subgraphs, composite states, `classDef`/`style`/`linkStyle`
+  and `click` links. Prefer a diagram to describing structure in prose.
+  Other diagram types (gantt, pie, …), and state diagram notes and
+  concurrent regions (`--`), fall back to a highlighted code block, so
   avoid them. Edges are drawn at right angles like GitHub's, so keep
   each diagram small (roughly ≤ 12–15 nodes, ≤ ~4 side by side, short
   labels); several focused diagrams beat one crowded one.

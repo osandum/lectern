@@ -43,6 +43,13 @@ const SPECS = {
   sequence: ["sequence/sequenceDiagram.spec.js"],
   class: ["class/parser/class.spec.js", "class/classDiagram.spec.ts"],
   er: ["er/parser/erDiagram.spec.js"],
+  state: [
+    "state/parser/state-parser.spec.js",
+    "state/parser/state-style.spec.js",
+    "state/stateDb.spec.js",
+    "state/stateDiagram.spec.js",
+    "state/stateDiagram-v2.spec.js",
+  ],
 };
 
 async function fetchSpec(path) {

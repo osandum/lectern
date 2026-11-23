@@ -42,14 +42,26 @@ EDGE_LABEL_CLEARANCE = 16.0
 CLUSTER_PAD = 14.0
 CLUSTER_RADIUS = 8.0
 CLUSTER_TITLE_SCALE = 0.95
+# A state diagram's pseudo-states, at mermaid's sizes: the start dot and
+# the end bullseye, a choice's diamond, and a fork or join's bar.
+STATE_DOT = 14.0
+CHOICE_SIZE = 28.0
+BAR_LENGTH = 70.0
+BAR_THICKNESS = 8.0
 
 class FlowNode:
-    __slots__ = ("key", "text", "shape", "href", "style", "w", "h", "x", "y", "rank", "order", "cap")
+    __slots__ = ("key", "text", "shape", "kind", "body", "href", "style", "w", "h", "x", "y",
+                 "rank", "order", "cap")
 
-    def __init__(self, key, text, shape):
+    def __init__(self, key, text, shape, kind=None):
         self.key = key
         self.text = text
-        self.shape = shape
+        self.shape = shape      # the outline edges meet: what layout reads
+        # How a state diagram's node is drawn, where that isn't just its
+        # shape: "start", "end", "choice", "bar" (a fork or join, across
+        # the edges' way), or "titled" (a title over `body`).
+        self.kind = kind
+        self.body = ""
         self.href = None        # from a `click` statement
         self.style = None       # styles.Style, from classDef/class/style
         self.w = self.h = 0.0
@@ -93,12 +105,13 @@ class Subgraph:
     node it doesn't own says something the author didn't write, so the
     diagram falls back to its source instead.
     """
-    __slots__ = ("key", "title", "members", "children", "parent", "style")
+    __slots__ = ("key", "title", "members", "children", "parent", "style", "dashed")
 
     def __init__(self, key, title, parent=None):
         self.key = key
         self.title = title
         self.style = None       # styles.Style, from class/style naming the block
+        self.dashed = True      # a composite state's frame is solid
         self.members = []       # node keys directly inside this block
         self.children = []      # nested Subgraphs
         self.parent = parent
@@ -623,13 +636,30 @@ def _circle_text_size(text, measurer):
 
 def _text_size(node, measurer):
     """(width, height) of `node`'s label as it is drawn in it."""
+    if not node.text:
+        return 0.0, 0.0
     if node.shape == "circle":
         return _circle_text_size(node.text, measurer)
     return measurer.size(node.text)
 
 
-def _size_node(node, measurer):
+def _size_node(node, measurer, vertical=True):
+    if node.kind in ("start", "end"):
+        node.w = node.h = STATE_DOT
+        return
+    if node.kind == "choice":
+        node.w = node.h = CHOICE_SIZE
+        return
+    if node.kind == "bar":
+        along, across = BAR_THICKNESS, BAR_LENGTH
+        node.w, node.h = (across, along) if vertical else (along, across)
+        return
     text_w, text_h = _text_size(node, measurer)
+    if node.kind == "titled":
+        body_w, body_h = measurer.size(node.body)
+        node.w = max(MIN_NODE_W, text_w + 2 * NODE_PAD_X, body_w + 2 * NODE_PAD_X)
+        node.h = text_h + body_h + 4 * NODE_PAD_Y
+        return
     width = max(MIN_NODE_W, text_w + 2 * NODE_PAD_X)
     height = text_h + 2 * NODE_PAD_Y
     shape = node.shape
@@ -673,6 +703,15 @@ def _node_shapes(node):
     y = node.y - node.h / 2
     w, h = node.w, node.h
     shape = node.shape
+    if node.kind == "start":
+        return [sc.Ellipse(x, y, w, h, fill=sc.EDGE, stroke=sc.EDGE)]
+    if node.kind == "end":
+        inset = w * 0.22
+        return [sc.Ellipse(x, y, w, h, fill=sc.NODE, stroke=sc.EDGE),
+                sc.Ellipse(x + inset, y + inset, w - 2 * inset, h - 2 * inset,
+                           fill=sc.EDGE, stroke=sc.EDGE)]
+    if node.kind == "bar":
+        return [sc.Rect(x, y, w, h, radius=2.0, fill=sc.EDGE, stroke=sc.EDGE)]
     if shape == "circle":
         return [sc.Ellipse(x, y, w, h, fill=sc.NODE, stroke=sc.EDGE)]
     if shape == "diamond":
@@ -853,9 +892,36 @@ def _clip_to_frame(points, frame):
     return points
 
 
+def _node_color(node):
+    return node.style.color if node.style and node.style.color else sc.FG
+
+
+def _add_node_text(scene, node, measurer):
+    text_w, text_h = _text_size(node, measurer)
+    # Centred in a cylinder's body: below the rim, not in the box.
+    text_y = node.y + (_cylinder_cap(node.w) / 2 if node.shape == "cylinder" else 0.0)
+    scene.add(sc.Text(node.x - text_w / 2, text_y - text_h / 2, text_w, text_h, node.text,
+                      color=_node_color(node)))
+
+
+def _add_titled_text(scene, node, measurer):
+    """A state with more than one description: the first as its title, a
+    rule under it, and the rest below, as mermaid draws a rectWithTitle."""
+    text_w, text_h = _text_size(node, measurer)
+    body_w, body_h = measurer.size(node.body)
+    top = node.y - node.h / 2
+    scene.add(sc.Text(node.x - text_w / 2, top + NODE_PAD_Y, text_w, text_h, node.text,
+                      color=_node_color(node)))
+    rule = top + text_h + 2 * NODE_PAD_Y
+    scene.add(_styled(sc.Line([(node.x - node.w / 2, rule), (node.x + node.w / 2, rule)],
+                              stroke=sc.EDGE), node.style))
+    scene.add(sc.Text(node.x - body_w / 2, rule + NODE_PAD_Y, body_w, body_h, node.body,
+                      color=_node_color(node)))
+
+
 def _build_scene(chart, measurer):
     for node in chart.nodes.values():
-        _size_node(node, measurer)
+        _size_node(node, measurer, chart.direction in layered.VERTICAL_DIRECTIONS)
     original_sizes = _reserve_cluster_room(chart, measurer)
 
     vertical = chart.direction in layered.VERTICAL_DIRECTIONS
@@ -897,7 +963,8 @@ def _build_scene(chart, measurer):
     # the two, so it wins.
     for group, x, y, w, h, title_h in clusters:
         scene.add(_styled(sc.Rect(x, y, w, h, radius=CLUSTER_RADIUS,
-                                  fill=sc.CLUSTER, stroke=sc.EDGE, dashed=True), group.style))
+                                  fill=sc.CLUSTER, stroke=sc.EDGE, dashed=group.dashed),
+                           group.style))
     frames = {group.key: (x, y, w, h) for group, x, y, w, h, _title_h in clusters}
 
     # Edges first so a node's fill covers the stub of any line that
@@ -989,12 +1056,12 @@ def _build_scene(chart, measurer):
     for node in chart.nodes.values():
         for shape in _node_shapes(node):
             scene.add(_styled(shape, node.style))
-        text_w, text_h = _text_size(node, measurer)
-        # Centred in a cylinder's body: below the rim, not in the box.
-        text_y = node.y + (_cylinder_cap(node.w) / 2 if node.shape == "cylinder" else 0.0)
-        color = node.style.color if node.style and node.style.color else sc.FG
-        scene.add(sc.Text(
-            node.x - text_w / 2, text_y - text_h / 2, text_w, text_h, node.text, color=color))
+        if not node.text:
+            pass
+        elif node.kind == "titled":
+            _add_titled_text(scene, node, measurer)
+        else:
+            _add_node_text(scene, node, measurer)
         if node.href:
             scene.add(sc.Link(node.x - node.w / 2, node.y - node.h / 2,
                               node.w, node.h, node.href))

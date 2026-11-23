@@ -33,11 +33,15 @@ class Token:
 # one of them is a character class covering most of Unicode.
 _compiled = {}
 
+# What JavaScript's String.prototype.trim takes off: its \s.
+_JS_SPACE = "\t\n\v\f\r \xa0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008" \
+            "\u2009\u200a\u2028\u2029\u202f\u205f\u3000\ufeff"
 
-def _rule(pattern):
-    regex = _compiled.get(pattern)
+
+def _rule(pattern, flags):
+    regex = _compiled.get((pattern, flags))
     if regex is None:
-        regex = _compiled[pattern] = re.compile(pattern, re.ASCII)
+        regex = _compiled[pattern, flags] = re.compile(pattern, re.ASCII | flags)
     return regex
 
 
@@ -46,20 +50,46 @@ def lex(lexer, text):
     lexer table. In each state, the first of its rules that matches wins
     -- jison's default, not the longest match. Raises Invalid where
     jison's lexer would fail."""
+    flags = re.IGNORECASE if getattr(lexer, "IGNORECASE", False) else 0
     stack = ["INITIAL"]
     first = True        # a rule's begin_once happens the first time only
     pos = stalled = 0
+    done = False
     while True:
+        # jison tries the rules once more with the input used up (where an
+        # end-of-input rule can match), and stops at the next call.
+        if done:
+            return
+        done = pos >= len(text)
         for index in lexer.CONDITIONS[stack[-1]]:
-            match = _rule(lexer.RULES[index]).match(text, pos)
+            match = _rule(lexer.RULES[index], flags).match(text, pos)
             if match:
                 break
         else:
+            if done:
+                return
             raise Invalid(f"lexical error at {text[pos:pos + 16]!r}")
-        value = match.group()
+        value, end = match.group(), match.end()
         steps, token = lexer.ACTIONS[index]
         for step in steps:
-            if step[0] == "push":
+            if step[0] == "process_id":
+                # The state lexer's processId: an id runs up to a `%%`
+                # comment, which goes back to be lexed on its own; one that
+                # starts with it is no token, and changes no state.
+                at = value.find("%%")
+                if at == 0:
+                    token = None
+                    break
+                if at > 0:
+                    value, end = value[:at], match.start() + at
+            elif step[0] == "slice":
+                value = value[step[1]:step[2]]
+            elif step[0] == "trim":
+                value = value.strip(_JS_SPACE)
+            elif step[0] == "error":
+                # The one such rule: a `state` name of more than one word.
+                raise Invalid(step[1].removeprefix("Error: ") + value.strip(_JS_SPACE) + '"')
+            elif step[0] == "push":
                 stack.append(step[1])
             elif step[0] == "pop":
                 if len(stack) > 1:
@@ -73,10 +103,10 @@ def lex(lexer, text):
             elif step[0] == "br":
                 value = re.sub(r"\n\s*", "<br/>", value)
         # An empty match that changes nothing would match again forever.
-        stalled = stalled + 1 if match.end() == pos else 0
+        stalled = stalled + 1 if end == pos else 0
         if stalled > 3:
             raise Invalid(f"lexical error at {text[pos:pos + 16]!r}")
-        pos = match.end()
+        pos = end
         if token == "EOF":
             return
         if token is not None:
