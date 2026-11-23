@@ -1636,3 +1636,34 @@ def test_link_style_color_colours_the_label_and_a_fill_means_nothing_to_an_edge(
     label = next(s for s in build("flowchart LR\n  A -- yes --> B\n  linkStyle 0 color:#f00\n").shapes
                  if isinstance(s, sc.Text) and s.text == "yes")
     assert label.color == (1.0, 0.0, 0.0, 1.0)
+
+
+def test_style_and_class_paint_a_subgraph_frame_and_its_title():
+    source = ("flowchart TD\n  subgraph Live[Live]\n    A --> B\n  end\n"
+              "  subgraph Old[Old sites]\n    C\n  end\n"
+              "  classDef gone fill:#eeeeee,stroke:#999999,stroke-dasharray:none,color:#666666\n"
+              "  class Old gone\n  style Live stroke:#2a9d4a,stroke-width:2px\n")
+    chart, scene = mermaid.parse(source), build(source)
+    assert set(chart.nodes) == {"A", "B", "C"}     # `style Live` conjures no node
+    blocks = {group.key: group for group in chart.all_subgraphs()}
+    assert blocks["Old"].style.dash == []
+    assert blocks["Live"].style.width == 2.0 and blocks["Live"].style.fill is None
+    title = next(s for s in scene.shapes if isinstance(s, sc.Text) and s.text == "Old sites")
+    assert title.color == pytest.approx((0x66 / 255,) * 3 + (1.0,))
+    frames = [s for s in scene.shapes if isinstance(s, sc.Rect) and s.dashed]
+    assert any(f.fill == pytest.approx(_GREY) and f.dash == [] for f in frames)
+    assert any(f.stroke == pytest.approx((42 / 255, 157 / 255, 74 / 255, 1.0)) and f.fill == sc.CLUSTER
+               for f in frames)
+
+
+def test_a_class_given_before_its_subgraph_closes_is_dropped():
+    # setClass only reaches a block mermaid has already recorded.
+    chart = mermaid.parse("flowchart TD\n  classDef x fill:#f00\n  class S x\n"
+                          "  subgraph S\n    A\n  end\n")
+    assert chart.all_subgraphs()[0].style is None
+
+
+def test_default_class_def_leaves_frames_alone():
+    chart = mermaid.parse("flowchart TD\n  classDef default fill:#f00\n  subgraph S\n    A\n  end\n")
+    assert chart.all_subgraphs()[0].style is None
+    assert chart.nodes["A"].style.fill == (1.0, 0.0, 0.0, 1.0)

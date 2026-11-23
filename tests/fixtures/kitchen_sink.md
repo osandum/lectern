@@ -209,8 +209,9 @@ flowchart TD
     Changed -->|no| Watch
 ```
 
-Nested `subgraph` frames, labels broken over two lines with `\n`, and an
-invisible `~~~` link placing a node nothing points at:
+Nested `subgraph` frames, one styled with `style` and one with `class`,
+labels broken over two lines with `\n`, and an invisible `~~~` link
+placing a node nothing points at:
 
 ```mermaid
 flowchart TD
@@ -226,6 +227,9 @@ flowchart TD
     Walk --> Buffer
     Walk --> Model
     Model ~~~ Note["Same walk, same order"]
+    style Screen stroke:#3584e4,stroke-width:2px,stroke-dasharray:none
+    classDef paper fill:#fdf6e3,stroke:#b58900,color:#7a5c00
+    class Paper paper
 ```
 
 Styles: `classDef` applied with `class` and with `:::`, a one-off `style`

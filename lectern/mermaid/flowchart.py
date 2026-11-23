@@ -93,11 +93,12 @@ class Subgraph:
     node it doesn't own says something the author didn't write, so the
     diagram falls back to its source instead.
     """
-    __slots__ = ("key", "title", "members", "children", "parent")
+    __slots__ = ("key", "title", "members", "children", "parent", "style")
 
     def __init__(self, key, title, parent=None):
         self.key = key
         self.title = title
+        self.style = None       # styles.Style, from class/style naming the block
         self.members = []       # node keys directly inside this block
         self.children = []      # nested Subgraphs
         self.parent = parent
@@ -250,11 +251,14 @@ class _FlowDb:
             self.classes.setdefault(name, []).extend(declared)
 
     def set_class(self, keys, name):
-        """setClass: only a node or an edge id that exists by now gets the
-        class."""
+        """setClass: only a node, an edge id or a block that exists by now
+        gets the class."""
         for key in keys.split(","):
             if key in self.vertices:
                 self.vertices[key]["classes"].append(name)
+            for group in self.subgraphs:
+                if group["id"] == key:
+                    group["classes"].append(name)
             for edge in self.edges:
                 if edge[3]["id"] == key:
                     edge[3]["classes"].append(name)
@@ -278,6 +282,16 @@ class _FlowDb:
             if name in classes and name != "default":
                 declared += defined
         return declared
+
+    def subgraph_style(self, group):
+        """What a block's frame is drawn with: its classes, then any
+        `style` naming it. Both can also reach it through a node of the
+        same id that `style` declared, which mermaid merges into the block
+        (addNodeFromVertex) -- and, like mermaid, `classDef default` is a
+        node's, not a frame's."""
+        vertex = self.vertices.get(group["id"], {"classes": [], "styles": []})
+        return styles.node_style(self._classes_style(group["classes"] + vertex["classes"])
+                                 + vertex["styles"])
 
     def edge_style(self, extra):
         """What an edge is drawn with: `linkStyle default`, its classes,
@@ -317,7 +331,7 @@ class _FlowDb:
             raise Unsupported("markdown subgraph title")
         key = key or f"subGraph{len(self.subgraphs)}"
         self.subgraphs.append({"id": key, "title": (title["text"] if title else "").strip(),
-                               "nodes": nodes})
+                               "nodes": nodes, "classes": []})
         return key
 
     def chart(self, source):
@@ -343,6 +357,7 @@ class _FlowDb:
                   for group in self.subgraphs}
         for group in self.subgraphs:
             block = blocks[group["id"]]
+            block.style = self.subgraph_style(group)
             for member in group["nodes"]:
                 if member in blocks:
                     blocks[member].parent = block
@@ -881,8 +896,8 @@ def _build_scene(chart, measurer):
     # exactly where the title is, and the title is the more structural of
     # the two, so it wins.
     for group, x, y, w, h, title_h in clusters:
-        scene.add(sc.Rect(x, y, w, h, radius=CLUSTER_RADIUS,
-                          fill=sc.CLUSTER, stroke=sc.EDGE, dashed=True))
+        scene.add(_styled(sc.Rect(x, y, w, h, radius=CLUSTER_RADIUS,
+                                  fill=sc.CLUSTER, stroke=sc.EDGE, dashed=True), group.style))
     frames = {group.key: (x, y, w, h) for group, x, y, w, h, _title_h in clusters}
 
     # Edges first so a node's fill covers the stub of any line that
@@ -988,11 +1003,15 @@ def _build_scene(chart, measurer):
             in zip(clusters, titles):
         if not group.title:
             continue
+        style = group.style
+        # The plate keeps an edge crossing the frame's top band off the
+        # title, and has to be the frame's own colour to vanish into it.
         scene.add(sc.Rect(title_x - LABEL_PAD, title_y - LABEL_PAD,
                           text_w + 2 * LABEL_PAD, text_h + 2 * LABEL_PAD,
-                          radius=3.0, fill=sc.CLUSTER))
+                          radius=3.0, fill=style.fill if style and style.fill else sc.CLUSTER))
         scene.add(sc.Text(title_x, title_y, text_w, text_h, group.title,
-                          color=sc.DIM, scale=CLUSTER_TITLE_SCALE))
+                          color=style.color if style and style.color else sc.DIM,
+                          scale=CLUSTER_TITLE_SCALE))
 
     # Self loops arc above their node and edge labels overhang the
     # leftmost box, so the box the widget draws into comes from the shapes
