@@ -314,53 +314,54 @@ class _PdfContext:
         return layout
 
 
+def _text_start_pt(block, item):
+    """Where on the page an item's text starts, after its marker and the
+    space following it, and where its wrapped lines start."""
+    from gi.repository import Pango
+    combined = "".join(text for text, _tags in item.runs)
+    start = len(item.runs[0][0])
+    while combined[start] == " ":
+        start += 1
+    index = len(combined[:start].encode("utf-8"))
+    lines = printing._line_geometry(block.layout)
+    assert len(lines) > 1
+    return (block.x + Pango.units_to_double(block.layout.index_to_pos(index).x),
+            block.x + lines[1][4])
+
+
 @pytest.mark.parametrize("source", [
     "- **Sync:** ",
     "1. ",
+    "10. ",
     "- [ ] task ",
-], ids=["bullet", "number", "task"])
-def test_list_item_text_starts_where_its_wrapped_lines_do(source):
-    """The marker is text in the print font, the hang a fixed length, and
-    they used to disagree: in a 10.8pt Cantarell "•  " is 8pt wide against
-    a 12pt hang, so every wrapped line sat 4pt right of the first one.
-
-    Unless the marker is wider than the hang, which depends on the font:
-    "1. " is 13pt in DejaVu Sans, the only font on the CI images. Then it
-    keeps its natural width and pushes the text right (see the next test)."""
-    from gi.repository import Pango
+], ids=["bullet", "number", "two-digit number", "task"])
+def test_list_item_text_starts_on_the_text_column(source):
+    """The marker is text in the print font and the hang a fixed length,
+    and they used to disagree: in a 10.8pt Cantarell "•  " is 8pt wide
+    against a 12pt hang, so every wrapped line sat 4pt right of the first
+    one -- and "10." is wider than the hang, which pushed its text right
+    (#43). The marker is right-aligned against the text column now, as on
+    screen, so the text starts there whatever the marker."""
     item = print_model_for(source + "word " * 60 + "\n")[0]
-    hang = printing._marker_hang_pt(item)
-    style_table = printing.tagdefs.tag_style_props(False)
-    marker = item.runs[0][0]
-
-    def x_at(hanging_pt, chars):
-        layout = printing._build_text_layout(
-            _PdfContext(), style_table, item, 400, hanging_pt,
-        )
-        index = len(marker[:chars].encode("utf-8"))
-        return layout, Pango.units_to_double(layout.index_to_pos(index).x)
-
-    layout, start = x_at(hang, len(marker))
-    _, natural = x_at(0.0, len(marker.rstrip()) + 1)  # down to one space
-    lines = printing._line_geometry(layout)
-    assert len(lines) > 1
-    assert start == pytest.approx(max(lines[1][4], natural), abs=0.1)
+    block, = _blocks_for(source + "word " * 60 + "\n")
+    text_x, wrapped_x = _text_start_pt(block, item)
+    column = printing._left_margin_pt(item.block_tags) + printing._marker_hang_pt(item)
+    assert text_x == pytest.approx(column, abs=0.1)
+    assert wrapped_x == pytest.approx(column, abs=0.1)
 
 
-def test_a_marker_wider_than_the_hang_keeps_a_space_before_its_text():
-    """"10." is wider than the hang, and closing the gap to it ran the
-    number into its text. It may only lose spaces down to one."""
-    from gi.repository import Pango
+def test_a_marker_wider_than_the_hang_reaches_left_of_the_marker_column():
+    """"10." keeps its natural width, a space before its text included,
+    and stands out to the left, as GitHub's numbers do."""
     item = print_model_for("10. " + "word " * 60 + "\n")[0]
-    layout = printing._build_text_layout(
-        _PdfContext(), printing.tagdefs.tag_style_props(False), item, 400,
-        printing._marker_hang_pt(item),
-    )
+    block, = _blocks_for("10. " + "word " * 60 + "\n")
+    text_x, _wrapped_x = _text_start_pt(block, item)
     natural = printing._build_text_layout(
-        _PdfContext(), printing.tagdefs.tag_style_props(False), item, 400,
-    )
-    end = len(item.runs[0][0].encode("utf-8"))
-    assert layout.index_to_pos(end).x == pytest.approx(natural.index_to_pos(end).x, abs=0.1 * Pango.SCALE)
+        _PdfContext(), printing.tagdefs.tag_style_props(False), item, 400)
+    from gi.repository import Pango
+    width = Pango.units_to_double(natural.index_to_pos(len("10. ")).x)
+    assert block.x == pytest.approx(text_x - width, abs=0.1)
+    assert block.x < printing._left_margin_pt(item.block_tags)
 
 
 # -- Paper is the screen at PRINT_SCALE, spacing included -------------------

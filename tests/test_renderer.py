@@ -296,9 +296,25 @@ def test_list_item_body_sits_on_the_text_column():
     # The hang is on the marker's line alone: on the shared list-indent
     # tag it would also pull a continuation block's first line out into
     # the marker column, where there is no marker to put.
-    assert tag_at(buffer, "one", "list-hang")
-    assert not tag_at(buffer, "continuation", "list-hang")
+    hang = tagdefs.ensure_list_hang_tag(table, 0, "•  ").get_property("name")
+    assert tag_at(buffer, "one", hang)
+    assert not tag_at(buffer, "continuation", hang)
     assert tag_at(buffer, "continuation", "list-body-0")
+
+
+def test_markers_of_one_shape_share_a_hang_whatever_their_digits():
+    # Markers are set in tabular numerals, so "1." and "7." are one width,
+    # "10." another: the hang is measured per shape, not per number.
+    _renderer, buffer = render("1. one\n7. seven\n\n10. ten\n- [ ] task\n")
+    names = {tag.get_property("name") for tag in _tags(buffer.get_tag_table())
+             if tag.get_property("name").startswith("list-hang-")}
+    assert names == {"list-hang-0-0. ", "list-hang-0-00. ", "list-hang-0-☐ "}
+
+
+def _tags(table):
+    found = []
+    table.foreach(lambda tag, _data: found.append(tag), None)
+    return found
 
 
 def test_ordered_list_uses_source_numbering():

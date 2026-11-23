@@ -41,6 +41,8 @@ rather than an error):
 See also tests/conftest.py, which pins GSK_RENDERER -- presenting a window
 under GTK's default renderer aborts outright where there is no GL.
 """
+import re
+
 import gi
 gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, GLib, Pango
@@ -91,10 +93,16 @@ class Line:
     """
 
     def __init__(self, index, text, x, space_above, text_height, space_below,
-                 line_height, display_lines, first_line_chars, display_ys):
+                 line_height, display_lines, first_line_chars, display_ys,
+                 text_x=None, wrap_x=None):
         self.index = index
         self.text = text
         self.x = x
+        # Where the line's text starts past a list marker and the spaces
+        # after it (x itself, if it has none), and where its second display
+        # line starts (None if it doesn't wrap).
+        self.text_x = x if text_x is None else text_x
+        self.wrap_x = wrap_x
         self.space_above = space_above
         self.text_height = text_height
         self.space_below = space_below
@@ -227,12 +235,18 @@ def _line_geometry(view, buffer, index):
     probe = it.copy()
     display_lines = 1
     first_break = None
+    wrap_x = None
     display_ys = [text_rect.y]
     while view.forward_display_line(probe) and probe.get_line() == index:
         if first_break is None:
             first_break = probe.get_line_offset()
+            wrap_x = view.get_iter_location(probe).x
         display_lines += 1
         display_ys.append(view.get_iter_location(probe).y)
+
+    marker = re.match(r"(?:•|☐|☑|\d+\.)\s*", text)
+    text_at = it.copy()
+    text_at.forward_chars(marker.end() if marker else 0)
 
     return Line(
         index=index,
@@ -245,6 +259,8 @@ def _line_geometry(view, buffer, index):
         display_lines=display_lines,
         first_line_chars=first_break if first_break is not None else len(text),
         display_ys=display_ys,
+        text_x=view.get_iter_location(text_at).x,
+        wrap_x=wrap_x,
     )
 
 
@@ -495,21 +511,41 @@ def test_list_indent_is_one_step_per_nesting_level():
             layout.em(tagdefs.LIST_INDENT_STEP), abs=TOL)
 
 
-def test_list_marker_hangs_left_of_its_text_column():
-    """The marker line sits at the marker column and the item's wrapped
-    lines one hanging indent further in, so they align under the text
-    rather than under the bullet.
+LIST_PROBE = """\
+- A bullet item written long enough that it has to wrap at seven hundred \
+pixels, so its wrapped lines can be compared with its first.
 
-    Which way round matters: a negative Pango indent (what
-    LIST_HANGING_INDENT is) leaves the *first* line alone and indents the
-    ones after it, so the marker line's own x is the plain marker column.
-    """
-    layout = measure(PROBE)
-    marker = layout.find("level one item")
-    assert layout.em(marker.x) == pytest.approx(
-        layout.em(tagdefs.list_marker_column(0)), abs=TOL)
-    assert layout.em(tagdefs.list_text_column(0) - marker.x) == pytest.approx(
-        layout.em(-tagdefs.LIST_HANGING_INDENT), abs=TOL)
+9. A ninth item written long enough that it has to wrap at seven hundred \
+pixels, so its wrapped lines can be compared with its first.
+10. A tenth item written long enough that it has to wrap at seven hundred \
+pixels, so its wrapped lines can be compared with its first.
+
+- [ ] A task item written long enough that it has to wrap at seven hundred \
+pixels, so its wrapped lines can be compared with its first.
+"""
+
+
+@pytest.mark.parametrize("probe", ["A bullet item", "A ninth item", "A tenth item",
+                                   "A task item"])
+def test_list_item_text_starts_on_its_text_column(probe):
+    """The marker hangs left of the item's text, right-aligned against it,
+    so the text starts on the column its wrapped lines and continuation
+    blocks use -- for "10." too, which used to push its text right (#43).
+    Which way round the hang goes matters: a negative Pango indent leaves
+    the *first* line alone and indents the ones after it."""
+    layout = measure(LIST_PROBE)
+    line = layout.find(probe)
+    assert line.wrap_x is not None, "the probe item must wrap"
+    assert layout.em(line.text_x) == pytest.approx(
+        layout.em(tagdefs.list_text_column(0)), abs=TOL)
+    assert layout.em(line.wrap_x) == pytest.approx(
+        layout.em(tagdefs.list_text_column(0)), abs=TOL)
+
+
+def test_a_two_digit_marker_reaches_left_of_the_marker_column():
+    layout = measure(LIST_PROBE)
+    assert layout.find("A tenth item").x < layout.find("A ninth item").x
+    assert layout.find("A tenth item").x < tagdefs.list_marker_column(0)
 
 
 def test_blockquote_is_indented_from_the_content_column():

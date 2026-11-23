@@ -113,6 +113,19 @@ class DecoratedTextView(Gtk.TextView):
             return 0  # not yet styled; the next sync gets it
         return tagdefs.line_leading(font_px, natural)
 
+    def _marker_width(self, shape):
+        """How wide a list marker (tags.list_hang_shape) is in the font the
+        view lays out with: to where the text after it starts, so its
+        trailing space counts. Set in tabular numerals, as the
+        list-marker tag sets it."""
+        layout = Pango.Layout.new(self.get_pango_context())
+        layout.set_text(shape, -1)
+        attrs = Pango.AttrList()
+        attrs.insert(Pango.attr_font_features_new("tnum 1"))
+        layout.set_attributes(attrs)
+        end = len(shape.encode("utf-8"))
+        return layout.index_to_pos(end).x / Pango.SCALE
+
     def _sync_metrics(self, width=None):
         """Put the content column where the current zoom and window width
         want it.
@@ -132,7 +145,7 @@ class DecoratedTextView(Gtk.TextView):
         buffer = self.get_buffer()
         if buffer is not None:
             tagdefs.apply_metrics(buffer.get_tag_table(), self._layout_scale,
-                                  gutter, self._leading())
+                                  gutter, self._leading(), self._marker_width)
         self.queue_draw()
 
     def do_size_allocate(self, width, height, baseline):

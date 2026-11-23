@@ -3,6 +3,7 @@ the print pipeline (see printing.py's use of tag_style_props), so the two
 can never visually drift apart.
 """
 import functools
+import re
 
 import gi
 gi.require_version("Gtk", "4.0")
@@ -270,28 +271,18 @@ def tag_style_props(dark):
         # Renderer-created dynamic block-gap-* tags carry the actual
         # inter-block top spacing value.
         "list-item-gap": {"pixels-above-lines": LIST_ITEM_GAP},
-        # Pulls the marker's own line back into the margin the item's
-        # text block starts at, so the bullet/number hangs to its left
-        # and wrapped lines align under the text. Applied by renderer.py
-        # to that one line only -- on the list-indent tag it would also
-        # hang the first line of a *continuation* paragraph, which has no
-        # marker to put there.
-        "list-hang": {"indent": LIST_HANGING_INDENT},
         "blockquote": {
             "left-margin": BLOCKQUOTE_INDENT,
             "foreground-rgba": _rgba(palette["dim"]),
             "style": Pango.Style.ITALIC,
         },
         # "tnum" (OpenType tabular numerals) makes every digit render at
-        # the same fixed width -- without it, digit "1" commonly renders
-        # visibly narrower than "2"-"9" in proportional UI fonts, so two
-        # same-length ordered-list markers (e.g. "1." and "2.") can end up
-        # different pixel widths, offsetting where their item text starts
-        # even though nothing else about them differs. (A generalized
-        # Pango-tab-stop-based fix for the further case of *different*
-        # digit counts, e.g. "9." vs "10.", was tried and reverted: it
-        # broke wrapped continuation-line alignment for multi-line items,
-        # a worse regression than the one it fixed.)
+        # the same fixed width, so a marker's width depends only on how
+        # many digits it has: list_hang_shape can then key the measured
+        # hang by "00. " rather than by every number a list uses. (A
+        # Pango-tab-stop way of lining up "9." and "10." was tried once and
+        # reverted: it broke wrapped-line alignment. ensure_list_hang_tag
+        # is what does it now.)
         "list-marker": {"foreground-rgba": _rgba(palette["dim"]), "font-features": "tnum 1"},
         "link": {
             "foreground-rgba": _rgba(palette["link"]),
@@ -356,9 +347,12 @@ def _apply_dynamic_metrics(tag, data):
     distinct gap or nesting level a document uses. The name carries the
     base value, so it doubles as the record of what to rescale to.
     """
-    scale, gutter = data
+    scale, gutter, measure = data
     kind, _, suffix = (tag.get_property("name") or "").rpartition("-")
-    if not suffix.isdigit():
+    if not suffix.isdigit() and not kind.startswith("list-hang-"):
+        return
+    if kind.startswith("list-hang-"):
+        _apply_hang_metrics(tag, scale, gutter, measure)
         return
     n = int(suffix)  # a gap in base pixels, or a nesting level
     if kind == "block-gap":
@@ -368,7 +362,7 @@ def _apply_dynamic_metrics(tag, data):
         tag.set_property("left-margin", round(column * scale) + gutter)
 
 
-def apply_metrics(tag_table, scale=1.0, gutter=0, leading=0):
+def apply_metrics(tag_table, scale=1.0, gutter=0, leading=0, measure=None):
     """Re-scale every length in `tag_table` to zoom factor `scale`, push the
     margin-valued ones out by `gutter` pixels, and give every line
     `leading` pixels of line-height padding.
@@ -378,7 +372,9 @@ def apply_metrics(tag_table, scale=1.0, gutter=0, leading=0):
     every absolute length here is written against BASE_FONT_PX and has to
     be scaled by hand. `leading` is the exception that arrives already in
     device pixels -- it is measured from live font metrics (line_leading),
-    not derived from a base value.
+    not derived from a base value. So is `measure`, a list marker's width
+    in the view's current font (see ensure_list_hang_tag); without one, a
+    marker is taken to be exactly the default hang wide.
 
     Only lengths are touched, so this and update_tag_colors compose in
     either order. Which properties are lengths doesn't depend on the
@@ -395,7 +391,7 @@ def apply_metrics(tag_table, scale=1.0, gutter=0, leading=0):
     if prose is not None:
         prose.set_property("pixels-below-lines", leading)
         prose.set_property("pixels-inside-wrap", leading)
-    tag_table.foreach(_apply_dynamic_metrics, (scale, gutter))
+    tag_table.foreach(_apply_dynamic_metrics, (scale, gutter, measure))
 
 
 def _make_tag(name, props):
@@ -490,6 +486,47 @@ def ensure_list_indent_tag(tag_table, level):
         get_or_create_tag(tag_table, list_body_tag_name(level),
                           {"left-margin": list_text_column(level)})
     return tag_table.lookup(name)
+
+
+def list_hang_shape(marker):
+    """What a list item's opening line holds before its text, with every
+    digit as "0": a marker's width depends on nothing else, since markers
+    are set in tabular numerals. A task box is followed by its text's own
+    leading space, which counts as part of it."""
+    shape = re.sub(r"\d", "0", marker)
+    return shape if shape.endswith(" ") else shape + " "
+
+
+def ensure_list_hang_tag(tag_table, level, marker):
+    """The tag for a list item's opening line that right-aligns its marker
+    against the item's text column, as GitHub's markers are: the text of
+    every item starts on the column its wrapped lines and continuation
+    blocks use, whatever the marker's width. A fixed hang only did that for
+    a marker exactly the hang wide, and pushed "10." and up's text right
+    (#43).
+
+    The line is moved out by the marker's own width -- its left margin is
+    the text column less the marker, its indent hangs the wrapped lines
+    back onto the text column -- so a marker wider than the default hang
+    reaches left of the marker column instead. That width is measured in
+    the view's font (apply_metrics' `measure`); until then it is the
+    default hang, which is where every marker used to start.
+
+    Created after its level's list-indent/list-body tags, so its margin
+    wins over theirs (see ensure_list_indent_tag)."""
+    name = f"list-hang-{level}-{list_hang_shape(marker)}"
+    if tag_table.lookup(name) is None:
+        ensure_list_indent_tag(tag_table, level)
+        get_or_create_tag(tag_table, name, {"left-margin": list_marker_column(level),
+                                            "indent": LIST_HANGING_INDENT})
+    return tag_table.lookup(name)
+
+
+def _apply_hang_metrics(tag, scale, gutter, measure):
+    level, _, shape = tag.get_property("name")[len("list-hang-"):].partition("-")
+    width = round(measure(shape) if measure else -LIST_HANGING_INDENT * scale)
+    tag.set_property("left-margin", round(list_text_column(int(level)) * scale) + gutter - width)
+    tag.set_property("indent", -width)
 
 
 def ensure_list_body_tag(tag_table, level):

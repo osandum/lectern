@@ -310,11 +310,12 @@ _MARKER_TAGS = frozenset({"list-marker", "task-checked-glyph", "task-unchecked-g
 
 
 def _marker_hang_pt(item):
-    """The hanging indent for a list item's opening line: it starts at the
-    marker column, and every line after it at the text column one
-    LIST_HANGING_INDENT further in. Zero for anything that isn't a
-    marker line -- including the item's own continuation blocks, which
-    are already placed on the text column by _left_margin_pt.
+    """The default hanging indent for a list item's opening line: the text
+    column is one LIST_HANGING_INDENT in from the marker column, and the
+    item's text starts there (_hang_marker right-aligns the marker against
+    it). Zero for anything that isn't a marker line -- including the
+    item's own continuation blocks, which are already placed on the text
+    column by _left_margin_pt.
 
     Pango.Layout's indent means the same thing as Gtk.TextTag's (negative
     indents the lines *after* the first, which is how both spell "hang"),
@@ -403,56 +404,34 @@ def _build_text_layout(context, style_table, item, width_pt, hanging_pt=0.0,
         byte_offset += nbytes
     layout.set_attributes(attr_list)
     if hanging_pt:
-        _align_marker_to_hang(layout, item, hanging_pt)
+        _hang_marker(layout, item)
     return layout
 
 
-def _align_marker_to_hang(layout, item, hanging_pt):
-    """Widen or narrow the marker so the item's text starts exactly where
-    its wrapped lines do. The hang is a fixed length and the marker is
-    plain text, so the two only agree when "•  " happens to be as wide as
-    LIST_HANGING_INDENT -- which on paper, in a smaller and often
-    substituted font, it isn't (8pt against a 12pt hang in Cantarell).
+def _hang_marker(layout, item):
+    """Hang the layout's wrapped lines by its marker's own width, measured
+    in the print font: to where the item's text starts, so a task box's
+    following space counts. The text then starts where the wrapped lines
+    do whatever the marker -- and _marker_shift_pt says how far to move the
+    block so that is the text column (tags.ensure_list_hang_tag does the
+    same on screen)."""
+    combined = "".join(text for text, _tags in item.runs)
+    start = len(item.runs[0][0])
+    while start < len(combined) and combined[start] == " ":
+        start += 1
+    end = len(combined[:start].encode("utf-8"))
+    width = Pango.units_to_double(layout.index_to_pos(end).x)
+    layout.set_indent(Pango.units_from_double(-width))
 
-    The difference goes on the marker's last character as letter spacing,
-    measured from the layout itself, so it holds for any font and marker.
-    A marker wider than the hang ("10." is) keeps one space before its
-    text and pushes it right, as on screen, rather than running into it.
 
-    How much of that spacing actually lands before the text is Pango's
-    call -- a one-character marker such as a task box only gets half --
-    so the first try is measured and the second scaled by what it moved.
-    """
-    marker = item.runs[0][0]
-    if len(item.runs) == 1:
-        return  # a bare marker -- no text to line up
-    end = len(marker.encode("utf-8"))
-    last = end - len(marker[-1].encode("utf-8"))
-
-    def text_x():
-        return Pango.units_to_double(layout.index_to_pos(end).x)
-
-    start_x = text_x()
-    one_space = marker.rstrip() + marker[len(marker.rstrip()):][:1]
-    target = max(hanging_pt, Pango.units_to_double(
-        layout.index_to_pos(len(one_space.encode("utf-8"))).x))
-    spacing, gain = 0.0, 1.0
-    for _attempt in range(2):
-        missing = target - text_x()
-        if abs(missing) < 0.01:
-            break
-        if spacing:
-            gain = (text_x() - start_x) / spacing or 1.0
-        spacing += missing / gain
-        attr = Pango.attr_letter_spacing_new(Pango.units_from_double(spacing))
-        attr.start_index = last
-        attr.end_index = end
-        # On a copy: the layout holds the list it was given by reference,
-        # and handed that same list back changed, it sees nothing new and
-        # keeps its old layout.
-        attrs = layout.get_attributes().copy()
-        attrs.change(attr)
-        layout.set_attributes(attrs)
+def _marker_shift_pt(layout, hanging_pt):
+    """How far right of its marker column a list item's opening line
+    starts, once _hang_marker has hung it by its marker: the default hang
+    less the marker's width, so negative for a marker wider than the hang
+    ("10."), which reaches left of the column as on screen."""
+    if not hanging_pt:
+        return 0.0
+    return hanging_pt + Pango.units_to_double(layout.get_indent())
 
 
 def _cell_extents(layout):
@@ -728,10 +707,14 @@ def _build_blocks(context, style_table, print_model, page_width, page_height, da
                 blocks.append(_Block.text(x, layout))
         elif item.kind == "paragraph":
             x = _left_margin_pt(item.block_tags)
+            hanging = _marker_hang_pt(item)
             layout = _build_text_layout(
-                context, style_table, item, page_width - x, _marker_hang_pt(item),
-                font, leading,
+                context, style_table, item, page_width - x, hanging, font, leading,
             )
+            shift = _marker_shift_pt(layout, hanging)
+            if shift:
+                x += shift
+                layout.set_width(Pango.units_from_double(max(page_width - x, 1.0)))
             run_tags = {tag for _text, tags in item.runs for tag in tags}
             heading_level = next((n for n in range(1, 7) if f"heading{n}" in run_tags), None)
             rule = heading_rule_rgb if heading_level in (1, 2) else None

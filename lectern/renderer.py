@@ -684,8 +684,9 @@ class MarkdownRenderer:
         then walk any remaining block children normally.
 
         `hang` gives that one line the hanging indent that puts the marker
-        left of the item's text (list items; footnote definitions have no
-        indent to hang out of), and `body_ctx` is the context the
+        left of the item's text, right-aligned against it
+        (tags.ensure_list_hang_tag; list items -- footnote definitions have
+        no indent to hang out of), and `body_ctx` is the context the
         remaining blocks are walked in -- the item's text column rather
         than its marker column."""
         hang_mark = buffer.create_mark(None, it, True) if hang else None
@@ -716,7 +717,10 @@ class MarkdownRenderer:
             self._prev_block_bottom = 0
             self._prev_block_padding = 0
         if hang_mark is not None:
-            self._tag_first_line(buffer, hang_mark, "list-hang")
+            level = max(int(name.rsplit("-", 1)[1]) for name in ctx.block_tags
+                        if name.startswith("list-indent-"))
+            tag = tagdefs.ensure_list_hang_tag(self.tag_table, level, marker_text)
+            self._tag_first_line(buffer, hang_mark, tag.get_property("name"))
         for child in rest:
             self._walk_block_node(child, buffer, it, body_ctx or ctx)
 
