@@ -203,6 +203,44 @@ class MarkdownRenderer:
         # (blockquotes, list items, nested lists...) inherits it too,
         # since push_block only ever appends, never replaces.
         self._walk_block(tree, buffer, it, RenderCtx(["prose"]))
+        self._reserve_code_chip_room(buffer)
+
+    @staticmethod
+    def _reserve_code_chip_room(buffer):
+        """Tag the characters either side of each inline code span with
+        the room its chip's sides are painted into: "code-gap" on a space,
+        "code-gap-wide" on anything visible (see tags.py for why the two
+        differ, and why never the code's own characters). Nothing where a
+        span starts or ends a line. Print does the same from the runs
+        (printing._reserve_code_chip_room)."""
+        table = buffer.get_tag_table()
+        code = table.lookup("code-inline")
+
+        gap, wide = table.lookup("code-gap"), table.lookup("code-gap-wide")
+
+        def reserve(start, end):
+            # A space between two spans takes both chips' sides.
+            if start.get_char().isspace() and not start.has_tag(gap):
+                buffer.apply_tag(gap, start, end)
+            else:
+                buffer.remove_tag(gap, start, end)
+                buffer.apply_tag(wide, start, end)
+
+        it = buffer.get_start_iter()
+        # forward_to_tag_toggle skips a toggle at the iter itself, so a
+        # span at the very start is looked for before the first step.
+        while it.starts_tag(code) or it.forward_to_tag_toggle(code):
+            if not it.starts_tag(code):
+                continue
+            if not it.starts_line():
+                before = it.copy()
+                before.backward_char()
+                reserve(before, it)
+            it.forward_to_tag_toggle(code)
+            if not it.ends_line():
+                after = it.copy()
+                after.forward_char()
+                reserve(it, after)
 
     def attach_pending_widgets(self, textview):
         """Must be called after render() and after the buffer is assigned

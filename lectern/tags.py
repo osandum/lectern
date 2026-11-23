@@ -255,6 +255,20 @@ def tag_style_props(dark):
             "scale": 0.92,
             "background-rgba": _rgba(palette["code-bg"]),
         },
+        # The room the inline-code chip's sides take, made in the text
+        # itself: decorated_textview.py paints the chip INLINE_CODE_PAD_X
+        # out from the code, and with nothing set aside for that it filled
+        # the space either side and met the neighbouring letters. GitHub's
+        # padding takes room the same way. It goes on the characters
+        # either side of a span, as letter spacing (renderer.py's
+        # _reserve_code_chip_room), and never on the code's own: Pango
+        # widens a spaced character's cell and draws the glyph in the
+        # middle of it, which put a gap inside the word ("cod e"). A space
+        # has no glyph to misplace and takes the pad; a visible character
+        # (`code`, or (`x`)) takes twice it, which centres its glyph right
+        # at the chip's edge, where GitHub's punctuation sits.
+        "code-gap": {"letter-spacing": INLINE_CODE_PAD_X * Pango.SCALE},
+        "code-gap-wide": {"letter-spacing": 2 * INLINE_CODE_PAD_X * Pango.SCALE},
         # Inset one CODE_BLOCK_PADDING *inside* the content column, so the
         # panel decorated_textview.py paints behind it can span the column
         # edge-to-edge with even padding on all four sides. The vertical
@@ -326,7 +340,7 @@ _COLOR_PROPS = frozenset({"foreground-rgba", "background-rgba"})
 # Lengths that are pure sizes: zoom is all that moves them.
 _LENGTH_PROPS = frozenset({
     "pixels-inside-wrap", "pixels-above-lines", "pixels-below-lines",
-    "indent", "rise",
+    "indent", "rise", "letter-spacing",
 })
 # Lengths measured from the edge of the text window rather than from the
 # content column. A Gtk.TextTag left/right-margin *replaces* the view's own

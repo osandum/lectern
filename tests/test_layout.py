@@ -94,7 +94,7 @@ class Line:
 
     def __init__(self, index, text, x, space_above, text_height, space_below,
                  line_height, display_lines, first_line_chars, display_ys,
-                 text_x=None, wrap_x=None):
+                 text_x=None, wrap_x=None, char_xs=()):
         self.index = index
         self.text = text
         self.x = x
@@ -103,6 +103,8 @@ class Line:
         # line starts (None if it doesn't wrap).
         self.text_x = x if text_x is None else text_x
         self.wrap_x = wrap_x
+        # The x of each character of the line's first display line.
+        self.char_xs = list(char_xs)
         self.space_above = space_above
         self.text_height = text_height
         self.space_below = space_below
@@ -261,7 +263,17 @@ def _line_geometry(view, buffer, index):
         display_ys=display_ys,
         text_x=view.get_iter_location(text_at).x,
         wrap_x=wrap_x,
+        char_xs=_char_xs(view, it, first_break if first_break is not None else len(text)),
     )
+
+
+def _char_xs(view, it, count):
+    xs, probe = [], it.copy()
+    for _ in range(count + 1):
+        xs.append(view.get_iter_location(probe).x)
+        if not probe.forward_char():
+            break
+    return xs
 
 
 _cache = {}
@@ -509,6 +521,26 @@ def test_list_indent_is_one_step_per_nesting_level():
     for step in steps:
         assert layout.em(step) == pytest.approx(
             layout.em(tagdefs.LIST_INDENT_STEP), abs=TOL)
+
+
+def test_an_inline_code_chip_leaves_the_space_beside_it_showing():
+    """The chip is painted INLINE_CODE_PAD_X out from its code, and with
+    no room set aside for that it covered the spaces either side and met
+    the letters beyond them. The room is made in the text now, so the
+    visible gap each side of the chip is a whole space, as on GitHub."""
+    layout = measure("Its `10.` should stand out.\n")
+    line = layout.find("Its 10. should")
+    xs = line.char_xs
+    pad = tagdefs.INLINE_CODE_PAD_X
+    code_start, code_end = line.text.index("10."), line.text.index("10.") + 3
+    # The chip spans the code and `pad` either side of it.
+    left_gap = (xs[code_start] - pad) - xs[code_start - 1]     # after "Its"
+    right_gap = xs[code_end + 1] - (xs[code_end] + pad)        # before "should"
+    plain = line.text.index(" stand")
+    space = xs[plain + 1] - xs[plain]                          # an ordinary space
+    assert layout.em(left_gap) == pytest.approx(layout.em(space), abs=TOL)
+    assert layout.em(right_gap) == pytest.approx(layout.em(space), abs=TOL)
+    assert layout.em(space) > 0.15
 
 
 LIST_PROBE = """\

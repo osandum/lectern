@@ -631,3 +631,97 @@ def test_a_remembered_sheet_is_the_sheet_printed_on(tmp_path):
     )
     boxes = set(re.findall(rb"/MediaBox\s*\[\s*0 0 ([\d.]+) ([\d.]+)\s*\]", pdf_texts(out)))
     assert {(round(float(w)), round(float(h))) for w, h in boxes} == {(792, 612)}
+
+
+def test_an_inline_code_chip_leaves_the_space_beside_it_showing_on_paper():
+    """As on screen (test_layout.py): the chip's sides are painted into
+    room set aside for them, so a whole space shows either side of it."""
+    from gi.repository import Pango
+    source = "Its `10.` should stand out.\n"
+    block, = _blocks_for(source)
+    text = block.layout.get_text()
+
+    def x(index):
+        return Pango.units_to_double(block.layout.index_to_pos(
+            len(text[:index].encode("utf-8"))).x)
+
+    pad = printing.layout_pt(printing.tagdefs.INLINE_CODE_PAD_X)
+    start = text.index("10.")
+    end = start + 3
+    plain = text.index(" stand")
+    space = x(plain + 1) - x(plain)
+    assert (x(start) - pad) - x(start - 1) == pytest.approx(space, abs=0.1)
+    assert x(end + 1) - (x(end) + pad) == pytest.approx(space, abs=0.1)
+
+
+def _ink_span(layout, start, end, zoom=8):
+    """(left, right) of the ink the characters in bytes [start, end) leave,
+    in points: drawn alone, everything else transparent. Where Pango says a
+    glyph *is* (index_to_pos) is its cell, which letter spacing widens and
+    centres the glyph in; only drawing it shows where it lands."""
+    import cairo
+    gi.require_version("PangoCairo", "1.0")
+    from gi.repository import Pango, PangoCairo
+    attrs = layout.get_attributes().copy()
+    hidden = Pango.attr_foreground_alpha_new(1)
+    hidden.start_index, hidden.end_index = 0, len(layout.get_text().encode("utf-8"))
+    attrs.insert(hidden)
+    shown = Pango.attr_foreground_alpha_new(65535)
+    shown.start_index, shown.end_index = start, end
+    attrs.insert(shown)
+    copy = layout.copy()
+    copy.set_attributes(attrs)
+    width = int(Pango.units_to_double(copy.get_extents()[1].width) + 20) * zoom
+    surface = cairo.ImageSurface(cairo.FORMAT_A8, width, 40 * zoom)
+    cr = cairo.Context(surface)
+    cr.scale(zoom, zoom)
+    PangoCairo.show_layout(cr, copy)
+    surface.flush()
+    data, stride = surface.get_data(), surface.get_stride()
+    columns = [x for x in range(width)
+               if any(data[y * stride + x] > 64 for y in range(40 * zoom))]
+    return columns[0] / zoom, (columns[-1] + 1) / zoom
+
+
+@pytest.mark.parametrize("source, neighbour", [
+    ("and `code`, then", ","),
+    ("see (`x`) here", "("),
+    ("see (`x`) here", ")"),
+], ids=["comma after", "bracket before", "bracket after"])
+def test_punctuation_beside_an_inline_code_chip_stays_off_it(source, neighbour):
+    """The room either side of a chip is letter spacing on the character
+    there, and Pango draws a spaced glyph in the middle of its widened
+    cell: punctuation gets twice the pad, which puts it at the chip's
+    edge rather than under the chip."""
+    from gi.repository import Pango
+    item = print_model_for(source + "\n")[0]
+    block, = _blocks_for(source + "\n")
+    layout, text = block.layout, block.layout.get_text()
+    pad = printing.layout_pt(printing.tagdefs.INLINE_CODE_PAD_X)
+    span_start, span_end = printing._inline_code_spans(item)[0]
+    chip_left = Pango.units_to_double(layout.index_to_pos(span_start).x) - pad
+    chip_right = Pango.units_to_double(layout.index_to_pos(span_end).x) + pad
+    index = len(text[:text.index(neighbour)].encode("utf-8"))
+    left, right = _ink_span(layout, index, index + 1)
+    if index < span_start:
+        assert right <= chip_left + 0.25
+    else:
+        assert left >= chip_right - 0.25
+
+
+def test_the_room_beside_a_chip_never_spreads_the_code_itself():
+    """Spacing the code's own last character drew it apart from the rest
+    of the word ("cod e"): the code's ink is as wide as it is unspaced."""
+    item = print_model_for("and `code`, then\n")[0]
+    block, = _blocks_for("and `code`, then\n")
+    start, end = printing._inline_code_spans(item)[0]
+    from gi.repository import Pango
+    spaced = _ink_span(block.layout, start, end)
+    unspaced = block.layout.copy()
+    attrs = Pango.AttrList()
+    for attr in block.layout.get_attributes().get_attributes():
+        if attr.klass.type != Pango.AttrType.LETTER_SPACING:
+            attrs.insert(attr.copy())
+    unspaced.set_attributes(attrs)
+    natural = _ink_span(unspaced, start, end)
+    assert spaced[1] - spaced[0] == pytest.approx(natural[1] - natural[0], abs=0.2)

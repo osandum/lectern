@@ -405,7 +405,59 @@ def _build_text_layout(context, style_table, item, width_pt, hanging_pt=0.0,
     layout.set_attributes(attr_list)
     if hanging_pt:
         _hang_marker(layout, item)
+    _reserve_code_chip_room(layout, item)
     return layout
+
+
+def _reserve_code_chip_room(layout, item):
+    """The room the inline-code chip's sides are painted into, as on
+    screen (renderer._reserve_code_chip_room, tags.py's "code-gap"):
+    letter spacing on the characters either side of each span, the pad on
+    a space and twice it on anything visible. After the marker is hung,
+    so a span opening an item moves off the text column by the same room
+    it does on screen."""
+    spans = _inline_code_spans(item)
+    if not spans:
+        return
+    text = layout.get_text().encode("utf-8")
+    pad = layout_pt(tagdefs.INLINE_CODE_PAD_X)
+    sides = {}      # a neighbouring character's byte range -> chips it borders
+    for start, end in spans:
+        if start > 0:
+            side = _char_before(text, start)
+            sides[side] = sides.get(side, 0) + 1
+        if end < len(text):
+            side = _char_after(text, end)
+            sides[side] = sides.get(side, 0) + 1
+    attrs = layout.get_attributes().copy()
+    for (char_start, char_end), chips in sides.items():
+        char = text[char_start:char_end].decode("utf-8")
+        if char == "\n":
+            continue
+        # A space between two spans takes both chips' sides.
+        spacing = pad * min(chips, 2) if char.isspace() else 2 * pad
+        attr = Pango.attr_letter_spacing_new(Pango.units_from_double(spacing))
+        attr.start_index, attr.end_index = char_start, char_end
+        attrs.insert(attr)
+    # On a copy: handed back the list it already holds, a layout sees
+    # nothing new and keeps its old layout.
+    layout.set_attributes(attrs)
+
+
+def _char_before(text, index):
+    """The UTF-8 byte range of the character ending at byte `index`."""
+    start = index - 1
+    while start > 0 and text[start] & 0xC0 == 0x80:
+        start -= 1
+    return start, index
+
+
+def _char_after(text, index):
+    """The UTF-8 byte range of the character starting at byte `index`."""
+    end = index + 1
+    while end < len(text) and text[end] & 0xC0 == 0x80:
+        end += 1
+    return index, end
 
 
 def _hang_marker(layout, item):
