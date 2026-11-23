@@ -375,6 +375,32 @@ def test_an_ambiguous_edge_to_a_subgraph_falls_back(source):
         mermaid.parse(source)
 
 
+@pytest.mark.parametrize("source", [
+    "flowchart TD\n  W{Which?}\n  subgraph S[Screen]\n    B[(Buffer)]\n  end\n  W --> B\n",
+    # Nested, as in the kitchen sink: the inner frame's title is the one
+    # right above where the edge ends.
+    "flowchart TD\n  W{Which?}\n  subgraph P[Pass]\n    subgraph S[Screen]\n      B[(Buffer)]\n"
+    "    end\n    subgraph Q[Paper]\n      M[Model]\n    end\n  end\n  W --> B\n  W --> M\n",
+])
+def test_an_edge_in_through_a_frames_title_keeps_its_arrowhead_clear_of_it(source):
+    # The title's plate is drawn over every line (#44): an arrowhead
+    # ending just under it was covered by it but for a sliver.
+    from lectern.mermaid.draw import ARROW_LENGTH
+    scene = build(source)
+    shapes = scene.shapes
+    plates = {shapes[i + 1].text: shape for i, shape in enumerate(shapes[:-1])
+              if isinstance(shapes[i + 1], sc.Text) and isinstance(shape, sc.Rect)
+              and shape.stroke is None}
+    arrows = [shape for shape in shapes if isinstance(shape, sc.Line) and shape.head]
+    assert arrows
+    for line in arrows:
+        x, tip = line.points[-1]
+        for title in ("Screen", "Paper"):
+            plate = plates.get(title)
+            if plate is not None and plate.x <= x <= plate.x + plate.w and tip > plate.y:
+                assert tip - (plate.y + plate.h) >= ARROW_LENGTH, title
+
+
 def test_a_frame_that_would_swallow_a_foreign_node_falls_back():
     """Two blocks whose members the layout interleaves can't both be framed
     honestly. Better an honest code block than a grouping the author never

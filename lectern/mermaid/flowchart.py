@@ -21,6 +21,7 @@ import re
 from . import layered
 from . import scene as sc
 from . import styles
+from .draw import ARROW_LENGTH
 from .common import Invalid, Unsupported, curve_setting, decode_entities, parse_label, preprocess
 
 # -- geometry, in nominal 96dpi pixels -------------------------------------
@@ -42,6 +43,9 @@ EDGE_LABEL_CLEARANCE = 16.0
 CLUSTER_PAD = 14.0
 CLUSTER_RADIUS = 8.0
 CLUSTER_TITLE_SCALE = 0.95
+# Line left showing behind an arrowhead that ends just under a frame's
+# title, between the title's plate and the arrowhead's back.
+ARROW_STEM = 4.0
 # A state diagram's pseudo-states, at mermaid's sizes: the start dot and
 # the end bullseye, a choice's diamond, and a fork or join's bar.
 STATE_DOT = 14.0
@@ -105,13 +109,17 @@ class Subgraph:
     node it doesn't own says something the author didn't write, so the
     diagram falls back to its source instead.
     """
-    __slots__ = ("key", "title", "members", "children", "parent", "style", "dashed")
+    __slots__ = ("key", "title", "members", "children", "parent", "style", "dashed",
+                 "arrow_room")
 
     def __init__(self, key, title, parent=None):
         self.key = key
         self.title = title
         self.style = None       # styles.Style, from class/style naming the block
         self.dashed = True      # a composite state's frame is solid
+        # Extra height under the title, for an edge that comes in through
+        # it to end at a node just below (see _make_arrow_room).
+        self.arrow_room = 0.0
         self.members = []       # node keys directly inside this block
         self.children = []      # nested Subgraphs
         self.parent = parent
@@ -785,17 +793,44 @@ def _styled(shape, style):
 
 
 def _title_height(group, measurer):
-    return measurer.size(group.title, wrap=False, scale=CLUSTER_TITLE_SCALE)[1]
+    """The height of a frame's title band: its title, and any room left
+    under it for an arrowhead."""
+    return measurer.size(group.title, wrap=False, scale=CLUSTER_TITLE_SCALE)[1] + group.arrow_room
 
 
 def _title_box(group, x, y, w, title_h, measurer):
-    """(x, y, w, h) of a frame's title text, centred in its title band."""
+    """(x, y, w, h) of a frame's title text, at the top of its title band."""
     if not group.title:
         return (x, y, 0.0, 0.0)
     text_w, text_h = measurer.size(
         group.title, wrap=False, scale=CLUSTER_TITLE_SCALE)
-    return (x + (w - text_w) / 2, y + (title_h - text_h) / 2 + CLUSTER_PAD / 2,
-            text_w, text_h)
+    return (x + (w - text_w) / 2, y + CLUSTER_PAD / 2, text_w, text_h)
+
+
+def _make_arrow_room(chart):
+    """Leave room under a frame's title for the arrowhead of an edge that
+    comes down into the frame through it (#44).
+
+    The title is drawn after every line, on a plate, so that it wins over
+    edge labels -- and a node at the top of the frame sits only a few
+    pixels under it. An edge coming in from above to that node ran down
+    behind the plate, which then covered all but a sliver of its
+    arrowhead. Only a top-down diagram's edges come in through the top,
+    and only the innermost frame the edge enters has its title right
+    above where it ends; the rest are left as they were.
+    """
+    if chart.direction != "TD":
+        return
+    paths = _group_paths(chart)
+    blocks = {group.key: group for group in chart.all_subgraphs()}
+    clear = ARROW_LENGTH + ARROW_STEM - (CLUSTER_PAD / 2 - LABEL_PAD)
+    for edge in chart.edges:
+        if edge.style == INVISIBLE or edge.head is None or edge.dst_cluster:
+            continue
+        entered = [key for key in paths.get(edge.dst, ())
+                   if key not in paths.get(edge.src, ())]
+        if entered and blocks[entered[-1]].title:
+            blocks[entered[-1]].arrow_room = max(0.0, clear)
 
 
 def _reserve_cluster_room(chart, measurer):
@@ -817,7 +852,10 @@ def _reserve_cluster_room(chart, measurer):
         for key in group.node_keys():
             node = chart.nodes[key]
             node.w += margin
-            node.h += margin
+            # Room for an arrowhead goes on top of the frame, where its
+            # title is, not half of it above and half below: twice over,
+            # since the node grows about its middle.
+            node.h += margin + group.arrow_room
     return original
 
 
@@ -922,6 +960,7 @@ def _add_titled_text(scene, node, measurer):
 def _build_scene(chart, measurer):
     for node in chart.nodes.values():
         _size_node(node, measurer, chart.direction in layered.VERTICAL_DIRECTIONS)
+    _make_arrow_room(chart)
     original_sizes = _reserve_cluster_room(chart, measurer)
 
     vertical = chart.direction in layered.VERTICAL_DIRECTIONS
