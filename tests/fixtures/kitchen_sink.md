@@ -228,6 +228,25 @@ flowchart TD
     Model ~~~ Note["Same walk, same order"]
 ```
 
+Styles: `classDef` applied with `class` and with `:::`, a one-off `style`
+giving only a fill (so the label picks a colour to contrast with it), and
+on edges a `linkStyle` by number and a class given to an edge id (`e1@`):
+
+```mermaid
+flowchart LR
+    Source[Mermaid source] --> Parsed{Parsed?}
+    Parsed -- yes --> Draw[Draw it]:::ok
+    Parsed e1@-- no --> Fence[Show the code]
+    Browser[Headless browser] -. replaced by .-> Draw
+    style Fence fill:#fff3c4
+    classDef ok fill:#d4f4dd,stroke:#2a9d4a,color:#14532d
+    classDef gone fill:#eeeeee,stroke:#999999,stroke-dasharray:5 5,color:#666666
+    classDef warn stroke:#c98a00,stroke-width:2px,color:#9a6700
+    class Browser gone
+    class e1 warn
+    linkStyle 1 stroke:#2a9d4a,stroke-width:2px,color:#2a9d4a
+```
+
 A sequence diagram, with a frame and a note:
 
 ```mermaid

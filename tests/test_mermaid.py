@@ -1589,3 +1589,50 @@ def test_author_colours_are_kept_on_a_light_page_and_adapted_on_a_dark_one():
     # Hue survives: a pale red fill stays red, just dark.
     r, g, b, _a = for_page((1.0, 0.8, 0.8, 1.0), dark[sc.PAGE], dark[sc.FG])
     assert r > g == pytest.approx(b) and r < 0.5
+
+
+def _line_into(scene, chart, index):
+    """The drawn line of edge `index`, found by where it ends."""
+    edge = chart.edges[index]
+    target = next(s for s in scene.shapes if isinstance(s, sc.Text) and s.text == chart.nodes[edge.dst].text)
+    return min((s for s in scene.shapes if isinstance(s, sc.Line) and s.head),
+               key=lambda s: abs(s.points[-1][0] - (target.x + target.w / 2))
+               + abs(s.points[-1][1] - (target.y + target.h / 2)))
+
+
+def test_link_style_paints_the_edges_it_numbers():
+    source = ("flowchart LR\n  A --> B\n  A --> C\n"
+              "  linkStyle 1 stroke:#f00,stroke-width:3px,stroke-dasharray:2 4\n")
+    chart, scene = mermaid.parse(source), build(source)
+    assert chart.edges[0].look is None
+    look = chart.edges[1].look
+    assert look.stroke == (1.0, 0.0, 0.0, 1.0) and look.width == 3.0 and look.dash == [2.0, 4.0]
+    line = _line_into(scene, chart, 1)
+    assert line.stroke == look.stroke and line.width == 3.0 and line.dash == [2.0, 4.0]
+    assert _line_into(scene, chart, 0).stroke == sc.EDGE
+
+
+def test_a_later_link_style_replaces_an_earlier_one_and_default_sits_under_it():
+    chart = mermaid.parse(
+        "flowchart LR\n  A --> B\n  A --> C\n"
+        "  linkStyle default stroke-width:4px\n"
+        "  linkStyle 0 stroke:#f00\n  linkStyle 0 stroke:#00f\n")
+    assert chart.edges[0].look.stroke == (0.0, 0.0, 1.0, 1.0)
+    assert chart.edges[0].look.width == chart.edges[1].look.width == 4.0
+
+
+def test_an_edge_id_takes_a_class():
+    chart = mermaid.parse(
+        "flowchart LR\n  A e1@--> B\n  A --> C\n"
+        "  classDef gone stroke:#999,stroke-dasharray:5 5\n  class e1 gone\n")
+    assert chart.edges[0].look.dash == [5.0, 5.0]
+    assert chart.edges[1].look is None
+
+
+def test_link_style_color_colours_the_label_and_a_fill_means_nothing_to_an_edge():
+    chart = mermaid.parse("flowchart LR\n  A -- yes --> B\n  linkStyle 0 color:#f00,fill:#ff0\n")
+    look = chart.edges[0].look
+    assert look.color == (1.0, 0.0, 0.0, 1.0) and look.fill is None
+    label = next(s for s in build("flowchart LR\n  A -- yes --> B\n  linkStyle 0 color:#f00\n").shapes
+                 if isinstance(s, sc.Text) and s.text == "yes")
+    assert label.color == (1.0, 0.0, 0.0, 1.0)

@@ -1,9 +1,10 @@
-"""What a flowchart's `classDef`, `class`, `A:::name` and `style` say about
-how a node is drawn.
+"""What a flowchart's `classDef`, `class`, `A:::name`, `style` and
+`linkStyle` say about how a node or an edge is drawn.
 
 Mermaid hands these declarations to the browser as CSS. Lectern reads the
 few that change the drawing: `fill`, `stroke`, `stroke-width`,
-`stroke-dasharray` and `color` (the label). Any other declaration is
+`stroke-dasharray` and `color` (the label; `fill` means nothing to an
+edge). Any other declaration is
 ignored, as all of them were before this: a style changes how a node
 looks, never what the diagram says, so a property Lectern can't draw is
 no reason to refuse the diagram.
@@ -31,7 +32,7 @@ _DARK_TEXT = (0.12, 0.14, 0.16)
 _LIGHT_TEXT = (0.94, 0.95, 0.96)
 
 
-class NodeStyle:
+class Style:
     __slots__ = ("fill", "stroke", "width", "dash", "color")
 
     def __init__(self):
@@ -48,9 +49,27 @@ def declarations(styles):
 
 
 def node_style(declared):
-    """The NodeStyle for a node's declarations, later ones winning, or
-    None if none of them is one Lectern draws."""
-    style = NodeStyle()
+    """The Style for a node's declarations, later ones winning, or None
+    if none of them is one Lectern draws."""
+    style = _style(declared)
+    if style is not None and style.color is None and style.fill is not None \
+            and style.fill[3] >= 0.5:
+        style.color = (*(_DARK_TEXT if _luminance(style.fill) > 0.4 else _LIGHT_TEXT), 1.0)
+    return style
+
+
+def edge_style(declared):
+    """The Style for an edge's declarations, or None. An edge has no fill,
+    so its label is left the colour edge labels always are unless a
+    `color` says otherwise."""
+    style = _style(declared)
+    if style is not None:
+        style.fill = None
+    return style
+
+
+def _style(declared):
+    style = Style()
     found = False
     for declaration in declared:
         name, colon, value = declaration.partition(":")
@@ -63,11 +82,7 @@ def node_style(declared):
             continue
         setattr(style, _FIELDS[name], parsed)
         found = True
-    if not found:
-        return None
-    if style.color is None and style.fill is not None and style.fill[3] >= 0.5:
-        style.color = (*(_DARK_TEXT if _luminance(style.fill) > 0.4 else _LIGHT_TEXT), 1.0)
-    return style
+    return style if found else None
 
 
 def for_page(rgba, page, fg):

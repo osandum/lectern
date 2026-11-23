@@ -51,7 +51,7 @@ class FlowNode:
         self.text = text
         self.shape = shape
         self.href = None        # from a `click` statement
-        self.style = None       # styles.NodeStyle, from classDef/class/style
+        self.style = None       # styles.Style, from classDef/class/style
         self.w = self.h = 0.0
         self.x = self.y = 0.0      # centre, filled in by layout
         self.rank = 0
@@ -64,7 +64,7 @@ class FlowNode:
 
 
 class FlowEdge:
-    __slots__ = ("src", "dst", "label", "style", "head", "tail",
+    __slots__ = ("src", "dst", "label", "style", "head", "tail", "look",
                  "src_cluster", "dst_cluster", "src_path", "dst_path")
 
     def __init__(self, src, dst, label, style, head, tail):
@@ -74,6 +74,7 @@ class FlowEdge:
         self.style = style      # solid | dotted | thick
         self.head = head        # arrow | circle | cross | None
         self.tail = tail
+        self.look = None        # styles.Style, from linkStyle and edge classes
         # An end naming a subgraph rather than a node: the edge is laid
         # out to a node inside it, with its bends kept outside the frame
         # (the paths, see layered.group_paths), and cut where it meets
@@ -222,7 +223,8 @@ class _FlowDb:
     def __init__(self):
         self.direction = None
         self.vertices = {}      # id -> {"text", "type", "declared"}, in mermaid's order
-        self.edges = []         # (start, end, link)
+        self.edges = []         # (start, end, link, {"id", "classes", "styles"})
+        self.default_link_style = []
         self.subgraphs = []     # in the order they close: inner ones first
         self.links = {}
         self.classes = {}       # classDef name -> declarations, in mermaid's order
@@ -248,25 +250,59 @@ class _FlowDb:
             self.classes.setdefault(name, []).extend(declared)
 
     def set_class(self, keys, name):
-        """setClass: only a node that exists by now gets the class."""
+        """setClass: only a node or an edge id that exists by now gets the
+        class."""
         for key in keys.split(","):
             if key in self.vertices:
                 self.vertices[key]["classes"].append(name)
+            for edge in self.edges:
+                if edge[3]["id"] == key:
+                    edge[3]["classes"].append(name)
+
+    def update_link(self, positions, declared):
+        """updateLink: `default`, or the edges by index, which must exist
+        by now. A second linkStyle for an edge replaces the first."""
+        if positions == "default":
+            self.default_link_style = declared
+            return
+        if any(int(n) >= len(self.edges) for n in positions):
+            raise Invalid("linkStyle for an edge that doesn't exist")
+        for n in positions:
+            self.edges[int(n)][3]["styles"] = declared
+
+    def _classes_style(self, classes):
+        """A node's or an edge's classes, as declarations, in the order the
+        classes were defined: a stylesheet's cascade."""
+        declared = []
+        for name, defined in self.classes.items():
+            if name in classes and name != "default":
+                declared += defined
+        return declared
+
+    def edge_style(self, extra):
+        """What an edge is drawn with: `linkStyle default`, its classes,
+        then its own linkStyle."""
+        return styles.edge_style(self.default_link_style + self._classes_style(extra["classes"])
+                                 + (extra["styles"] or []))
 
     def node_style(self, vertex):
         """What a node is drawn with: `classDef default` under every node,
         then its classes in the order they were defined (a stylesheet's
         cascade), then its own `style` statements."""
-        declared = list(self.classes.get("default", []))
-        for name, defined in self.classes.items():
-            if name in vertex["classes"] and name != "default":
-                declared += defined
-        return styles.node_style(declared + vertex["styles"])
+        return styles.node_style(self.classes.get("default", [])
+                                 + self._classes_style(vertex["classes"]) + vertex["styles"])
 
     def add_link(self, starts, ends, link):
+        # addLink: of the edges one statement makes (`A & B --> C`), the
+        # id goes to the one from the last start to the first end, and to
+        # no edge if another already has it.
+        key = link.get("id")
+        if key is not None and any(edge[3]["id"] == key for edge in self.edges):
+            key = None
         for start in starts:
             for end in ends:
-                self.edges.append((start, end, link))
+                mine = key if start == starts[-1] and end == ends[0] else None
+                self.edges.append((start, end, link, {"id": mine, "classes": [], "styles": None}))
 
     def add_subgraph(self, key, mentioned, title):
         """addSubGraph: a block's members are every node its statements
@@ -295,10 +331,11 @@ class _FlowDb:
             nodes[key] = FlowNode(key, parse_label(decode_entities(vertex["text"])), _SHAPES[vertex["type"]])
             nodes[key].style = self.node_style(vertex)
         edges = []
-        for start, end, link in self.edges:
+        for start, end, link, extra in self.edges:
             tail, head = _ENDS[link["type"]]
             label = parse_label(decode_entities(_label(link["text"]))) if "text" in link else ""
             edges.append(FlowEdge(start, end, label, _STROKES[link["stroke"]], head, tail))
+            edges[-1].look = self.edge_style(extra)
         keys = [group["id"] for group in self.subgraphs]
         if len(keys) != len(set(keys)):
             raise Unsupported("a subgraph id defined twice")
@@ -370,10 +407,13 @@ class _Actions:
 
     def link_style_statement(self, children):
         # mermaid styles the edges by index there and then, and throws on
-        # one that doesn't exist (yet).
-        edges = children[2]     # num_list, or the DEFAULT token
-        if isinstance(edges, list) and any(int(n) >= len(self.db.edges) for n in edges):
-            raise Invalid("linkStyle for an edge that doesn't exist")
+        # one that doesn't exist (yet). An `interpolate` (a curve for just
+        # these edges) is ignored: Lectern curves a whole diagram or none.
+        positions = children[2]     # num_list, or the DEFAULT token
+        if not isinstance(positions, list):
+            positions = "default"
+        declared = children[-1] if len(children) in (5, 9) else []
+        self.db.update_link(positions, declared)
 
     def num_list(self, children):
         return [token.value for token in children if token.type == "NUM"]
@@ -463,7 +503,7 @@ class _Actions:
         return {"text": "".join(token.value for token in children), "type": kind}
 
     def link_statement(self, children):
-        return _link(children[-1].value)
+        return {**_link(children[-1].value), **_link_id(children)}
 
     def arrow_text(self, children):
         return children[1]
@@ -476,7 +516,15 @@ class _Actions:
 
     def link_texted(self, children):
         start, text, end = children[-3:]
-        return {**_link(end.value, start.value), "text": text}
+        return {**_link(end.value, start.value), "text": text, **_link_id(children)}
+
+
+def _link_id(children):
+    """`A e1@--> B`: the edge's id, which `class` can name."""
+    token = children[0]
+    if getattr(token, "type", None) == "LINK_ID":
+        return {"id": token.value.strip().removesuffix("@")}
+    return {}
 
 
 def parse(source):
@@ -880,10 +928,13 @@ def _build_scene(chart, measurer):
                 (n.x - n.w / 2, n.y - n.h / 2, n.w, n.h) for key, n in chart.nodes.items()
                 if key not in (edge.src, edge.dst)])
         drawn_lines.append((index, drawn))
+        look = edge.look
         scene.add(sc.Line(
             drawn,
+            stroke=look.stroke if look and look.stroke else sc.EDGE,
             dashed=_DASHED[edge.style],
-            width=_STROKE_WIDTH[edge.style],
+            dash=look.dash if look else None,
+            width=look.width if look and look.width is not None else _STROKE_WIDTH[edge.style],
             head=edge.head,
             tail=edge.tail,
         ))
@@ -916,7 +967,8 @@ def _build_scene(chart, measurer):
         ))
         scene.add(sc.Text(
             cx - text_w / 2, cy - text_h / 2, text_w, text_h,
-            edge.label, color=sc.DIM, scale=EDGE_LABEL_FONT_SCALE,
+            edge.label, color=edge.look.color if edge.look and edge.look.color else sc.DIM,
+            scale=EDGE_LABEL_FONT_SCALE,
         ))
 
     for node in chart.nodes.values():
