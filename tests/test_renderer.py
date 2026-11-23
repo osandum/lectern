@@ -241,6 +241,19 @@ def test_fenced_code_block_is_tagged_and_highlighted():
     assert "pyg-keyword" in tag_names
 
 
+@pytest.mark.parametrize("info", ["", "blorpiscript"])
+def test_fence_without_a_known_language_is_not_highlighted(info):
+    """GitHub highlights only a fence that names a language it knows.
+    Guessing read ASCII art full of `@@` as Transact-SQL and coloured it."""
+    _renderer, buffer = render(f"```{info}\n  __gmmW@@@@@@mms__.\n ,g/~  @@  'M@@W\n```\n")
+    start, end = buffer.get_bounds()
+    it = start.copy()
+    while it.compare(end) < 0:
+        names = {t.get_property("name") for t in it.get_tags()}
+        assert not any(n.startswith("pyg-") for n in names), names
+        it.forward_char()
+
+
 def test_indented_code_block_is_rendered_like_a_fence():
     """A CommonMark 4-space / tab-indented block is a `code_block` token,
     not a `fence`. It still has to reach the buffer, carry the code-block

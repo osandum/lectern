@@ -57,8 +57,8 @@ class Example:
         self.value = value
 ```
 
-A fenced block in a language Lectern has never heard of, to exercise the
-`guess_lexer` fallback path:
+A fenced block in a language Lectern has never heard of, which renders
+plain, as an untagged fence does -- no guessing, as on GitHub:
 
 ```blorpiscript
 frobnicate(x, y) => x <~> y;

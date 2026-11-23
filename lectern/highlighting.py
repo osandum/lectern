@@ -49,13 +49,15 @@ def _tag_for_token(ttype):
 def highlight_runs(code, language):
     """Yield (text, tag_name_or_None) runs covering `code` exactly.
 
-    Falls back to a single untagged run if no lexer can be found for the
-    declared language and guessing also fails -- callers can always just
-    concatenate the yielded text and get `code` back unchanged.
+    A fence with no language, or one Pygments doesn't know, is a single
+    untagged run, as on GitHub: there is no guessing. `guess_lexer` reads
+    ASCII art full of `@@` as Transact-SQL and colours it at random, and
+    callers can always just concatenate the yielded text and get `code`
+    back unchanged.
     """
     global _token_tag_map
     from pygments import lex
-    from pygments.lexers import get_lexer_by_name, guess_lexer
+    from pygments.lexers import get_lexer_by_name
     from pygments.util import ClassNotFound
 
     if _token_tag_map is None:
@@ -65,11 +67,6 @@ def highlight_runs(code, language):
     if language:
         try:
             lexer = get_lexer_by_name(language, stripnl=False, stripall=False)
-        except ClassNotFound:
-            lexer = None
-    if lexer is None and code.strip():
-        try:
-            lexer = guess_lexer(code)
         except ClassNotFound:
             lexer = None
     if lexer is None:
