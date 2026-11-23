@@ -13,6 +13,7 @@ gi.require_version("PangoCairo", "1.0")
 from gi.repository import Pango, PangoCairo
 
 from . import scene as sc
+from . import styles
 from . import text as textlib
 
 ARROW_LENGTH = 9.0
@@ -20,8 +21,13 @@ ARROW_HALF_WIDTH = 4.0
 DASH_PATTERN = [4.0, 3.0]
 
 
-def _set_color(cr, palette, role):
-    cr.set_source_rgb(*palette[role])
+def _set_color(cr, palette, color):
+    """`color` is a role, looked up in the palette, or a colour the
+    diagram spelled out, as (r, g, b, a)."""
+    if isinstance(color, tuple):
+        cr.set_source_rgba(*styles.for_page(color, palette[sc.PAGE], palette[sc.FG]))
+    else:
+        cr.set_source_rgb(*palette[color])
 
 
 def _rounded_rect(cr, x, y, w, h, radius):
@@ -48,6 +54,10 @@ def _ellipse_path(cr, x, y, w, h):
 
 
 def _fill_and_stroke(cr, palette, shape, line_width=1.4):
+    if shape.width is not None:
+        line_width = shape.width
+    if shape.dash is not None:
+        cr.set_dash(shape.dash)
     if shape.fill is not None:
         _set_color(cr, palette, shape.fill)
         if shape.stroke is not None:
@@ -57,7 +67,10 @@ def _fill_and_stroke(cr, palette, shape, line_width=1.4):
     if shape.stroke is not None:
         _set_color(cr, palette, shape.stroke)
         cr.set_line_width(line_width)
-        cr.stroke()
+        if line_width > 0:
+            cr.stroke()
+    cr.new_path()
+    cr.set_dash([])
 
 
 # ER cardinality glyphs, as (bars, has_circle, has_crow). "one" is two
@@ -186,7 +199,7 @@ def _draw_line(cr, palette, line):
         return
     _set_color(cr, palette, line.stroke)
     cr.set_line_width(line.width)
-    cr.set_dash(DASH_PATTERN if line.dashed else [])
+    cr.set_dash(line.dash if line.dash is not None else DASH_PATTERN if line.dashed else [])
     cr.move_to(*line.points[0])
     for point in line.points[1:]:
         cr.line_to(*point)

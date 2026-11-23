@@ -20,6 +20,7 @@ import re
 
 from . import layered
 from . import scene as sc
+from . import styles
 from .common import Invalid, Unsupported, curve_setting, decode_entities, parse_label, preprocess
 
 # -- geometry, in nominal 96dpi pixels -------------------------------------
@@ -43,13 +44,14 @@ CLUSTER_RADIUS = 8.0
 CLUSTER_TITLE_SCALE = 0.95
 
 class FlowNode:
-    __slots__ = ("key", "text", "shape", "href", "w", "h", "x", "y", "rank", "order", "cap")
+    __slots__ = ("key", "text", "shape", "href", "style", "w", "h", "x", "y", "rank", "order", "cap")
 
     def __init__(self, key, text, shape):
         self.key = key
         self.text = text
         self.shape = shape
         self.href = None        # from a `click` statement
+        self.style = None       # styles.NodeStyle, from classDef/class/style
         self.w = self.h = 0.0
         self.x = self.y = 0.0      # centre, filled in by layout
         self.rank = 0
@@ -223,11 +225,13 @@ class _FlowDb:
         self.edges = []         # (start, end, link)
         self.subgraphs = []     # in the order they close: inner ones first
         self.links = {}
+        self.classes = {}       # classDef name -> declarations, in mermaid's order
 
     def add_vertex(self, key, text=None, shape=None):
         if not key.strip():
             return
-        vertex = self.vertices.setdefault(key, {"text": None, "type": None, "declared": False})
+        vertex = self.vertices.setdefault(
+            key, {"text": None, "type": None, "declared": False, "classes": [], "styles": []})
         if text is not None:
             vertex["text"] = _label(text)
             vertex["declared"] = True
@@ -236,6 +240,28 @@ class _FlowDb:
         if shape is not None:
             vertex["type"] = shape
             vertex["declared"] = True
+
+    def add_class(self, names, declared):
+        """addClass: `classDef a,b ...` defines both, and a second
+        definition of a name adds to the first."""
+        for name in names.split(","):
+            self.classes.setdefault(name, []).extend(declared)
+
+    def set_class(self, keys, name):
+        """setClass: only a node that exists by now gets the class."""
+        for key in keys.split(","):
+            if key in self.vertices:
+                self.vertices[key]["classes"].append(name)
+
+    def node_style(self, vertex):
+        """What a node is drawn with: `classDef default` under every node,
+        then its classes in the order they were defined (a stylesheet's
+        cascade), then its own `style` statements."""
+        declared = list(self.classes.get("default", []))
+        for name, defined in self.classes.items():
+            if name in vertex["classes"] and name != "default":
+                declared += defined
+        return styles.node_style(declared + vertex["styles"])
 
     def add_link(self, starts, ends, link):
         for start in starts:
@@ -267,6 +293,7 @@ class _FlowDb:
             if vertex["type"] not in _SHAPES:
                 raise Unsupported(f"no drawing for the {vertex['type']!r} shape")
             nodes[key] = FlowNode(key, parse_label(decode_entities(vertex["text"])), _SHAPES[vertex["type"]])
+            nodes[key].style = self.node_style(vertex)
         edges = []
         for start, end, link in self.edges:
             tail, head = _ENDS[link["type"]]
@@ -326,13 +353,27 @@ class _Actions:
     def style_statement(self, children):
         # mermaid declares a node a style names, if nothing else did.
         self.db.add_vertex(children[2])
+        if children[2] in self.db.vertices:
+            self.db.vertices[children[2]]["styles"] += children[4]
+
+    def class_def_statement(self, children):
+        self.db.add_class(children[2], children[4])
+
+    def class_statement(self, children):
+        self.db.set_class(children[2], children[4])
+
+    def styles(self, children):
+        return styles.declarations([c for c in children if isinstance(c, str)])
+
+    def style(self, children):
+        return "".join(token.value for token in children)
 
     def link_style_statement(self, children):
         # mermaid styles the edges by index there and then, and throws on
         # one that doesn't exist (yet).
-        for child in children:
-            if isinstance(child, list) and any(int(n) >= len(self.db.edges) for n in child):
-                raise Invalid("linkStyle for an edge that doesn't exist")
+        edges = children[2]     # num_list, or the DEFAULT token
+        if isinstance(edges, list) and any(int(n) >= len(self.db.edges) for n in edges):
+            raise Invalid("linkStyle for an edge that doesn't exist")
 
     def num_list(self, children):
         return [token.value for token in children if token.type == "NUM"]
@@ -377,6 +418,8 @@ class _Actions:
         return children[0] + [children[-1]]
 
     def styled_vertex(self, children):
+        if len(children) == 3:          # A:::name
+            self.db.set_class(children[0], children[2])
         return children[0]
 
     def id_string(self, children):
@@ -623,6 +666,22 @@ def _node_shapes(node):
     return [sc.Rect(x, y, w, h, fill=sc.NODE, stroke=sc.EDGE)]
 
 
+def _styled(shape, style):
+    """One of a node's outline shapes, painted as its style says."""
+    if style is None:
+        return shape
+    if getattr(shape, "fill", None) is not None and style.fill is not None:
+        shape.fill = style.fill
+    if shape.stroke is not None:
+        if style.stroke is not None:
+            shape.stroke = style.stroke
+        if style.width is not None:
+            shape.width = style.width
+        if style.dash is not None:
+            shape.dash = style.dash
+    return shape
+
+
 def _title_height(group, measurer):
     return measurer.size(group.title, wrap=False, scale=CLUSTER_TITLE_SCALE)[1]
 
@@ -862,12 +921,13 @@ def _build_scene(chart, measurer):
 
     for node in chart.nodes.values():
         for shape in _node_shapes(node):
-            scene.add(shape)
+            scene.add(_styled(shape, node.style))
         text_w, text_h = _text_size(node, measurer)
         # Centred in a cylinder's body: below the rim, not in the box.
         text_y = node.y + (_cylinder_cap(node.w) / 2 if node.shape == "cylinder" else 0.0)
+        color = node.style.color if node.style and node.style.color else sc.FG
         scene.add(sc.Text(
-            node.x - text_w / 2, text_y - text_h / 2, text_w, text_h, node.text))
+            node.x - text_w / 2, text_y - text_h / 2, text_w, text_h, node.text, color=color))
         if node.href:
             scene.add(sc.Link(node.x - node.w / 2, node.y - node.h / 2,
                               node.w, node.h, node.href))

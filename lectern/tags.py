@@ -36,6 +36,9 @@ _LIGHT = {
     "diagram-edge": "#5c7799",
     "diagram-fg": "#1b1f24",
     "diagram-label-bg": "#fafafa",
+    # The page a diagram sits on: what colours a diagram's author spelled
+    # out are adapted against (mermaid/styles.py, for_page).
+    "diagram-page": "#ffffff",
     "diagram-note": "#fbf5d6",
 }
 
@@ -59,6 +62,7 @@ _DARK = {
     "diagram-edge": "#8cb2dc",
     "diagram-fg": "#f6f5f4",
     "diagram-label-bg": "#242424",
+    "diagram-page": "#1e1e1e",
     "diagram-note": "#3b3722",
 }
 
@@ -194,6 +198,7 @@ _DIAGRAM_ROLE_COLORS = {
     "dim": "dim",
     "label-bg": "diagram-label-bg",
     "note": "diagram-note",
+    "page": "diagram-page",
 }
 
 

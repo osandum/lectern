@@ -1512,3 +1512,80 @@ def test_a_node_list_keeps_shapes_and_the_link_label():
     assert chart.nodes["B"].shape == "hexagon"
     assert {e.label for e in chart.edges} == {"reads"}
     assert {e.style for e in chart.edges} == {"dotted"}
+
+
+# -- classDef / class / style ----------------------------------------------
+
+_GREY = (0xee / 255, 0xee / 255, 0xee / 255, 1.0)
+
+
+def _outline(scene, label):
+    """The outline shape drawn for the node whose text is `label`."""
+    text = next(s for s in scene.shapes if isinstance(s, sc.Text) and s.text == label)
+    return next(s for s in scene.shapes
+                if isinstance(s, (sc.Rect, sc.Polygon, sc.Ellipse))
+                and getattr(s, "x", None) is not None
+                and s.x <= text.x and s.x + s.w >= text.x + text.w
+                and s.y <= text.y and s.y + s.h >= text.y + text.h), text
+
+
+def test_class_def_styles_the_nodes_named_by_class():
+    scene = build(
+        "flowchart TD\n  A[Old] --> B[New]\n"
+        "  classDef historic fill:#eeeeee,stroke:#999999,stroke-dasharray:5 5,color:#666666\n"
+        "  class A historic\n")
+    box, text = _outline(scene, "Old")
+    assert box.fill == pytest.approx(_GREY)
+    assert box.dash == [5.0, 5.0]
+    assert text.color == pytest.approx((0x66 / 255, 0x66 / 255, 0x66 / 255, 1.0))
+    box, text = _outline(scene, "New")
+    assert box.fill == sc.NODE and box.dash is None and text.color == sc.FG
+
+
+def test_class_takes_a_comma_list_and_the_triple_colon_form():
+    chart = mermaid.parse(
+        "flowchart LR\n  A --> B:::hot --> C\n  classDef hot fill:#f00\n  class A,C hot\n")
+    assert all(chart.nodes[key].style.fill == (1.0, 0.0, 0.0, 1.0) for key in "ABC")
+
+
+def test_style_statement_beats_the_class_and_default_sits_under_both():
+    chart = mermaid.parse(
+        "flowchart LR\n  A --> B\n"
+        "  classDef default stroke:#00f,stroke-width:3px\n"
+        "  classDef hot fill:#f00\n  class A hot\n  style A fill:#0f0\n")
+    a, b = chart.nodes["A"].style, chart.nodes["B"].style
+    assert a.fill == (0.0, 1.0, 0.0, 1.0)
+    assert a.stroke == b.stroke == (0.0, 0.0, 1.0, 1.0)
+    assert a.width == b.width == 3.0
+
+
+def test_a_class_on_an_undeclared_node_conjures_no_node():
+    # setClass, like setLink, only touches a node that exists already.
+    chart = mermaid.parse("flowchart LR\n  A --> B\n  classDef x fill:#f00\n  class C x\n")
+    assert set(chart.nodes) == {"A", "B"}
+
+
+def test_a_filled_node_without_a_color_gets_a_label_that_contrasts():
+    light = mermaid.parse("flowchart LR\n  A\n  style A fill:#ffffcc\n").nodes["A"].style
+    dark = mermaid.parse("flowchart LR\n  A\n  style A fill:#202040\n").nodes["A"].style
+    assert sum(light.color[:3]) < 1.0 < sum(dark.color[:3])
+
+
+def test_styles_lectern_cannot_draw_are_ignored_not_refused():
+    chart = mermaid.parse("flowchart LR\n  A\n  style A font-size:20px,fill:notacolor\n")
+    assert chart.nodes["A"].style is None
+
+
+def test_author_colours_are_kept_on_a_light_page_and_adapted_on_a_dark_one():
+    from lectern.mermaid.styles import for_page
+    light, dark = tagdefs.diagram_palette(False), tagdefs.diagram_palette(True)
+    grey = (0.6, 0.6, 0.6, 1.0)
+    assert for_page(grey, light[sc.PAGE], light[sc.FG]) == grey
+    # White lands on the page, black on the text, and the order between holds.
+    assert for_page((1, 1, 1, 1), dark[sc.PAGE], dark[sc.FG])[:3] == pytest.approx(dark[sc.PAGE])
+    near_white = for_page((0.93, 0.93, 0.93, 1.0), dark[sc.PAGE], dark[sc.FG])
+    mid = for_page(grey, dark[sc.PAGE], dark[sc.FG])
+    assert sum(dark[sc.PAGE]) < sum(near_white[:3]) < sum(mid[:3]) < sum(dark[sc.FG])
+    # Hue survives: a pale red fill stays red, just dark.
+    r, g, b, _a = for_page((1.0, 0.8, 0.8, 1.0), dark[sc.PAGE], dark[sc.FG])
+    assert r > g == pytest.approx(b) and r < 0.5

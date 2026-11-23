@@ -19,35 +19,48 @@ FG = "fg"                # primary text
 DIM = "dim"              # secondary text (cardinalities, notes)
 LABEL_BG = "label-bg"    # the plate an edge label sits on
 NOTE = "note"            # sequence-diagram notes
+PAGE = "page"            # what the diagram is drawn on; never painted itself
+
+# Anywhere a role goes, an (r, g, b, a) tuple may stand instead: a colour
+# the diagram's author spelled out (flowchart `classDef`/`style`). It is
+# drawn as written on a light page and adapted on a dark one
+# (styles.for_page).
 
 
 class Rect:
-    __slots__ = ("x", "y", "w", "h", "radius", "fill", "stroke", "dashed")
+    __slots__ = ("x", "y", "w", "h", "radius", "fill", "stroke", "dashed", "width", "dash")
 
-    def __init__(self, x, y, w, h, *, radius=0.0, fill=None, stroke=None, dashed=False):
+    def __init__(self, x, y, w, h, *, radius=0.0, fill=None, stroke=None, dashed=False,
+                 width=None, dash=None):
         self.x, self.y, self.w, self.h = x, y, w, h
         self.radius = radius
         self.fill = fill
         self.stroke = stroke
         self.dashed = dashed
+        self.width = width      # stroke width; None is draw.py's default
+        self.dash = dash        # an explicit dash pattern, overriding `dashed`
 
 
 class Polygon:
-    __slots__ = ("points", "fill", "stroke")
+    __slots__ = ("points", "fill", "stroke", "width", "dash")
 
-    def __init__(self, points, *, fill=None, stroke=None):
+    def __init__(self, points, *, fill=None, stroke=None, width=None, dash=None):
         self.points = points
         self.fill = fill
         self.stroke = stroke
+        self.width = width
+        self.dash = dash
 
 
 class Ellipse:
-    __slots__ = ("x", "y", "w", "h", "fill", "stroke")
+    __slots__ = ("x", "y", "w", "h", "fill", "stroke", "width", "dash")
 
-    def __init__(self, x, y, w, h, *, fill=None, stroke=None):
+    def __init__(self, x, y, w, h, *, fill=None, stroke=None, width=None, dash=None):
         self.x, self.y, self.w, self.h = x, y, w, h
         self.fill = fill
         self.stroke = stroke
+        self.width = width
+        self.dash = dash
 
 
 class Line:
@@ -59,12 +72,14 @@ class Line:
     "triangle" (class inheritance) and "diamond"/"diamond-open"
     (composition/aggregation).
     """
-    __slots__ = ("points", "stroke", "dashed", "head", "tail", "width")
+    __slots__ = ("points", "stroke", "dashed", "head", "tail", "width", "dash")
 
-    def __init__(self, points, *, stroke=EDGE, dashed=False, head=None, tail=None, width=1.0):
+    def __init__(self, points, *, stroke=EDGE, dashed=False, head=None, tail=None, width=1.0,
+                 dash=None):
         self.points = points
         self.stroke = stroke
         self.dashed = dashed
+        self.dash = dash
         self.head = head
         self.tail = tail
         self.width = width
