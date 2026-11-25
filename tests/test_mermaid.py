@@ -888,8 +888,50 @@ def test_crossing_square_edges_are_drawn_with_a_hop(direction, monkeypatch):
         drawn.append(hops)
         return rounded(points, *args, hops=hops, **kwargs)
     monkeypatch.setattr(layered, "rounded", spy)
-    build(FANNED.replace("flowchart TB", f"flowchart {direction}"))
+    # Two sources into the same three targets cross however they're laid out.
+    build(f"flowchart {direction}\n  A --> C & D & E\n  B --> C & D & E\n")
     assert any(drawn)
+
+
+FAN_IN = """flowchart LR
+  A["Lag 1 · Medarbejder<br/>lead form"] --> API
+  B["Lag 2 · Afdelingsleder<br/>pipeline tracker"] --> API
+  C["Lag 3 · Direktion<br/>overview"] --> API
+  API["Flask API"] --> DB[("SQLite")]
+"""
+
+
+def test_a_fan_in_is_centred_on_the_node_it_points_at(monkeypatch):
+    # Pushing the sources apart from the top hung B and C off A, lined
+    # the target up with A, and bent every other edge into it.
+    scene = build(FAN_IN)
+    rects = {s.text: s for s in scene.shapes if isinstance(s, sc.Text)}
+    def middle(text):
+        return rects[text].y + rects[text].h / 2
+    assert middle("Flask API") == pytest.approx(middle("Lag 2 · Afdelingsleder\npipeline tracker"), abs=0.5)
+    routes = square_routes(FAN_IN, monkeypatch)
+    assert sum(1 for points in routes if len(points) == 2) == 2      # B --> API, API --> DB
+
+
+def test_a_fan_in_does_not_cross_itself(monkeypatch):
+    drawn = []
+    rounded = layered.rounded
+
+    def spy(points, *args, hops=None, **kwargs):
+        drawn.append(hops)
+        return rounded(points, *args, hops=hops, **kwargs)
+    monkeypatch.setattr(layered, "rounded", spy)
+    for direction in ("TB", "LR"):
+        build(FAN_IN.replace("flowchart LR", f"flowchart {direction}"))
+    assert not any(drawn)
+
+
+def test_overlapping_runs_keep_their_order_on_the_tracks():
+    # Three runs heading left (up, in LR) into one node: 0 and 2 don't
+    # overlap, so 2 fitted on 0's track, above 1, which it does overlap,
+    # and crossed it twice.
+    tracks = layered._assign_tracks([(0, 32.0, 19.0), (1, 110.0, 32.0), (2, 188.0, 45.0)])
+    assert tracks[0] < tracks[1] < tracks[2]
 
 
 def test_a_source_is_ranked_just_above_what_it_points_at():

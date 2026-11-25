@@ -419,19 +419,36 @@ def place(layers, up, down, vertical, rank_gaps, paths=None, rank=None):
             cursor = positions[cell.key][0] + half + NODE_GAP
 
     def separate(layer):
-        """Push apart in both directions so a pulled cell never overlaps
-        its neighbour, and the pull isn't systematically biased toward
-        whichever end the pass started from."""
-        for index in range(1, len(layer)):
-            prev, cell = layer[index - 1], layer[index]
-            minimum = (positions[prev.key][0] + _cross_size(prev, vertical) / 2
-                       + NODE_GAP + _cross_size(cell, vertical) / 2)
-            positions[cell.key][0] = max(positions[cell.key][0], minimum)
-        for index in range(len(layer) - 2, -1, -1):
-            cell, following = layer[index], layer[index + 1]
-            maximum = (positions[following.key][0] - _cross_size(following, vertical) / 2
-                       - NODE_GAP - _cross_size(cell, vertical) / 2)
-            positions[cell.key][0] = min(positions[cell.key][0], maximum)
+        """Move the layer's cells as little as they can be moved (least
+        squares) while none overlaps its neighbour.
+
+        Cells pulled to one spot -- the sources of a fan-in, all pulled
+        to the one node they point at -- end up centred on it. Pushing
+        apart from one end instead left the first of them on the spot
+        and hung the rest off it, so the node they fan into lined up
+        with the first and every other edge into it bent.
+
+        Shifting each cell back by the room the cells before it need
+        turns the spacing into plain ordering, and the closest ordered
+        sequence is pool-adjacent-violators: merge any run of cells out
+        of order into one block at their mean.
+        """
+        offsets = [0.0]
+        for prev, cell in zip(layer, layer[1:]):
+            offsets.append(offsets[-1] + _cross_size(prev, vertical) / 2
+                           + NODE_GAP + _cross_size(cell, vertical) / 2)
+        pools = []      # [mean, count]
+        for cell, offset in zip(layer, offsets):
+            pools.append([positions[cell.key][0] - offset, 1])
+            while len(pools) > 1 and pools[-2][0] > pools[-1][0]:
+                mean, count = pools.pop()
+                pools[-1] = [(pools[-1][0] * pools[-1][1] + mean * count)
+                             / (pools[-1][1] + count), pools[-1][1] + count]
+        index = 0
+        for mean, count in pools:
+            for _ in range(count):
+                positions[layer[index].key][0] = mean + offsets[index]
+                index += 1
 
     for layer in layers:
         pack(layer)
@@ -1141,19 +1158,19 @@ def _assign_tracks(gap_runs):
     is on the higher track: its drop into the lower layer cuts through
     the other's run. So runs heading right are stacked by where they end,
     furthest right highest, runs heading left the mirror image, and each
-    takes the highest track where it overlaps nothing already there.
+    goes one track below the lowest run before it that it overlaps.
+
+    Not simply the highest track that is free where it runs: that let a
+    run slip above one it overlaps, past a run further up that it
+    doesn't, and so undo the order and cross twice.
     """
     rightward = sorted((r for r in gap_runs if r[2] > r[1]), key=lambda r: -r[2])
     leftward = sorted((r for r in gap_runs if r[2] < r[1]), key=lambda r: r[2])
-    tracks, taken = {}, []
+    tracks, placed = {}, []
     for hop, a, b in rightward + leftward:
         low, high = min(a, b) - TRACK_CLEARANCE, max(a, b) + TRACK_CLEARANCE
-        track = 0
-        while track < len(taken) and any(l < high and low < h for l, h in taken[track]):
-            track += 1
-        if track == len(taken):
-            taken.append([])
-        taken[track].append((low, high))
+        track = 1 + max((t for l, h, t in placed if l < high and low < h), default=-1)
+        placed.append((low, high, track))
         tracks[hop] = track
     return tracks
 
